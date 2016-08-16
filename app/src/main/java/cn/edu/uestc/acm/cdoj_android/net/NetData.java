@@ -59,7 +59,7 @@ public class NetData {
         async(ViewHandler.ARTICLE_DETAIL, new String[]{articleDetailUrl + id}, viewHandler);
     }
     public static void getContestDetail(final int id, final ViewHandler viewHandler){
-        async(ViewHandler.CONTEST_DETAIL, new String[]{articleDetailUrl + id}, viewHandler);
+        async(ViewHandler.CONTEST_DETAIL, new String[]{contestDetailUrl + id}, viewHandler);
     }
     public static void getProblemDetail(final int id, final ViewHandler viewHandler){
         async(ViewHandler.PROBLEM_DETAIL, new String[]{problemDetailUrl + id}, viewHandler);
