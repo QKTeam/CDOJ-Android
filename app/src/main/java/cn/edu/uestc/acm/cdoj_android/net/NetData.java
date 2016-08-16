@@ -6,9 +6,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import cn.edu.uestc.acm.cdoj_android.net.data.Article;
-import cn.edu.uestc.acm.cdoj_android.net.data.ArticleInfoList;
+import cn.edu.uestc.acm.cdoj_android.net.data.ArticleInfo;
 import cn.edu.uestc.acm.cdoj_android.net.data.Contest;
-import cn.edu.uestc.acm.cdoj_android.net.data.ContestInfoList;
+import cn.edu.uestc.acm.cdoj_android.net.data.ContestInfo;
 import cn.edu.uestc.acm.cdoj_android.net.data.InfoList;
 import cn.edu.uestc.acm.cdoj_android.net.data.Problem;
 import cn.edu.uestc.acm.cdoj_android.net.data.ProblemInfo;
@@ -86,9 +86,9 @@ public class NetData {
             case ViewHandler.PROBLEM_LIST:
                 return new InfoList<ProblemInfo>(NetWorkTool.post(req[0], req[1]), ProblemInfo.class);
             case ViewHandler.ARTICLE_LIST:
-                return new ArticleInfoList(NetWorkTool.post(req[0], req[1]));
+                return new InfoList<ArticleInfo>(NetWorkTool.post(req[0], req[1]), ArticleInfo.class);
             case ViewHandler.CONTEST_LIST:
-                return new ContestInfoList(NetWorkTool.post(req[0], req[1]));
+                return new InfoList<ContestInfo>(NetWorkTool.post(req[0], req[1]), ContestInfo.class);
             case ViewHandler.PROBLEM_DETAIL:
                 return new Problem(NetWorkTool.get(req[0]));
             case ViewHandler.CONTEST_DETAIL:
