@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta charset="utf-8">
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://cdn.bootcss.com/marked/0.3.3/marked.min.js"></script>
+    <style>
+        * { word-break: break-all; word-wrap: break-word; white-space: normal; }
+        html, body { background-color: transparent; }
+        body { padding: 0 20px 20px; }
+        img { max-width: 100%; vertical-align: middle; }
+        table, tr { max-width: 100%; }
+        .title {
+        color: rgb(243, 152, 0);
+        }
+    </style>
+</head>
+<body>
+<h3 id="title" class="title"></h3>
+<markdown id="content"></markdown>
+</body>
+<script type="text/javascript">
+        var data = {{{replace_data_here}}};
+        document.getElementById("title").innerHTML = data.title;
+        document.getElementById("content").innerHTML = marked(data.content);
+    </script>
+<script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>
+<script src="http://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</html>
