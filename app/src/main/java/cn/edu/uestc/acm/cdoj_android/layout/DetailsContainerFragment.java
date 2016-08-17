@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.webkit.WebViewFragment;
 
 import cn.edu.uestc.acm.cdoj_android.R;
 import cn.edu.uestc.acm.cdoj_android.Selection;
@@ -19,18 +18,27 @@ import cn.edu.uestc.acm.cdoj_android.Selection;
  * Created by great on 2016/8/15.
  */
 public class DetailsContainerFragment extends Fragment {
-    WebViewFragment[] details_Fragment;
+    MyWebViewFragment[] details_Fragment;
     ViewPager detailsContainer_ViewPager;
     Selection selection;
-    WebView webView;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        details_Fragment = new WebViewFragment[3];
+        details_Fragment = new MyWebViewFragment[3];
         for (int i = 0; i != 3; ++i) {
-            details_Fragment[i] = new WebViewFragment();
+            details_Fragment[i] = new MyWebViewFragment();
+            switch (i) {
+                case 0:
+                    details_Fragment[i].setUrl("file:///android_asset/articleRender.html");
+                    break;
+                case 1:
+                    details_Fragment[i].setUrl("file:///android_asset/problemRender.html");
+                    break;
+                case 2:
+                    details_Fragment[i].setUrl("file:///android_asset/contestOverviewRender.html");
+                    break;
+            }
         }
-        webView = details_Fragment[0].getWebView();
         return inflater.inflate(R.layout.details_container_fragment,container,false);
     }
 
@@ -72,12 +80,10 @@ public class DetailsContainerFragment extends Fragment {
             @Override
             public void onPageScrollStateChanged(int state) {}
         });
-        Log.d(getTag(), "onViewCreated: ");
         selection.initTab(detailsContainer_ViewPager);
     }
 
     public void addSelection(Selection selection) {
-        Log.d("addSelection", "addSelection: ");
         this.selection = selection;
     }
 }
