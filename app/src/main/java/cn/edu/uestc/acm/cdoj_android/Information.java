@@ -9,10 +9,13 @@ import cn.edu.uestc.acm.cdoj_android.layout.ContestListFragment;
 import cn.edu.uestc.acm.cdoj_android.layout.DetailsContainerFragment;
 import cn.edu.uestc.acm.cdoj_android.layout.ProblemListFragment;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
+import cn.edu.uestc.acm.cdoj_android.net.data.Article;
 import cn.edu.uestc.acm.cdoj_android.net.data.ArticleInfo;
 import cn.edu.uestc.acm.cdoj_android.net.data.ArticleInfoList;
+import cn.edu.uestc.acm.cdoj_android.net.data.Contest;
 import cn.edu.uestc.acm.cdoj_android.net.data.ContestInfo;
 import cn.edu.uestc.acm.cdoj_android.net.data.ContestInfoList;
+import cn.edu.uestc.acm.cdoj_android.net.data.Problem;
 import cn.edu.uestc.acm.cdoj_android.net.data.ProblemInfo;
 import cn.edu.uestc.acm.cdoj_android.net.data.ProblemInfoList;
 
@@ -34,11 +37,13 @@ public class Information implements ViewHandler {
             case ViewHandler.ARTICLE_LIST:
                 ArrayList<ArticleInfo> infoList_A = ((ArticleInfoList)data).getArticleInfoList();
                 for (ArticleInfo tem : infoList_A) {
-                    ((ArticleListFragment) list_Fragment[0]).addToList(tem.title, tem.content, tem.time, tem.ownerName);
+                    ((ArticleListFragment) list_Fragment[0]).addToList(tem.title, tem.content, tem.timeString, tem.ownerName, ""+tem.articleId);
                 }
                 ((ArticleListFragment) list_Fragment[0]).notifyDataSetChanged();
                 break;
-            case ViewHandler.ARTICLE_DETAIL:break;
+            case ViewHandler.ARTICLE_DETAIL:
+                detailsContainer_Fragment.addJSData(0, ((Article) data).getContentString());
+                break;
             case ViewHandler.PROBLEM_LIST:
                 ArrayList<ProblemInfo> infoList_P = ((ProblemInfoList)data).getProblemInfo();
                 for (ProblemInfo tem : infoList_P) {
@@ -47,7 +52,9 @@ public class Information implements ViewHandler {
                 }
                 ((ProblemListFragment)list_Fragment[1]).notifyDataSetChanged();
                 break;
-            case ViewHandler.PROBLEM_DETAIL:break;
+            case ViewHandler.PROBLEM_DETAIL:
+                detailsContainer_Fragment.addJSData(1, ((Problem) data).getContentString());
+                break;
             case ViewHandler.CONTEST_LIST:
                 ArrayList<ContestInfo> infoList_C = ((ContestInfoList)data).getContestInfo();
                 String permissions;
@@ -57,11 +64,13 @@ public class Information implements ViewHandler {
                     }else {
                         permissions = "Private";
                     }
-                    ((ContestListFragment) list_Fragment[2]).addToList(tem.title, tem.time, tem.length, permissions);
+                    ((ContestListFragment) list_Fragment[2]).addToList(tem.title, tem.timeString, tem.lengthString, "" + tem.contestId, tem.status, permissions);
                 }
                 ((ContestListFragment)list_Fragment[2]).notifyDataSetChanged();
                 break;
-            case ViewHandler.CONTEST_DETAIL:break;
+            case ViewHandler.CONTEST_DETAIL:
+                detailsContainer_Fragment.addJSData(2, ((Contest) data).getContentString());
+                break;
         }
     }
 }

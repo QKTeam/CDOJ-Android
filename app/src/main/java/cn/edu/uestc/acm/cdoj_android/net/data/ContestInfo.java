@@ -12,14 +12,14 @@ public class ContestInfo {
     public int contestId, type;
     public long time, length;
     public boolean isVisible;
-    public String status, title, typeName, timeString, lenthString;
+    public String status, title, typeName, timeString, lengthString;
     public ContestInfo(JSONObject jsonObject){
         if (jsonObject == null) {
             return;
         }
         try {
             length = jsonObject.getLong("length");
-            lenthString = new SimpleDateFormat("HH:mm:ss").format(length);
+            lengthString = new SimpleDateFormat("HH:mm:ss").format(length);
             time = jsonObject.getLong("time");
             timeString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
             type = jsonObject.getInt("type");

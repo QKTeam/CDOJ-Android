@@ -8,14 +8,19 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import cn.edu.uestc.acm.cdoj_android.layout.ArticleListFragment;
 import cn.edu.uestc.acm.cdoj_android.layout.ContestListFragment;
 import cn.edu.uestc.acm.cdoj_android.layout.DetailsContainerFragment;
 import cn.edu.uestc.acm.cdoj_android.layout.ProblemListFragment;
+import cn.edu.uestc.acm.cdoj_android.net.NetData;
 import cn.edu.uestc.acm.cdoj_android.net.NetData_1;
 
-public class MainActivity extends AppCompatActivity implements Selection {
+public class MainActivity extends AppCompatActivity implements Selection,GetInformation {
 
     private TabLayout tab_bottom;
     private DetailsContainerFragment detailsContainer_Fragment;
@@ -31,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements Selection {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Log.d("进行", "onCreate: ");
         fragmentManager = getFragmentManager();
         list_Fragment = new ListFragment[3];
         if (savedInstanceState == null){
@@ -38,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements Selection {
         }else {
             findBackFragment();
         }
+
     }
 
     private void findBackFragment() {
@@ -113,5 +121,10 @@ public class MainActivity extends AppCompatActivity implements Selection {
             transaction.hide(list_Fragment[i]);
         }
         transaction.commit();
+    }
+
+    @Override
+    public Information getInformation() {
+        return information;
     }
 }
