@@ -57,6 +57,7 @@ public class ProblemListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
+        Log.d("当前ID", ""+listItems.get(position).get("id"));
         NetData.getProblemDetail(Integer.parseInt(listItems.get(position).get("id")),getInformation.getInformation());
     }
 }
