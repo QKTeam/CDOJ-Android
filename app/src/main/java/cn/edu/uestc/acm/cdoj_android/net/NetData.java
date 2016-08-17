@@ -6,9 +6,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import cn.edu.uestc.acm.cdoj_android.net.data.Article;
-import cn.edu.uestc.acm.cdoj_android.net.data.ArticleInfoList;
+import cn.edu.uestc.acm.cdoj_android.net.data.ArticleInfo;
 import cn.edu.uestc.acm.cdoj_android.net.data.Contest;
-import cn.edu.uestc.acm.cdoj_android.net.data.ContestInfoList;
+import cn.edu.uestc.acm.cdoj_android.net.data.ContestInfo;
 import cn.edu.uestc.acm.cdoj_android.net.data.InfoList;
 import cn.edu.uestc.acm.cdoj_android.net.data.Problem;
 import cn.edu.uestc.acm.cdoj_android.net.data.ProblemInfo;
@@ -17,7 +17,7 @@ import cn.edu.uestc.acm.cdoj_android.net.data.ProblemInfo;
  * Created by qwe on 16-8-14.
  */
 public class NetData {
-    final static String severAddress = "http://acm.uestc.edu.cn",
+    public final static String severAddress = "http://acm.uestc.edu.cn",
             problemListUrl = severAddress + "/problem/search",
             contestListUrl = severAddress + "/contest/search",
             articleListUrl = severAddress + "/article/search",
@@ -25,28 +25,32 @@ public class NetData {
             problemDetailUrl = severAddress + "/problem/data/",
             contestDetailUrl = severAddress + "/contest/data/";
 
-    public static void getProblemList(final int page, final ViewHandler viewHandler){
+    public static void getProblemList(final int page, String keyword, final ViewHandler viewHandler){
         String p = "";
         try {
-            p = new JSONObject().put("currentPage", page).put("orderAsc", "true").put("orderFields", "id").toString();
+            p = new JSONObject().put("currentPage", page).put("orderAsc", "true")
+                    .put("orderFields", "id").put("keyword", keyword).toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
         async(ViewHandler.PROBLEM_LIST, new String[]{problemListUrl, p}, viewHandler);
     }
-    public static void getContestList(final int page, final ViewHandler viewHandler){
+    public static void getContestList(int page, String keyword, ViewHandler viewHandler) {
         String p = "";
         try {
-            p = new JSONObject().put("currentPage", page).put("orderAsc", "true").put("orderFields", "id").toString();
+            p = new JSONObject().put("currentPage", page).put("orderAsc", "true")
+                    .put("orderFields", "id").put("keyword", keyword).toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
         async(ViewHandler.CONTEST_LIST, new String[]{contestListUrl, p}, viewHandler);
+
     }
     public static void getArticleList(final int page, final ViewHandler viewHandler){
         String p = "";
         try {
-            p = new JSONObject().put("currentPage", page).put("orderAsc", "false").put("orderFields", "id").toString();
+            p = new JSONObject().put("currentPage", page).put("orderAsc", "false")
+                    .put("orderFields", "id").toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -56,10 +60,10 @@ public class NetData {
     public static void getArticleDetail(final int id, final ViewHandler viewHandler){
         async(ViewHandler.ARTICLE_DETAIL, new String[]{articleDetailUrl + id}, viewHandler);
     }
-    public void getContestDetail(final int id, final ViewHandler viewHandler){
-        async(ViewHandler.CONTEST_DETAIL, new String[]{articleDetailUrl + id}, viewHandler);
+    public static void getContestDetail(final int id, final ViewHandler viewHandler){
+        async(ViewHandler.CONTEST_DETAIL, new String[]{contestDetailUrl + id}, viewHandler);
     }
-    public void getProblemDetail(final int id, final ViewHandler viewHandler){
+    public static void getProblemDetail(final int id, final ViewHandler viewHandler){
         async(ViewHandler.PROBLEM_DETAIL, new String[]{problemDetailUrl + id}, viewHandler);
     }
 
@@ -84,9 +88,9 @@ public class NetData {
             case ViewHandler.PROBLEM_LIST:
                 return new InfoList<ProblemInfo>(NetWorkTool.post(req[0], req[1]), ProblemInfo.class);
             case ViewHandler.ARTICLE_LIST:
-                return new ArticleInfoList(NetWorkTool.post(req[0], req[1]));
+                return new InfoList<ArticleInfo>(NetWorkTool.post(req[0], req[1]), ArticleInfo.class);
             case ViewHandler.CONTEST_LIST:
-                return new ContestInfoList(NetWorkTool.post(req[0], req[1]));
+                return new InfoList<ContestInfo>(NetWorkTool.post(req[0], req[1]), ContestInfo.class);
             case ViewHandler.PROBLEM_DETAIL:
                 return new Problem(NetWorkTool.get(req[0]));
             case ViewHandler.CONTEST_DETAIL:
