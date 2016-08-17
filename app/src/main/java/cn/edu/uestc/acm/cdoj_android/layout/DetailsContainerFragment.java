@@ -11,6 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import cn.edu.uestc.acm.cdoj_android.R;
 import cn.edu.uestc.acm.cdoj_android.Selection;
 
@@ -27,16 +30,31 @@ public class DetailsContainerFragment extends Fragment {
         details_Fragment = new MyWebViewFragment[3];
         for (int i = 0; i != 3; ++i) {
             details_Fragment[i] = new MyWebViewFragment();
-            switch (i) {
-                case 0:
-                    details_Fragment[i].setUrl("file:///android_asset/articleRender.html");
-                    break;
-                case 1:
-                    details_Fragment[i].setUrl("file:///android_asset/problemRender.html");
-                    break;
-                case 2:
-                    details_Fragment[i].setUrl("file:///android_asset/contestOverviewRender.html");
-                    break;
+            try {
+                InputStream input;
+                byte[] in;
+                switch (i) {
+                    case 0:
+                        input = getResources().getAssets().open("articleRender.html");
+                        in = new byte[input.available()];
+                        input.read(in);
+                        details_Fragment[i].addHTMLData(new String(in));
+                        break;
+                    case 1:
+                       input = getResources().getAssets().open("problemRender.html");
+                        in = new byte[input.available()];
+                        input.read(in);
+                        details_Fragment[i].addHTMLData(new String(in));
+                        break;
+                    case 2:
+                        input = getResources().getAssets().open("contestOverviewRender.html");
+                        in = new byte[input.available()];
+                        input.read(in);
+                        details_Fragment[i].addHTMLData(new String(in));
+                        break;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         return inflater.inflate(R.layout.details_container_fragment,container,false);
@@ -85,5 +103,9 @@ public class DetailsContainerFragment extends Fragment {
 
     public void addSelection(Selection selection) {
         this.selection = selection;
+    }
+
+    public void addJSData(int which, String webData) {
+        details_Fragment[which].addJSData(webData);
     }
 }
