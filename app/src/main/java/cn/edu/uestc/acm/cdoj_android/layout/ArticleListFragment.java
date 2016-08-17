@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.edu.uestc.acm.cdoj_android.GetInformation;
 import cn.edu.uestc.acm.cdoj_android.R;
+import cn.edu.uestc.acm.cdoj_android.net.NetData;
 
 /**
  * Created by great on 2016/8/17.
@@ -20,6 +22,8 @@ import cn.edu.uestc.acm.cdoj_android.R;
 public class ArticleListFragment extends ListFragment {
     SimpleAdapter adapter;
     ArrayList<Map<String,String>> listItems;
+    GetInformation getInformation;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +32,7 @@ public class ArticleListFragment extends ListFragment {
 
 
     public ArticleListFragment createAdapter(Context context) {
+        getInformation = (GetInformation)context;
         listItems = new ArrayList<>();
         adapter = new SimpleAdapter(context, listItems, R.layout.article_list_item,
                 new String[]{"title", "content", "releaseTime", "author"},
@@ -36,12 +41,13 @@ public class ArticleListFragment extends ListFragment {
         return this;
     }
 
-    public void addToList(String title, String content, String releaseTime, String author) {
+    public void addToList(String title, String content, String releaseTime, String author, String id) {
         Map<String,String> listItem = new HashMap<>();
         listItem.put("title",title);
         listItem.put("content", content);
         listItem.put("releaseTime", releaseTime);
         listItem.put("author", author);
+        listItem.put("id",id);
         listItems.add(listItem);
     }
 
@@ -52,6 +58,6 @@ public class ArticleListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        Log.d("onListItemClick:",""+position+"  "+id );
+        NetData.getArticleDetail(Integer.parseInt(listItems.get(position).get("id")),getInformation.getInformation());
     }
 }
