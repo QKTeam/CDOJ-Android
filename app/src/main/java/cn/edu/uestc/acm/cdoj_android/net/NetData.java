@@ -35,7 +35,7 @@ public class NetData {
         }
         async(ViewHandler.PROBLEM_LIST, new String[]{problemListUrl, p}, viewHandler);
     }
-    public static void getContestList(int page, String keyword, ViewHandler viewHandler){
+    public static void getContestList(int page, String keyword, ViewHandler viewHandler) {
         String p = "";
         try {
             p = new JSONObject().put("currentPage", page).put("orderAsc", "true")
@@ -44,11 +44,13 @@ public class NetData {
             e.printStackTrace();
         }
         async(ViewHandler.CONTEST_LIST, new String[]{contestListUrl, p}, viewHandler);
+
     }
     public static void getArticleList(final int page, final ViewHandler viewHandler){
         String p = "";
         try {
-            p = new JSONObject().put("currentPage", page).put("orderAsc", "false").put("orderFields", "id").toString();
+            p = new JSONObject().put("currentPage", page).put("orderAsc", "false")
+                    .put("orderFields", "id").toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
