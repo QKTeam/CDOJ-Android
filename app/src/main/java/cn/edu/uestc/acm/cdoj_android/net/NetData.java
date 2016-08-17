@@ -38,8 +38,8 @@ public class NetData {
     public static void getContestList(int page, String keyword, ViewHandler viewHandler) {
         String p = "";
         try {
-            p = new JSONObject().put("currentPage", page).put("orderAsc", "true")
-                    .put("orderFields", "id").put("keyword", keyword).toString();
+            p = new JSONObject().put("currentPage", page).put("orderAsc", "false")
+                    .put("orderFields", "time").put("keyword", keyword).toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }

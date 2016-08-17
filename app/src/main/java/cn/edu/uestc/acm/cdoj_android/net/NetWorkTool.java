@@ -53,7 +53,7 @@ public class NetWorkTool {
         if (is == null) {
             return null;
         }
-        byte[] buffer = new byte[1024*32];
+        byte[] buffer = new byte[1024*320];
         int len = 0, tlen = 0;
         try {
             while (tlen != -1){

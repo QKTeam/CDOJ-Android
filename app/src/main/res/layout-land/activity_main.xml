@@ -41,7 +41,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:theme="@style/AppTheme.AppBarOverlay">
-
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
@@ -53,7 +52,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
+                android:layout_weight="1"
                 android:id="@+id/details_container"/>
+            <ScrollView
+                android:layout_weight="2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/testTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </ScrollView>
+
         </LinearLayout>
 
     </LinearLayout>
