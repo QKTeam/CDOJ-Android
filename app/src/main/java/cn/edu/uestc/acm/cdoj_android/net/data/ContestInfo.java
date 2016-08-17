@@ -3,20 +3,25 @@ package cn.edu.uestc.acm.cdoj_android.net.data;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+
 /**
  * Created by lenovo on 2016/8/7.
  */
 public class ContestInfo {
-    public int contestId, length, time, type;
+    public int contestId, type;
+    public long time, length;
     public boolean isVisible;
-    public String status, title, typeName;
+    public String status, title, typeName, timeString, lenthString;
     public ContestInfo(JSONObject jsonObject){
         if (jsonObject == null) {
             return;
         }
         try {
-            length = jsonObject.getInt("length");
-            time = jsonObject.getInt("time");
+            length = jsonObject.getLong("length");
+            lenthString = new SimpleDateFormat("HH:mm:ss").format(length);
+            time = jsonObject.getLong("time");
+            timeString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
             type = jsonObject.getInt("type");
             contestId = jsonObject.getInt("contestId");
 

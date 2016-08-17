@@ -3,20 +3,24 @@ package cn.edu.uestc.acm.cdoj_android.net.data;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+
 /**
  * Created by qwe on 16-8-10.
  */
 public class ArticleInfo {
-    public int articleId, clicked, time;
+    public int articleId, clicked;
+    public long time;
     public boolean hasMore, isVisible;
-    public String content, ownerEmail, ownerName, title;
+    public String content, ownerEmail, ownerName, title, timeString;
     public ArticleInfo(JSONObject jsonObject){
         if (jsonObject == null) {
             return;
         }
         try {
             articleId = jsonObject.getInt("articleId");
-            time = jsonObject.getInt("time");
+            time = jsonObject.getLong("time");
+            timeString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
             clicked = jsonObject.getInt("clicked");
 
             hasMore = jsonObject.getBoolean("hasMore");
