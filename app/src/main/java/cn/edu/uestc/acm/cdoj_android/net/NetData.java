@@ -1,6 +1,7 @@
 package cn.edu.uestc.acm.cdoj_android.net;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,8 +50,8 @@ public class NetData {
     public static void getArticleList(final int page, final ViewHandler viewHandler){
         String p = "";
         try {
-            p = new JSONObject().put("currentPage", page).put("orderAsc", "false")
-                    .put("orderFields", "id").toString();
+            p = new JSONObject().put("currentPage", page).put("orderAsc", "true")
+                    .put("orderFields", "order").toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -68,16 +69,18 @@ public class NetData {
     }
 
     static void async(final int which, final String[] req, final ViewHandler viewHandler){
+        final long time = System.currentTimeMillis();
         new AsyncTask<Void, Void, Object>(){
 
             @Override
             protected Object doInBackground(Void... voids) {
+                Log.d("TAG", "doInBackground: ");
                 return request(which, req);
             }
 
             @Override
             protected void onPostExecute(Object o) {
-                handleInMain(which, o, viewHandler);
+            	handleInMain(which, o, viewHandler, time);
             }
         }.execute();
 
@@ -100,7 +103,7 @@ public class NetData {
             default: return null;
         }
     }
-    static void handleInMain(int which, Object data, ViewHandler viewHandler){
-        viewHandler.show(which,data);
+    static void handleInMain(int which, Object data, ViewHandler viewHandler, long time){
+        viewHandler.show(which, data, time);
     }
 }
