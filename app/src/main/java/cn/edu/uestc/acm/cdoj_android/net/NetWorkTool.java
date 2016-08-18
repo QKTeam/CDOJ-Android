@@ -50,10 +50,11 @@ public class NetWorkTool {
         return getString(_get(url));
     }
     public static String getString(InputStream is){
+        String string = null;
         if (is == null) {
             return null;
         }
-        byte[] buffer = new byte[1024*32];
+        byte[] buffer = new byte[1024*320];
         int len = 0, tlen = 0;
         try {
             while (tlen != -1){
@@ -62,11 +63,12 @@ public class NetWorkTool {
                     len += tlen;
                 }
             }
+            string = new String(buffer, 0 , len, "utf-8");
         }
         catch (Exception e){
             e.printStackTrace();
             return null;
         }
-        return new String(buffer, 0 , len);
+        return string;
     }
 }
