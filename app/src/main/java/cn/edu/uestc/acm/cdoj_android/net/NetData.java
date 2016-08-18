@@ -50,8 +50,8 @@ public class NetData {
     public static void getArticleList(final int page, final ViewHandler viewHandler){
         String p = "";
         try {
-            p = new JSONObject().put("currentPage", page).put("orderAsc", "false")
-                    .put("orderFields", "id").toString();
+            p = new JSONObject().put("currentPage", page).put("orderAsc", "true")
+                    .put("orderFields", "order").toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -69,7 +69,7 @@ public class NetData {
     }
 
     static void async(final int which, final String[] req, final ViewHandler viewHandler){
-        Log.d("TAG", "async: ");
+        final long time = System.currentTimeMillis();
         new AsyncTask<Void, Void, Object>(){
 
             @Override
@@ -80,8 +80,7 @@ public class NetData {
 
             @Override
             protected void onPostExecute(Object o) {
-                Log.d("TAG", "onPostExecute: ");
-                handleInMain(which, o, viewHandler);
+            	handleInMain(which, o, viewHandler, time);
             }
         }.execute();
 
@@ -104,7 +103,7 @@ public class NetData {
             default: return null;
         }
     }
-    static void handleInMain(int which, Object data, ViewHandler viewHandler){
-        viewHandler.show(which,data);
+    static void handleInMain(int which, Object data, ViewHandler viewHandler, long time){
+        viewHandler.show(which, data, time);
     }
 }

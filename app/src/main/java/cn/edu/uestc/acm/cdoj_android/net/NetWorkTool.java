@@ -50,6 +50,7 @@ public class NetWorkTool {
         return getString(_get(url));
     }
     public static String getString(InputStream is){
+        String string = null;
         if (is == null) {
             return null;
         }
@@ -62,11 +63,12 @@ public class NetWorkTool {
                     len += tlen;
                 }
             }
+            string = new String(buffer, 0 , len, "utf-8");
         }
         catch (Exception e){
             e.printStackTrace();
             return null;
         }
-        return new String(buffer, 0 , len);
+        return string;
     }
 }
