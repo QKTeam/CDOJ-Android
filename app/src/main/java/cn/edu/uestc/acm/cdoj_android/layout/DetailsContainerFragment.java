@@ -5,17 +5,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import cn.edu.uestc.acm.cdoj_android.R;
 import cn.edu.uestc.acm.cdoj_android.Selection;
+import cn.edu.uestc.acm.cdoj_android.ShowTestText;
 
 /**
  * Created by great on 2016/8/15.
@@ -41,7 +40,7 @@ public class DetailsContainerFragment extends Fragment {
                         details_Fragment[i].addHTMLData(new String(in));
                         break;
                     case 1:
-                       input = getResources().getAssets().open("problemRender.html");
+                        input = getResources().getAssets().open("problemRender.html");
                         in = new byte[input.available()];
                         input.read(in);
                         details_Fragment[i].addHTMLData(new String(in));
@@ -105,7 +104,8 @@ public class DetailsContainerFragment extends Fragment {
         this.selection = selection;
     }
 
-    public void addJSData(int which, String webData) {
-        details_Fragment[which].addJSData(webData);
+    public void addJSData(int which, String JSData) {
+//        ((ShowTestText)getActivity()).showTestText(JSData);
+        details_Fragment[which].addJSData(JSData);
     }
 }
