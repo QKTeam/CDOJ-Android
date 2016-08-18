@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +21,7 @@ import cn.edu.uestc.acm.cdoj_android.layout.ProblemListFragment;
 import cn.edu.uestc.acm.cdoj_android.net.NetData;
 import cn.edu.uestc.acm.cdoj_android.net.NetData_1;
 
-public class MainActivity extends AppCompatActivity implements Selection,GetInformation {
+public class MainActivity extends AppCompatActivity implements Selection,GetInformation,ShowTestText {
 
     private TabLayout tab_bottom;
     private DetailsContainerFragment detailsContainer_Fragment;
@@ -76,9 +77,9 @@ public class MainActivity extends AppCompatActivity implements Selection,GetInfo
             transaction.add(R.id.list_main,list_Fragment[i],"list_Fragment"+i);
         }
         information = new Information(this,list_Fragment,detailsContainer_Fragment);
-        NetData_1.getArticleList(1, information);
-        NetData_1.getProblemList(1, information);
-        NetData_1.getContestList(1, information);
+        NetData.getArticleList(1, information);
+        NetData.getProblemList(1, "", information);
+        NetData.getContestList(1, "", information);
         transaction.commit();
         setDefaultFragment();
     }
@@ -126,5 +127,10 @@ public class MainActivity extends AppCompatActivity implements Selection,GetInfo
     @Override
     public Information getInformation() {
         return information;
+    }
+
+    @Override
+    public void showTestText(String str) {
+        ((TextView)findViewById(R.id.testTextView)).setText(str);
     }
 }

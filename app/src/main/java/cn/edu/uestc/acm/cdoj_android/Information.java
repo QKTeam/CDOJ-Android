@@ -11,13 +11,13 @@ import cn.edu.uestc.acm.cdoj_android.layout.ProblemListFragment;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj_android.net.data.Article;
 import cn.edu.uestc.acm.cdoj_android.net.data.ArticleInfo;
-import cn.edu.uestc.acm.cdoj_android.net.data.ArticleInfoList;
+import cn.edu.uestc.acm.cdoj_android.net.data.InfoList;
 import cn.edu.uestc.acm.cdoj_android.net.data.Contest;
 import cn.edu.uestc.acm.cdoj_android.net.data.ContestInfo;
-import cn.edu.uestc.acm.cdoj_android.net.data.ContestInfoList;
+import cn.edu.uestc.acm.cdoj_android.net.data.InfoList;
 import cn.edu.uestc.acm.cdoj_android.net.data.Problem;
 import cn.edu.uestc.acm.cdoj_android.net.data.ProblemInfo;
-import cn.edu.uestc.acm.cdoj_android.net.data.ProblemInfoList;
+import cn.edu.uestc.acm.cdoj_android.net.data.InfoList;
 
 /**
  * Created by great on 2016/8/15.
@@ -35,7 +35,7 @@ public class Information implements ViewHandler {
     public void show(int which, Object data) {
         switch (which) {
             case ViewHandler.ARTICLE_LIST:
-                ArrayList<ArticleInfo> infoList_A = ((ArticleInfoList)data).getArticleInfoList();
+                ArrayList<ArticleInfo> infoList_A = ((InfoList)data).getInfoList();
                 for (ArticleInfo tem : infoList_A) {
                     ((ArticleListFragment) list_Fragment[0]).addToList(tem.title, tem.content, tem.timeString, tem.ownerName, ""+tem.articleId);
                 }
@@ -45,7 +45,7 @@ public class Information implements ViewHandler {
                 detailsContainer_Fragment.addJSData(0, ((Article) data).getContentString());
                 break;
             case ViewHandler.PROBLEM_LIST:
-                ArrayList<ProblemInfo> infoList_P = ((ProblemInfoList)data).getProblemInfo();
+                ArrayList<ProblemInfo> infoList_P = ((InfoList)data).getInfoList();
                 for (ProblemInfo tem : infoList_P) {
                     String number = ""+tem.solved+"/"+tem.tried;
                     ((ProblemListFragment) list_Fragment[1]).addToList(tem.title, tem.source, "" + tem.problemId, number);
@@ -53,18 +53,13 @@ public class Information implements ViewHandler {
                 ((ProblemListFragment)list_Fragment[1]).notifyDataSetChanged();
                 break;
             case ViewHandler.PROBLEM_DETAIL:
+//                main.showTestText(((Problem) data).getContentString());
                 detailsContainer_Fragment.addJSData(1, ((Problem) data).getContentString());
                 break;
             case ViewHandler.CONTEST_LIST:
-                ArrayList<ContestInfo> infoList_C = ((ContestInfoList)data).getContestInfo();
-                String permissions;
+                ArrayList<ContestInfo> infoList_C = ((InfoList)data).getInfoList();
                 for (ContestInfo tem : infoList_C) {
-                    if (tem.isVisible) {
-                        permissions = "Public";
-                    }else {
-                        permissions = "Private";
-                    }
-                    ((ContestListFragment) list_Fragment[2]).addToList(tem.title, tem.timeString, tem.lengthString, "" + tem.contestId, tem.status, permissions);
+                    ((ContestListFragment) list_Fragment[2]).addToList(tem.title, tem.timeString, tem.lengthString, "" + tem.contestId, tem.status, tem.typeName);
                 }
                 ((ContestListFragment)list_Fragment[2]).notifyDataSetChanged();
                 break;

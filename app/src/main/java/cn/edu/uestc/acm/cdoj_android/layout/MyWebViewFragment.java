@@ -8,6 +8,8 @@ import android.webkit.WebViewFragment;
 import java.io.IOException;
 import java.io.InputStream;
 
+import cn.edu.uestc.acm.cdoj_android.ShowTestText;
+
 /**
  * Created by great on 2016/8/16.
  */
@@ -15,6 +17,7 @@ public class MyWebViewFragment extends WebViewFragment {
     final String acmWebUrl = "http://acm.uestc.edu.cn/";
     final String mimeType = "text/html";
     final String encoding = "utf-8";
+    String HTMLData;
     String webData;
 
     @Override
@@ -32,10 +35,12 @@ public class MyWebViewFragment extends WebViewFragment {
     }
 
     public  void addHTMLData(String data) {
-        webData = data;
+        HTMLData = data;
     }
-    public void addJSData(String data) {
-        this.webData = this.webData.replace("{{{replace_data_here}}}", data);
+    public void addJSData(String JSData) {
+        ((ShowTestText)getActivity()).showTestText(JSData);
+        webData = HTMLData.replace("{{{replace_data_here}}}", JSData);
+
         if (getWebView() != null) {
             getWebView().loadDataWithBaseURL(acmWebUrl, webData, mimeType, encoding, null);
         }
