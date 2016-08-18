@@ -13,5 +13,5 @@ public interface ViewHandler {
     //    void showProblemList(ProblemInfoList problemInfoList);
 //    void showContestList(ContestInfoList contestInfoList);
 //    void showArticleList(ArticleInfoList aritcleInfoList);
-    void show(int which, Object data);
+    void show(int which, Object data, long time);
 }
