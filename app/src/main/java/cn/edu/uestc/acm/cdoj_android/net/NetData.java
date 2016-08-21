@@ -1,6 +1,8 @@
 package cn.edu.uestc.acm.cdoj_android.net;
 
 import android.os.AsyncTask;
+import android.util.Log;
+import android.view.View;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,19 +14,47 @@ import cn.edu.uestc.acm.cdoj_android.net.data.ContestInfo;
 import cn.edu.uestc.acm.cdoj_android.net.data.InfoList;
 import cn.edu.uestc.acm.cdoj_android.net.data.Problem;
 import cn.edu.uestc.acm.cdoj_android.net.data.ProblemInfo;
+import cn.edu.uestc.acm.cdoj_android.net.data.User;
 
 /**
  * Created by qwe on 16-8-14.
  */
 public class NetData {
+
+    static String TAG = "-------NetDataTag-----";
+
+
     public final static String severAddress = "http://acm.uestc.edu.cn",
             problemListUrl = severAddress + "/problem/search",
             contestListUrl = severAddress + "/contest/search",
             articleListUrl = severAddress + "/article/search",
             articleDetailUrl= severAddress + "/article/data/",
             problemDetailUrl = severAddress + "/problem/data/",
-            contestDetailUrl = severAddress + "/contest/data/";
-
+            contestDetailUrl = severAddress + "/contest/data/",
+            loginUrl = severAddress + "/user/login",
+            logoutUrl = severAddress + "/user/logout",
+            loginContestUrl = severAddress + "/contest/loginContest";
+    public static void loginContest(int contestId, String password, ViewHandler viewHandler){
+        String p = "";
+        try {
+            p = new JSONObject().put("contestId", contestId).put("password", NetWorkTool.sha1(password)).toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        async(ViewHandler.LOGCONTEST, new String[]{loginContestUrl, p}, viewHandler);
+    }
+    public static void login(String userName, String password, ViewHandler viewHandler){
+        String p = "";
+        try {
+            p = new JSONObject().put("userName", userName).put("password", NetWorkTool.sha1(password)).toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        async(ViewHandler.LOGIN, new String[]{loginUrl, p}, viewHandler);
+    }
+    public static void logout(ViewHandler viewHandler){
+        async(ViewHandler.LOGOUT, new String[]{logoutUrl}, viewHandler);
+    }
     public static void getProblemList(final int page, String keyword, final ViewHandler viewHandler){
         String p = "";
         try {
@@ -98,10 +128,29 @@ public class NetData {
                 return new Contest(NetWorkTool.get(req[0]));
             case ViewHandler.ARTICLE_DETAIL:
                 return new Article(NetWorkTool.get(req[0]));
+            case ViewHandler.LOGIN:
+                String s;
+                Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + (s = NetWorkTool.post(req[0], req[1])));;
+                return checkResult(s);
+            case ViewHandler.LOGOUT:
+                return checkResult(NetWorkTool.get(req[0]));
+            case ViewHandler.LOGCONTEST:
+                Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + (s = NetWorkTool.post(req[0], req[1])));;
+                return checkResult(s);
             default: return null;
         }
     }
     static void handleInMain(int which, Object data, ViewHandler viewHandler, long time){
-        viewHandler.show(which, data, time);
+        if (viewHandler != null){
+            viewHandler.show(which, data, time);
+        }
+    }
+    static boolean checkResult(String json){
+        try {
+            return new JSONObject(json).getString("result").equals("success");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

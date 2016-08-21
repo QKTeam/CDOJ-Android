@@ -9,7 +9,11 @@ public interface ViewHandler {
             ARTICLE_LIST = 2,
             PROBLEM_DETAIL = 3,
             CONTEST_DETAIL = 4,
-            ARTICLE_DETAIL = 5;
+            ARTICLE_DETAIL = 5,
+            LOGIN = 6,
+            LOGOUT = 7,
+            LOGCONTEST = 8;
+
     //    void showProblemList(ProblemInfoList problemInfoList);
 //    void showContestList(ContestInfoList contestInfoList);
 //    void showArticleList(ArticleInfoList aritcleInfoList);
