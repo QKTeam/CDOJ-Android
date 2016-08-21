@@ -1,7 +1,5 @@
 package cn.edu.uestc.acm.cdoj_android.net.data;
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,7 +10,6 @@ public class Article {
     boolean result;
     String contentString = "";
     public Article(String json){
-//        Log.d(TAG, "Article: ");
         try {
             JSONObject jsonObject = new JSONObject(json);
             result = jsonObject.optString("result", "fail").equals("success");
