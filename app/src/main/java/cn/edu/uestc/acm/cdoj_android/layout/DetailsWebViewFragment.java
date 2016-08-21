@@ -13,7 +13,7 @@ import cn.edu.uestc.acm.cdoj_android.ShowTestText;
 /**
  * Created by great on 2016/8/16.
  */
-public class MyWebViewFragment extends WebViewFragment {
+public class DetailsWebViewFragment extends WebViewFragment {
     final String acmWebUrl = "http://acm.uestc.edu.cn/";
     final String mimeType = "text/html";
     final String encoding = "utf-8";
@@ -38,9 +38,7 @@ public class MyWebViewFragment extends WebViewFragment {
         HTMLData = data;
     }
     public void addJSData(String JSData) {
-        ((ShowTestText)getActivity()).showTestText(JSData);
         webData = HTMLData.replace("{{{replace_data_here}}}", JSData);
-
         if (getWebView() != null) {
             getWebView().loadDataWithBaseURL(acmWebUrl, webData, mimeType, encoding, null);
         }
