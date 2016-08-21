@@ -1,68 +1,88 @@
 package cn.edu.uestc.acm.cdoj_android;
 
-import android.app.ListFragment;
+import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-import cn.edu.uestc.acm.cdoj_android.layout.ArticleListFragment;
-import cn.edu.uestc.acm.cdoj_android.layout.ContestListFragment;
 import cn.edu.uestc.acm.cdoj_android.layout.DetailsContainerFragment;
-import cn.edu.uestc.acm.cdoj_android.layout.ProblemListFragment;
+import cn.edu.uestc.acm.cdoj_android.layout.ListContainerFragment;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj_android.net.data.Article;
 import cn.edu.uestc.acm.cdoj_android.net.data.ArticleInfo;
-import cn.edu.uestc.acm.cdoj_android.net.data.InfoList;
 import cn.edu.uestc.acm.cdoj_android.net.data.Contest;
 import cn.edu.uestc.acm.cdoj_android.net.data.ContestInfo;
 import cn.edu.uestc.acm.cdoj_android.net.data.InfoList;
 import cn.edu.uestc.acm.cdoj_android.net.data.Problem;
 import cn.edu.uestc.acm.cdoj_android.net.data.ProblemInfo;
-import cn.edu.uestc.acm.cdoj_android.net.data.InfoList;
 
 /**
  * Created by great on 2016/8/15.
  */
 public class Information implements ViewHandler {
-    MainActivity main;
-    ListFragment[] list_Fragment;
     DetailsContainerFragment detailsContainer_Fragment;
-    public Information(MainActivity main, ListFragment[] list_Fragment, DetailsContainerFragment detailsContainer_Fragment) {
-        this.main = main;
-        this.list_Fragment = list_Fragment;
+    ListContainerFragment listContainerFragment;
+
+    public Information(ListContainerFragment listContainerFragment, DetailsContainerFragment detailsContainer_Fragment) {
+        this.listContainerFragment = listContainerFragment;
         this.detailsContainer_Fragment = detailsContainer_Fragment;
     }
+
     @Override
     public void show(int which, Object data) {
         switch (which) {
             case ViewHandler.ARTICLE_LIST:
                 ArrayList<ArticleInfo> infoList_A = ((InfoList)data).getInfoList();
                 for (ArticleInfo tem : infoList_A) {
-                    ((ArticleListFragment) list_Fragment[0]).addToList(tem.title, tem.content, tem.timeString, tem.ownerName, ""+tem.articleId);
+                    Map<String,String> listItem = new HashMap<>();
+                    listItem.put("title",tem.title);
+                    listItem.put("content", tem.content);
+                    listItem.put("releaseTime", tem.timeString);
+                    listItem.put("author", tem.ownerName);
+                    listItem.put("id",""+tem.articleId);
+                    listContainerFragment.addListItem(ListContainerFragment.article, listItem);
                 }
-                ((ArticleListFragment) list_Fragment[0]).notifyDataSetChanged();
+                listContainerFragment.notifyDataSetChanged(ListContainerFragment.article);
                 break;
+
             case ViewHandler.ARTICLE_DETAIL:
                 detailsContainer_Fragment.addJSData(0, ((Article) data).getContentString());
                 break;
+
             case ViewHandler.PROBLEM_LIST:
                 ArrayList<ProblemInfo> infoList_P = ((InfoList)data).getInfoList();
                 for (ProblemInfo tem : infoList_P) {
                     String number = ""+tem.solved+"/"+tem.tried;
-                    ((ProblemListFragment) list_Fragment[1]).addToList(tem.title, tem.source, "" + tem.problemId, number);
+                    Map<String,String> listItem = new HashMap<>();
+                    listItem.put("title",tem.title);
+                    listItem.put("source", tem.source);
+                    listItem.put("id", ""+tem.problemId);
+                    listItem.put("number", number);
+                    listContainerFragment.addListItem(ListContainerFragment.problem,listItem);
                 }
-                ((ProblemListFragment)list_Fragment[1]).notifyDataSetChanged();
+                listContainerFragment.notifyDataSetChanged(ListContainerFragment.problem);
                 break;
+
             case ViewHandler.PROBLEM_DETAIL:
-//                main.showTestText(((Problem) data).getContentString());
                 detailsContainer_Fragment.addJSData(1, ((Problem) data).getContentString());
                 break;
+
             case ViewHandler.CONTEST_LIST:
                 ArrayList<ContestInfo> infoList_C = ((InfoList)data).getInfoList();
                 for (ContestInfo tem : infoList_C) {
-                    ((ContestListFragment) list_Fragment[2]).addToList(tem.title, tem.timeString, tem.lengthString, "" + tem.contestId, tem.status, tem.typeName);
+                    Map<String,String> listItem = new HashMap<>();
+                    listItem.put("title",tem.title);
+                    listItem.put("releaseTime", tem.timeString);
+                    listItem.put("timeLimit", tem.lengthString);
+                    listItem.put("id", ""+tem.contestId);
+                    listItem.put("status", tem.status);
+                    listItem.put("permissions", tem.typeName);
+                    listContainerFragment.addListItem(ListContainerFragment.contest, listItem);
                 }
-                ((ContestListFragment)list_Fragment[2]).notifyDataSetChanged();
+                listContainerFragment.notifyDataSetChanged(ListContainerFragment.contest);
                 break;
+
             case ViewHandler.CONTEST_DETAIL:
                 detailsContainer_Fragment.addJSData(2, ((Contest) data).getContentString());
                 break;

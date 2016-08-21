@@ -1,6 +1,7 @@
 package cn.edu.uestc.acm.cdoj_android.net;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,12 +74,13 @@ public class NetData {
 
             @Override
             protected Object doInBackground(Void... voids) {
+                Log.d("TAG", "doInBackground: ");
                 return request(which, req);
             }
 
             @Override
             protected void onPostExecute(Object o) {
-                handleInMain(which, o, viewHandler, time);
+            	handleInMain(which, o, viewHandler, time);
             }
         }.execute();
 

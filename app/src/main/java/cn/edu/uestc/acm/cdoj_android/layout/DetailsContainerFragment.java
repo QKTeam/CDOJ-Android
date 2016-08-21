@@ -14,21 +14,27 @@ import java.io.InputStream;
 
 import cn.edu.uestc.acm.cdoj_android.R;
 import cn.edu.uestc.acm.cdoj_android.Selection;
-import cn.edu.uestc.acm.cdoj_android.ShowTestText;
 
 /**
- * Created by great on 2016/8/15.
+ * Created by great on 2016/8/18.
  */
 public class DetailsContainerFragment extends Fragment {
-    MyWebViewFragment[] details_Fragment;
+    DetailsWebViewFragment[] details_Fragment;
     ViewPager detailsContainer_ViewPager;
     Selection selection;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        selection = (Selection)getActivity();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        details_Fragment = new MyWebViewFragment[3];
+        details_Fragment = new DetailsWebViewFragment[3];
         for (int i = 0; i != 3; ++i) {
-            details_Fragment[i] = new MyWebViewFragment();
+            details_Fragment[i] = new DetailsWebViewFragment();
             try {
                 InputStream input;
                 byte[] in;
@@ -56,13 +62,13 @@ public class DetailsContainerFragment extends Fragment {
                 e.printStackTrace();
             }
         }
-        return inflater.inflate(R.layout.details_container_fragment,container,false);
+        return inflater.inflate(R.layout.details_container, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        detailsContainer_ViewPager = (ViewPager)getView();
+        detailsContainer_ViewPager = (ViewPager) (getView().findViewById(R.id.detailsViewPager));
         detailsContainer_ViewPager.setAdapter(new FragmentPagerAdapter(getFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
@@ -100,12 +106,7 @@ public class DetailsContainerFragment extends Fragment {
         selection.initTab(detailsContainer_ViewPager);
     }
 
-    public void addSelection(Selection selection) {
-        this.selection = selection;
-    }
-
     public void addJSData(int which, String JSData) {
-//        ((ShowTestText)getActivity()).showTestText(JSData);
         details_Fragment[which].addJSData(JSData);
     }
 }
