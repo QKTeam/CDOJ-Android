@@ -1,6 +1,5 @@
 package cn.edu.uestc.acm.cdoj_android.net;
 
-import android.os.Looper;
 import android.util.Log;
 
 import org.apache.http.HttpResponse;
@@ -27,19 +26,23 @@ import java.security.NoSuchAlgorithmException;
  * Created by lenovo on 2016/8/7.
  */
 public class NetWorkTool {
+    static String TAG = "---------NetWorkTool----------";
     static HttpClient httpClient;
+
     static {
         httpClient = new DefaultHttpClient();
     }
-    public static String post(String url, String params){
+
+    public static String post(String url, String params) {
 //        Log.d("TAG", "new post: ");
         HttpPost httpPost = new HttpPost(url);
+        Log.d(TAG, "post: " + params);
         httpPost.addHeader("Content-Type", "application/json");
         try {
-            httpPost.setEntity(new StringEntity(params));
+            httpPost.setEntity(new StringEntity(params, "utf-8"));
             HttpResponse httpResponse = httpClient.execute(httpPost);
-            if (httpResponse.getStatusLine().getStatusCode() == 200){
-                return EntityUtils.toString(httpResponse.getEntity());
+            if (httpResponse.getStatusLine().getStatusCode() == 200) {
+                return EntityUtils.toString(httpResponse.getEntity(), "utf-8");
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -50,12 +53,12 @@ public class NetWorkTool {
         }
         return null;
     }
-    public static String get(String url){
+    public static String get(String url) {
         HttpGet httpGet = new HttpGet(url);
         try {
             HttpResponse httpResponse = httpClient.execute(httpGet);
-            if (httpResponse.getStatusLine().getStatusCode() == 200){
-                return EntityUtils.toString(httpResponse.getEntity());
+            if (httpResponse.getStatusLine().getStatusCode() == 200) {
+                return EntityUtils.toString(httpResponse.getEntity(), "utf-8");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -63,18 +66,17 @@ public class NetWorkTool {
         return null;
     }
 
-
-    public static String post1(String url, String params){
+    public static String post1(String url, String params) {
         return getString(_post(url, params));
     }
-    public static String get1(String url){
+    public static String get1(String url) {
         return getString(_get(url));
     }
-    public static InputStream _post(String url, String params){
+    public static InputStream _post(String url, String params) {
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
             connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("accept" , "*/*");
+            connection.setRequestProperty("accept", "*/*");
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
             connection.setDoInput(true);
@@ -82,16 +84,15 @@ public class NetWorkTool {
             OutputStream outputStream = connection.getOutputStream();
             outputStream.write(params.getBytes("utf-8"));
             outputStream.flush();
-            Log.d("_post", ""+ connection.getResponseCode());
+            Log.d("_post", "" + connection.getResponseCode());
             return connection.getInputStream();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
 
     }
-    public static InputStream _get(String url){
+    public static InputStream _get(String url) {
         try {
             URLConnection connection = new URL(url).openConnection();
             return connection.getInputStream();
@@ -100,23 +101,22 @@ public class NetWorkTool {
             return null;
         }
     }
-    public static String getString(InputStream is){
+    public static String getString(InputStream is) {
         String string = null;
         if (is == null) {
             return null;
         }
-        byte[] buffer = new byte[1024*320];
+        byte[] buffer = new byte[1024 * 320];
         int len = 0, tlen = 0;
         try {
-            while (tlen != -1){
+            while (tlen != -1) {
                 tlen = is.read(buffer, len, 1024);
-                if (tlen != -1){
+                if (tlen != -1) {
                     len += tlen;
                 }
             }
-            string = new String(buffer, 0 , len, "utf-8");
-        }
-        catch (Exception e){
+            string = new String(buffer, 0, len, "utf-8");
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

@@ -3,7 +3,6 @@ package cn.edu.uestc.acm.cdoj_android.net;
 import android.os.AsyncTask;
 import android.util.Log;
 
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -14,7 +13,7 @@ import cn.edu.uestc.acm.cdoj_android.net.data.ContestInfo;
 import cn.edu.uestc.acm.cdoj_android.net.data.InfoList;
 import cn.edu.uestc.acm.cdoj_android.net.data.Problem;
 import cn.edu.uestc.acm.cdoj_android.net.data.ProblemInfo;
-import cn.edu.uestc.acm.cdoj_android.net.data.User;
+import cn.edu.uestc.acm.cdoj_android.net.data.Status;
 
 /**
  * Created by qwe on 16-8-14.
@@ -24,7 +23,8 @@ public class NetData {
     static String TAG = "-------NetDataTag-----";
 
 
-    public final static String severAddress = "http://acm.uestc.edu.cn",
+    public final static String severAddress = "http://acm.uestc.edu.cn";
+    private final static String
             problemListUrl = severAddress + "/problem/search",
             contestListUrl = severAddress + "/contest/search",
             articleListUrl = severAddress + "/article/search",
@@ -33,7 +33,34 @@ public class NetData {
             contestDetailUrl = severAddress + "/contest/data/",
             loginUrl = severAddress + "/user/login",
             logoutUrl = severAddress + "/user/logout",
-            loginContestUrl = severAddress + "/contest/loginContest";
+            loginContestUrl = severAddress + "/contest/loginContest",
+            contestCommentUrl = severAddress + "/article/commentSearch",
+            contestRankListUrl = severAddress + "/contest/rankList/",
+            statusListUrl = severAddress + "/status/search";
+    public static void getStutas(int contestId, int page, ViewHandler viewHandler){
+        String key[] = new String[]{"contestId", "currentPage", "orderAsc", "orderFields", "result"};
+        Object[] o = new Object[]{contestId, page, false, "statusId", 0};
+        async(ViewHandler.STATUS_LIST, new String[]{statusListUrl, constructJson(key, o)}, viewHandler);
+    }
+    public static void getContestComment(int contestId, int page, ViewHandler viewHandler){
+        String key[] = new String[]{"contestId", "currentPage", "orderAsc", "orderFields"};
+        Object[] o = new Object[]{contestId, page, false, "id"};
+        async(ViewHandler.CONTEST_COMMENT, new String[]{contestCommentUrl, constructJson(key, o)}, viewHandler);
+    }
+    public static void getContestRankList(int contestId, ViewHandler viewHandler){
+        async(ViewHandler.CONTEST_RANK_LIST, new String[]{contestRankListUrl + contestId}, viewHandler);
+    }
+    static String constructJson(String key[], Object o[]){
+        JSONObject temp = new JSONObject();
+        try {
+            for (int i = 0; i < key.length; i++) {
+                temp.put(key[i], o[i]);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return temp.toString();
+    }
     public static void loginContest(int contestId, String password, ViewHandler viewHandler){
         String p = "";
         try {
@@ -80,7 +107,7 @@ public class NetData {
         String p = "";
         try {
             p = new JSONObject().put("currentPage", page).put("orderAsc", "true")
-                    .put("orderFields", "order").toString();
+                    .put("orderFields", "order").put("type", 0).toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -103,13 +130,12 @@ public class NetData {
 
             @Override
             protected Object doInBackground(Void... voids) {
-                Log.d("TAG", "doInBackground: ");
                 return request(which, req);
             }
 
             @Override
             protected void onPostExecute(Object o) {
-            	handleInMain(which, o, viewHandler, time);
+                handleInMain(which, o, viewHandler, time);
             }
         }.execute();
 
@@ -138,6 +164,12 @@ public class NetData {
             case ViewHandler.LOGCONTEST:
                 Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + (s = NetWorkTool.post(req[0], req[1])));;
                 return checkResult(s);
+            case ViewHandler.CONTEST_COMMENT:
+                return new InfoList<ArticleInfo>(NetWorkTool.post(req[0], req[1]), ArticleInfo.class);
+            case ViewHandler.CONTEST_RANK_LIST:
+                return null;
+            case ViewHandler.STATUS_LIST:
+                return new InfoList<Status>(NetWorkTool.post(req[0], req[1]), Status.class);
             default: return null;
         }
     }
