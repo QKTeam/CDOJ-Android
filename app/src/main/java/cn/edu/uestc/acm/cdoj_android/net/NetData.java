@@ -13,19 +13,75 @@ import cn.edu.uestc.acm.cdoj_android.net.data.ContestInfo;
 import cn.edu.uestc.acm.cdoj_android.net.data.InfoList;
 import cn.edu.uestc.acm.cdoj_android.net.data.Problem;
 import cn.edu.uestc.acm.cdoj_android.net.data.ProblemInfo;
+import cn.edu.uestc.acm.cdoj_android.net.data.Status;
 
 /**
  * Created by qwe on 16-8-14.
  */
 public class NetData {
-    public final static String severAddress = "http://acm.uestc.edu.cn",
+
+    static String TAG = "-------NetDataTag-----";
+
+
+    public final static String severAddress = "http://acm.uestc.edu.cn";
+    private final static String
             problemListUrl = severAddress + "/problem/search",
             contestListUrl = severAddress + "/contest/search",
             articleListUrl = severAddress + "/article/search",
             articleDetailUrl= severAddress + "/article/data/",
             problemDetailUrl = severAddress + "/problem/data/",
-            contestDetailUrl = severAddress + "/contest/data/";
-
+            contestDetailUrl = severAddress + "/contest/data/",
+            loginUrl = severAddress + "/user/login",
+            logoutUrl = severAddress + "/user/logout",
+            loginContestUrl = severAddress + "/contest/loginContest",
+            contestCommentUrl = severAddress + "/article/commentSearch",
+            contestRankListUrl = severAddress + "/contest/rankList/",
+            statusListUrl = severAddress + "/status/search";
+    public static void getStutas(int contestId, int page, ViewHandler viewHandler){
+        String key[] = new String[]{"contestId", "currentPage", "orderAsc", "orderFields", "result"};
+        Object[] o = new Object[]{contestId, page, false, "statusId", 0};
+        async(ViewHandler.STATUS_LIST, new String[]{statusListUrl, constructJson(key, o)}, viewHandler);
+    }
+    public static void getContestComment(int contestId, int page, ViewHandler viewHandler){
+        String key[] = new String[]{"contestId", "currentPage", "orderAsc", "orderFields"};
+        Object[] o = new Object[]{contestId, page, false, "id"};
+        async(ViewHandler.CONTEST_COMMENT, new String[]{contestCommentUrl, constructJson(key, o)}, viewHandler);
+    }
+    public static void getContestRankList(int contestId, ViewHandler viewHandler){
+        async(ViewHandler.CONTEST_RANK_LIST, new String[]{contestRankListUrl + contestId}, viewHandler);
+    }
+    static String constructJson(String key[], Object o[]){
+        JSONObject temp = new JSONObject();
+        try {
+            for (int i = 0; i < key.length; i++) {
+                temp.put(key[i], o[i]);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return temp.toString();
+    }
+    public static void loginContest(int contestId, String password, ViewHandler viewHandler){
+        String p = "";
+        try {
+            p = new JSONObject().put("contestId", contestId).put("password", NetWorkTool.sha1(password)).toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        async(ViewHandler.LOGCONTEST, new String[]{loginContestUrl, p}, viewHandler);
+    }
+    public static void login(String userName, String password, ViewHandler viewHandler){
+        String p = "";
+        try {
+            p = new JSONObject().put("userName", userName).put("password", NetWorkTool.sha1(password)).toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        async(ViewHandler.LOGIN, new String[]{loginUrl, p}, viewHandler);
+    }
+    public static void logout(ViewHandler viewHandler){
+        async(ViewHandler.LOGOUT, new String[]{logoutUrl}, viewHandler);
+    }
     public static void getProblemList(final int page, String keyword, final ViewHandler viewHandler){
         String p = "";
         try {
@@ -51,7 +107,7 @@ public class NetData {
         String p = "";
         try {
             p = new JSONObject().put("currentPage", page).put("orderAsc", "true")
-                    .put("orderFields", "order").toString();
+                    .put("orderFields", "order").put("type", 0).toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -74,13 +130,12 @@ public class NetData {
 
             @Override
             protected Object doInBackground(Void... voids) {
-                Log.d("TAG", "doInBackground: ");
                 return request(which, req);
             }
 
             @Override
             protected void onPostExecute(Object o) {
-            	handleInMain(which, o, viewHandler, time);
+                handleInMain(which, o, viewHandler, time);
             }
         }.execute();
 
@@ -100,10 +155,35 @@ public class NetData {
                 return new Contest(NetWorkTool.get(req[0]));
             case ViewHandler.ARTICLE_DETAIL:
                 return new Article(NetWorkTool.get(req[0]));
+            case ViewHandler.LOGIN:
+                String s;
+                Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + (s = NetWorkTool.post(req[0], req[1])));;
+                return checkResult(s);
+            case ViewHandler.LOGOUT:
+                return checkResult(NetWorkTool.get(req[0]));
+            case ViewHandler.LOGCONTEST:
+                Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + (s = NetWorkTool.post(req[0], req[1])));;
+                return checkResult(s);
+            case ViewHandler.CONTEST_COMMENT:
+                return new InfoList<ArticleInfo>(NetWorkTool.post(req[0], req[1]), ArticleInfo.class);
+            case ViewHandler.CONTEST_RANK_LIST:
+                return null;
+            case ViewHandler.STATUS_LIST:
+                return new InfoList<Status>(NetWorkTool.post(req[0], req[1]), Status.class);
             default: return null;
         }
     }
     static void handleInMain(int which, Object data, ViewHandler viewHandler, long time){
-        viewHandler.show(which, data, time);
+        if (viewHandler != null){
+            viewHandler.show(which, data, time);
+        }
+    }
+    static boolean checkResult(String json){
+        try {
+            return new JSONObject(json).getString("result").equals("success");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

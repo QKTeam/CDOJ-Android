@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
  * Created by lenovo on 2016/8/7.
  */
 public class ContestInfo {
+    public final static int TYPE_PUBLIC = 0, TYPE_PRIVATE = 1, TYPE_INVITED = 3, TYPE_ONSITE = 5;
     public int contestId, type;
     public long time, length;
     public boolean isVisible;
