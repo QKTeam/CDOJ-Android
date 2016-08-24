@@ -18,8 +18,10 @@ package cn.edu.uestc.acm.cdoj_android.layout;
 
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -175,14 +177,16 @@ public class ListFragmentWithGestureLoad extends Fragment {
     View mListContainer;
     CharSequence mEmptyText;
     boolean mListShown;
+    Context context;
+    View rootView;
 
     public ListFragmentWithGestureLoad() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        super.onCreate(savedInstanceState);
     }
 
     /**
@@ -201,9 +205,11 @@ public class ListFragmentWithGestureLoad extends Fragment {
      */
     @Override
     final public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.list,
-                container, false);
+                                   Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            rootView = inflater.inflate(R.layout.list, container, false);
+        }
+        return rootView;
     }
 
     /**

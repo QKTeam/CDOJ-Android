@@ -2,6 +2,7 @@ package cn.edu.uestc.acm.cdoj_android.layout;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
@@ -48,6 +49,7 @@ public class PullUpLoadListView extends ListView {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if (needLoad(firstVisibleItem, visibleItemCount, totalItemCount)) {
+                    Log.d("需要上拉加载", "onScroll: ");
                     startPullUpLoad();
                 }
             }
@@ -61,10 +63,14 @@ public class PullUpLoadListView extends ListView {
     }
 
     private void startPullUpLoad() {
+        Log.d("开始执行上拉加载", "startPullUpLoad: ");
         if (onPullUpLoadListener != null) {
             footer.updateView(PullUpLoadListViewFooter.State.LOADING, "Loading.....");
             isPullUpLoading = true;
+            Log.d("执行上拉加载", "startPullUpLoad: ");
             onPullUpLoadListener.onPullUpLoading();
+        }else {
+            Log.d("listener变空了", "startPullUpLoad: ");
         }
     }
 
@@ -74,6 +80,7 @@ public class PullUpLoadListView extends ListView {
 
     public void pullUpLoadingComplete() {
         isPullUpLoading = false;
+        Log.d("加载完成", "pullUpLoadingComplete: ");
         footer.updateView(PullUpLoadListViewFooter.State.NOT_LOADING,"Loading Complete");
     }
 
