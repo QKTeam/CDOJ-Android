@@ -8,18 +8,23 @@ import android.view.MotionEvent;
 /**
  * Created by great on 2016/8/18.
  */
-public class ViewPagerWithoutGesture extends ViewPager {
+public class MyViewPager extends ViewPager {
+    private boolean isScrollable;
 
-    public ViewPagerWithoutGesture(Context context) {
+    public MyViewPager(Context context) {
         super(context);
     }
 
-    public ViewPagerWithoutGesture(Context context, AttributeSet attrs) {
+    public MyViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        return false;
+        return isScrollable && super.onTouchEvent(ev);
+    }
+
+    public void setScrollable(boolean isScrollable) {
+        this.isScrollable = isScrollable;
     }
 }

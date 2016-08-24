@@ -6,4 +6,6 @@
     <color name="colorBlue">#33CCFF</color>
     <color name="content_background">#e8e8e8</color>
     <color name="toolbar_background">#f0f0f0</color>
+    <color name="statusBar_background_white">#ffffff</color>
+    <color name="statusBar_background_gray">#666666</color>
 </resources>
