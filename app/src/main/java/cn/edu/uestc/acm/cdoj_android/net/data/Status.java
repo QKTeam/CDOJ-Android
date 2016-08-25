@@ -7,6 +7,8 @@ import org.json.JSONObject;
  * Created by qwe on 16-8-21.
  */
 public class Status {
+    public final static int LANGUAGE_C = 1, LANGUAGE_CPP = 2, LANGUAGE_JAVA = 3;
+
     public int caseNumber, length, memoryCost, problemId, returnTypeId, statusId, time, timeCost;
     public String email, language,  name, nickName, returnType, userName;
 
@@ -20,6 +22,7 @@ public class Status {
             statusId = jsonObject.getInt("statusId");
             time = jsonObject.getInt("time");
             timeCost = jsonObject.getInt("timeCost");
+
             email = jsonObject.getString("email");
             language = jsonObject.getString("language");
             name = jsonObject.getString("name");
@@ -29,5 +32,13 @@ public class Status {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+    public static String getCode(String json){
+        try {
+            return new JSONObject(json).optString("code", null);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
