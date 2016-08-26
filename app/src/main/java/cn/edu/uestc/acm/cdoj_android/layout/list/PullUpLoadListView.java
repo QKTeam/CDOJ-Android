@@ -12,7 +12,7 @@ import android.widget.ListView;
 public class PullUpLoadListView extends ListView {
 
     private boolean isPullUpLoading;
-    private boolean isPullUpLoad;
+    private boolean pullUpLoadEnable = true;
     private OnPullUpLoadListener onPullUpLoadListener;
     private PullUpLoadListViewFooter footer;
     public interface OnPullUpLoadListener {
@@ -35,7 +35,7 @@ public class PullUpLoadListView extends ListView {
     }
 
     private void init() {
-        if (isPullUpLoad){
+        if (pullUpLoadEnable){
             isPullUpLoading = false;
             footer = new PullUpLoadListViewFooter(getContext());
             footer.setVisibility(View.VISIBLE);
@@ -82,7 +82,7 @@ public class PullUpLoadListView extends ListView {
         return isPullUpLoading;
     }
 
-    public void setPullUpLoad(boolean isPullUpLoad) {
-        this.isPullUpLoad = isPullUpLoad;
+    public void setPullUpLoadEnable(boolean pullUpLoadEnable) {
+        this.pullUpLoadEnable = pullUpLoadEnable;
     }
 }

@@ -433,9 +433,5 @@ public class ListFragmentWithGestureLoad extends Fragment {
 
     public void notifyDataSetChanged(){}
 
-    public void addListItem(Map<String ,String> listItem){}
-
-    public void setPullUpLoad(Boolean isPullUpLoad) {
-        mList.setPullUpLoad(isPullUpLoad);
-    }
+    public void addListItem(Map<String ,Object> listItem){}
 }

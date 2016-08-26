@@ -30,10 +30,10 @@ import cn.edu.uestc.acm.cdoj_android.net.data.ProblemInfo;
  */
 public class NetContent implements ViewHandler {
     private ArticleUI article;
-    private ArticleUI article_itemActivity;
     private ProblemUI problem;
-    private ProblemUI problem_itemActivity;
     private ContestUI contest;
+    private ArticleUI article_itemActivity;
+    private ProblemUI problem_itemActivity;
     private ContestUI contest_itemActivity;
     private ArticleListFragment articleList;
     private ProblemListFragment problemList;
@@ -46,10 +46,10 @@ public class NetContent implements ViewHandler {
             case ViewHandler.ARTICLE_LIST:
                 ArrayList<ArticleInfo> infoList_A = ((InfoList) data).getInfoList();
                 for (ArticleInfo tem : infoList_A) {
-                    Map<String, String> listItem = new HashMap<>();
+                    Map<String, Object> listItem = new HashMap<>();
                     listItem.put("title", tem.title);
                     listItem.put("content", tem.content);
-                    listItem.put("releaseTime", tem.timeString);
+                    listItem.put("date", tem.timeString);
                     listItem.put("author", tem.ownerName);
                     listItem.put("id", "" + tem.articleId);
                     articleList.addListItem(listItem);
@@ -71,7 +71,7 @@ public class NetContent implements ViewHandler {
                 ArrayList<ProblemInfo> infoList_P = ((InfoList) data).getInfoList();
                 for (ProblemInfo tem : infoList_P) {
                     String number = "" + tem.solved + "/" + tem.tried;
-                    Map<String, String> listItem = new HashMap<>();
+                    Map<String, Object> listItem = new HashMap<>();
                     listItem.put("title", tem.title);
                     listItem.put("source", tem.source);
                     listItem.put("id", "" + tem.problemId);
@@ -94,13 +94,13 @@ public class NetContent implements ViewHandler {
             case ViewHandler.CONTEST_LIST:
                 ArrayList<ContestInfo> infoList_C = ((InfoList) data).getInfoList();
                 for (ContestInfo tem : infoList_C) {
-                    Map<String, String> listItem = new HashMap<>();
+                    Map<String, Object> listItem = new HashMap<>();
                     listItem.put("title", tem.title);
-                    listItem.put("releaseTime", tem.timeString);
+                    listItem.put("date", tem.timeString);
                     listItem.put("timeLimit", tem.lengthString);
                     listItem.put("id", "" + tem.contestId);
                     listItem.put("status", tem.status);
-                    listItem.put("permissions", tem.typeName);
+                    listItem.put("permission", tem.typeName);
                     contestList.addListItem(listItem);
                 }
                 contestList.notifyDataSetChanged();

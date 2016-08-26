@@ -14,7 +14,7 @@ import cn.edu.uestc.acm.cdoj_android.layout.list.ListFragmentWithGestureLoad;
 /**
  * Created by great on 2016/8/25.
  */
-public class ContestClarification extends ListFragmentWithGestureLoad {
+public class ContestStatus extends ListFragmentWithGestureLoad {
     private SimpleAdapter adapter;
     private ArrayList<Map<String, Object>> listItems = new ArrayList<>();
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -54,9 +54,10 @@ public class ContestClarification extends ListFragmentWithGestureLoad {
     private void createAdapter() {
         adapter = new SimpleAdapter(
                 Global.currentMainActivity, listItems, R.layout.contest_clarification_item_list,
-                new String[]{"header", "content", "date", "author"},
-                new int[]{R.id.contestClarification_header, R.id.contestClarification_content,
-                        R.id.contestClarification_date, R.id.contestClarification_author});
+                new String[]{"prob", "result", "length", "submitTime", "language", "time", "memory"},
+                new int[]{R.id.contestStatus_prob, R.id.contestStatus_result,
+                        R.id.contestStatus_length, R.id.contestStatus_submitTime,
+                        R.id.contestStatus_language, R.id.contestStatus_time, R.id.contestStatus_memory});
         setListAdapter(adapter);
     }
 }

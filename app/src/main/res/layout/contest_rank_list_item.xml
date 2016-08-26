@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/main_background"
     android:layout_width="match_parent"
     android:layout_height="80dp"
     android:orientation="horizontal"
@@ -7,26 +8,29 @@
     android:paddingLeft="20dp"
     android:paddingRight="10dp"
     android:paddingTop="5dp">
-    <LinearLayout
-        android:orientation="vertical"
+
+    <TextView
+        android:id="@+id/contestRank_rank"
         android:layout_width="65dp"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
+
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
         <TextView
             android:id="@+id/contestRank_name"
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="0dp" />
-        <LinearLayout
-            android:id="@+id/contest_solved"
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
-        </LinearLayout>
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/contestRank_solved"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"/>
 
 
     </LinearLayout>

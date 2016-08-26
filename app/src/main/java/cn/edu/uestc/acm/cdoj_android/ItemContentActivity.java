@@ -6,8 +6,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ArticleUI;
 import cn.edu.uestc.acm.cdoj_android.layout.detail.ContestUI;
 import cn.edu.uestc.acm.cdoj_android.layout.detail.DetailWebViewFragment;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ProblemUI;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj_android.statusBar.FlyMeUtils;
 import cn.edu.uestc.acm.cdoj_android.statusBar.MIUIUtils;
@@ -45,12 +47,10 @@ public class ItemContentActivity extends AppCompatActivity {
         Fragment detail = null;
         switch (type) {
             case ViewHandler.ARTICLE_DETAIL:
-                detail = new DetailWebViewFragment();
-                ((DetailWebViewFragment) detail).switchHTMLData(type);
+                detail = new ArticleUI();
                 break;
             case ViewHandler.PROBLEM_DETAIL:
-                detail = new DetailWebViewFragment();
-                ((DetailWebViewFragment) detail).switchHTMLData(type);
+                detail = new ProblemUI();
                 break;
             case ViewHandler.CONTEST_DETAIL:
                 detail = new ContestUI();

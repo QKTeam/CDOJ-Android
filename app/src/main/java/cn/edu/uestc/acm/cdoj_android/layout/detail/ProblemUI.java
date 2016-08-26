@@ -30,8 +30,11 @@ public class ProblemUI extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             rootView = inflater.inflate(R.layout.problem, container, false);
-            webViewFragment = (DetailWebViewFragment) getChildFragmentManager().findFragmentById(R.id.webViewFragment_problem);
+            webViewFragment = new DetailWebViewFragment();
             webViewFragment.switchHTMLData(ViewHandler.PROBLEM_DETAIL);
+            getChildFragmentManager().beginTransaction()
+                    .add(R.id.webViewFragment_problem, webViewFragment)
+                    .commit();
             toolbar = (Toolbar) rootView.findViewById(R.id.toolbar_problem);
         }
         return rootView;

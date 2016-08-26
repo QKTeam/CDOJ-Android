@@ -15,18 +15,16 @@ import cn.edu.uestc.acm.cdoj_android.Global;
 import cn.edu.uestc.acm.cdoj_android.ItemContentActivity;
 import cn.edu.uestc.acm.cdoj_android.R;
 import cn.edu.uestc.acm.cdoj_android.GetInformation;
-import cn.edu.uestc.acm.cdoj_android.layout.detail.DetailWebViewFragment;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 
 /**
  * Created by great on 2016/8/17.
  */
 public class ArticleListFragment extends ListFragmentWithGestureLoad {
-    SimpleAdapter adapter;
-    ArrayList<Map<String, String>> listItems = new ArrayList<>();
-    SwipeRefreshLayout swipeRefreshLayout;
-    PullUpLoadListView listView;
-    DetailWebViewFragment articleDetails;
+    private SimpleAdapter adapter;
+    private ArrayList<Map<String, Object>> listItems = new ArrayList<>();
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private PullUpLoadListView listView;
     boolean isTwoPane;
 
     @Override
@@ -58,28 +56,18 @@ public class ArticleListFragment extends ListFragmentWithGestureLoad {
                 }
             });
             Global.netContent.getContent(ViewHandler.ARTICLE_LIST, 1);
-            if (isTwoPane) {
-                articleDetails = (DetailWebViewFragment)((GetInformation) Global.currentMainActivity)
-                        .getDetailsContainer()
-                        .getDetail(ViewHandler.ARTICLE_DETAIL);
-            }
         }
     }
 
     @Override
-    public void addListItem(Map<String, String> listItem) {
+    public void addListItem(Map<String, Object> listItem) {
         listItems.add(listItem);
     }
 
     @Override
     public void notifyDataSetChanged() {
         if (adapter == null) {
-            adapter = new SimpleAdapter(
-                    Global.currentMainActivity, listItems, R.layout.article_list_item,
-                    new String[]{"title", "content", "releaseTime", "author"},
-                    new int[]{R.id.article_title, R.id.article_content,
-                            R.id.article_releaseTime, R.id.article_author});
-            setListAdapter(adapter);
+            createAdapter();
         }
         adapter.notifyDataSetChanged();
         if (swipeRefreshLayout.isRefreshing()) {
@@ -96,10 +84,20 @@ public class ArticleListFragment extends ListFragmentWithGestureLoad {
             Context context = l.getContext();
             Intent intent = new Intent(context, ItemContentActivity.class);
             intent.putExtra("type", ViewHandler.ARTICLE_DETAIL);
-            intent.putExtra("id", Integer.parseInt(listItems.get(position).get("id")));
+            intent.putExtra("id", Integer.parseInt((String) listItems.get(position).get("id")));
             context.startActivity(intent);
             return;
         }
-        Global.netContent.getContent(ViewHandler.ARTICLE_DETAIL, Integer.parseInt(listItems.get(position).get("id")));
+        Global.netContent.getContent(ViewHandler.ARTICLE_DETAIL,
+                Integer.parseInt((String) listItems.get(position).get("id")));
+    }
+
+    private void createAdapter() {
+        adapter = new SimpleAdapter(
+                Global.currentMainActivity, listItems, R.layout.article_item_list,
+                new String[]{"title", "content", "date", "author"},
+                new int[]{R.id.article_title, R.id.article_content,
+                        R.id.article_date, R.id.article_author});
+        setListAdapter(adapter);
     }
 }

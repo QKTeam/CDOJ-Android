@@ -8,10 +8,12 @@
         android:id="@+id/toolbar_problem"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:background="@color/main_background"
         app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-    <fragment class="cn.edu.uestc.acm.cdoj_android.layout.detail.DetailWebViewFragment"
+    <LinearLayout
         android:id="@+id/webViewFragment_problem"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

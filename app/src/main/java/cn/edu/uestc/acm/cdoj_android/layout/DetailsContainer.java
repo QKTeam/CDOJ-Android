@@ -56,6 +56,7 @@ public class DetailsContainer extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         if (savedInstanceState == null) {
             viewPager = (ViewPager) (rootView.findViewById(R.id.detailsViewPager));
+            viewPager.setOffscreenPageLimit(2);
             viewPager.setAdapter(new FragmentPagerAdapter(getFragmentManager()) {
                 @Override
                 public Fragment getItem(int position) {

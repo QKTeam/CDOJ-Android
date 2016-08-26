@@ -8,7 +8,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 
 import cn.edu.uestc.acm.cdoj_android.layout.DetailsContainer;
-import cn.edu.uestc.acm.cdoj_android.layout.ListContainerFragment;
+import cn.edu.uestc.acm.cdoj_android.layout.ListContainer;
 import cn.edu.uestc.acm.cdoj_android.statusBar.FlyMeUtils;
 import cn.edu.uestc.acm.cdoj_android.statusBar.MIUIUtils;
 import cn.edu.uestc.acm.cdoj_android.statusBar.StatusBarUtil;
@@ -16,7 +16,7 @@ import cn.edu.uestc.acm.cdoj_android.statusBar.StatusBarUtil;
 public class MainActivity extends AppCompatActivity implements GetInformation {
 
     private DetailsContainer detailsContainer;
-    private ListContainerFragment listContainer;
+    private ListContainer listContainer;
     private FragmentManager fragmentManager;
     private boolean isTwoPane;
 
@@ -55,13 +55,13 @@ public class MainActivity extends AppCompatActivity implements GetInformation {
             detailsContainer = new DetailsContainer();
             transaction.add(R.id.details_container, detailsContainer, "detailsContainer");
         }
-        listContainer = new ListContainerFragment();
+        listContainer = new ListContainer();
         transaction.add(R.id.list_container, listContainer, "listContainer");
         transaction.commit();
     }
 
     private void findBackContainerFragment() {
-        listContainer = (ListContainerFragment) fragmentManager.findFragmentByTag("listContainer");
+        listContainer = (ListContainer) fragmentManager.findFragmentByTag("listContainer");
         detailsContainer = (DetailsContainer) fragmentManager.findFragmentByTag("detailsContainer");
         if (detailsContainer == null && isTwoPane) {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements GetInformation {
     }
 
     @Override
-    public ListContainerFragment getListContainer() {
+    public ListContainer getListContainer() {
         return listContainer;
     }
 }

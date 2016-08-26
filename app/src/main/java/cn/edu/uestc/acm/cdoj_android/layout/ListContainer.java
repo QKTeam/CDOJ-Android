@@ -26,7 +26,7 @@ import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 /**
  * Created by great on 2016/8/18.
  */
-public class ListContainerFragment extends Fragment {
+public class ListContainer extends Fragment {
     private ArticleListFragment articleList;
     private ProblemListFragment problemList;
     private ContestListFragment contestList;
@@ -60,6 +60,7 @@ public class ListContainerFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         if (savedInstanceState == null) {
             viewPager = (ViewPager) (rootView.findViewById(R.id.listViewPager));
             viewPager.setOffscreenPageLimit(2);
@@ -82,7 +83,6 @@ public class ListContainerFragment extends Fragment {
                     return 3;
                 }
             });
-            viewPager.setOffscreenPageLimit(2);
         }
         if (onPageChangeListener != null) {viewPager.addOnPageChangeListener(onPageChangeListener);}
         if (bottomTab != null) {setupTabLayout();}
@@ -91,6 +91,7 @@ public class ListContainerFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         detailsContainer = ((GetInformation) Global.currentMainActivity).getDetailsContainer();
         boolean isTwoPane = ((GetInformation) Global.currentMainActivity).isTwoPane();
         if (isTwoPane && detailsContainer != null) {

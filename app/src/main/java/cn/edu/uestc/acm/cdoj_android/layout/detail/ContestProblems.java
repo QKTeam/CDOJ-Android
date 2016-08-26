@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,12 +47,12 @@ public class ContestProblems extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (savedInstanceState == null) {
-            viewPager = (ViewPager) rootView.findViewById(R.id.contestProblemsViewPager);
+            viewPager = (ViewPager) rootView.findViewById(R.id.contestProblems_viewPager);
             if (problems != null) {
                 setAdapter();
             }
+            tabLayout = (TabLayout) rootView.findViewById(R.id.contestProblems_tabLayout);
         }
-
     }
 
     public void addProblems(ArrayList<Problem> problemList) {
@@ -77,5 +79,9 @@ public class ContestProblems extends Fragment {
                 return problemsCount;
             }
         });
+        tabLayout.setupWithViewPager(viewPager);
+        for (int i = 0; i != problemsCount; ++i) {
+            tabLayout.getTabAt(i).setText("A" + i);
+        }
     }
 }

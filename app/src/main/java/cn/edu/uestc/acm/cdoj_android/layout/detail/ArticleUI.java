@@ -29,9 +29,12 @@ public class ArticleUI extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (savedInstanceState == null) {
-            rootView = inflater.inflate(R.layout.problem, container, false);
-            webViewFragment = (DetailWebViewFragment) getChildFragmentManager().findFragmentById(R.id.webViewFragment_article);
+            rootView = inflater.inflate(R.layout.article, container, false);
+            webViewFragment = new DetailWebViewFragment();
             webViewFragment.switchHTMLData(ViewHandler.ARTICLE_DETAIL);
+            getChildFragmentManager().beginTransaction()
+                    .add(R.id.webViewFragment_article,webViewFragment)
+                    .commit();
             toolbar = (Toolbar) rootView.findViewById(R.id.toolbar_article);
         }
         return rootView;

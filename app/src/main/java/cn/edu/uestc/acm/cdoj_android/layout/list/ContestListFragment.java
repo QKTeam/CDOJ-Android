@@ -15,18 +15,16 @@ import cn.edu.uestc.acm.cdoj_android.Global;
 import cn.edu.uestc.acm.cdoj_android.ItemContentActivity;
 import cn.edu.uestc.acm.cdoj_android.R;
 import cn.edu.uestc.acm.cdoj_android.GetInformation;
-import cn.edu.uestc.acm.cdoj_android.layout.detail.ContestUI;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 
 /**
  * Created by great on 2016/8/17.
  */
 public class ContestListFragment extends ListFragmentWithGestureLoad {
-    SimpleAdapter adapter;
-    ArrayList<Map<String,String>> listItems = new ArrayList<>();
-    SwipeRefreshLayout swipeRefreshLayout;
-    PullUpLoadListView listView;
-    ContestUI contestDetails;
+    private SimpleAdapter adapter;
+    private ArrayList<Map<String,Object>> listItems = new ArrayList<>();
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private PullUpLoadListView listView;
     boolean isTwoPane;
 
     @Override
@@ -56,28 +54,18 @@ public class ContestListFragment extends ListFragmentWithGestureLoad {
                 }
             });
             Global.netContent.getContent(ViewHandler.CONTEST_LIST, 1);
-            if (isTwoPane) {
-                contestDetails = (ContestUI)((GetInformation) (Global.currentMainActivity))
-                        .getDetailsContainer()
-                        .getDetail(ViewHandler.CONTEST_DETAIL);
-            }
         }
     }
 
     @Override
-    public void addListItem(Map<String ,String> listItem) {
+    public void addListItem(Map<String ,Object> listItem) {
         listItems.add(listItem);
     }
 
     @Override
     public void notifyDataSetChanged() {
         if (adapter == null) {
-            adapter = new SimpleAdapter(
-                    Global.currentMainActivity, listItems, R.layout.contest_list_item,
-                    new String[]{"title", "releaseTime", "timeLimit", "id", "status", "permissions"},
-                    new int[]{R.id.contest_title, R.id.contest_releaseTime, R.id.contest_timeLimit,
-                            R.id.contest_id, R.id.contest_status, R.id.contest_permissions});
-            setListAdapter(adapter);
+            creatAdapter();
         }
         adapter.notifyDataSetChanged();
         if (swipeRefreshLayout.isRefreshing()) {
@@ -88,16 +76,26 @@ public class ContestListFragment extends ListFragmentWithGestureLoad {
         }
     }
 
+    private void creatAdapter() {
+        adapter = new SimpleAdapter(
+                Global.currentMainActivity, listItems, R.layout.contest_item_list,
+                new String[]{"title", "date", "timeLimit", "id", "status", "permission"},
+                new int[]{R.id.contest_title, R.id.contest_date, R.id.contest_timeLimit,
+                        R.id.contest_id, R.id.contest_status, R.id.contest_permission});
+        setListAdapter(adapter);
+    }
+
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         if (!isTwoPane) {
             Context context = l.getContext();
             Intent intent = new Intent(context, ItemContentActivity.class);
             intent.putExtra("type", ViewHandler.CONTEST_DETAIL);
-            intent.putExtra("id", Integer.parseInt(listItems.get(position).get("id")));
+            intent.putExtra("id", Integer.parseInt((String) listItems.get(position).get("id")));
             context.startActivity(intent);
             return;
         }
-        Global.netContent.getContent(ViewHandler.CONTEST_DETAIL, Integer.parseInt(listItems.get(position).get("id")));
+        Global.netContent.getContent(ViewHandler.CONTEST_DETAIL,
+                Integer.parseInt((String) listItems.get(position).get("id")));
     }
 }

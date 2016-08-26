@@ -1,8 +1,10 @@
 package cn.edu.uestc.acm.cdoj_android.layout.detail;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
+import android.webkit.WebViewFragment;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,18 +14,18 @@ import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 /**
  * Created by great on 2016/8/16.
  */
-public class DetailWebViewFragment extends android.webkit.WebViewFragment {
-    final String acmWebUrl = "http://acm.uestc.edu.cn/";
-    final String mimeType = "text/html";
-    final String encoding = "utf-8";
-    String HTMLData;
-    String webData;
-    WebView webView;
-    int HTMLType = 0;
+public class DetailWebViewFragment extends WebViewFragment {
+    private final String acmWebUrl = "http://acm.uestc.edu.cn/";
+    private final String mimeType = "text/html";
+    private final String encoding = "utf-8";
+    private String HTMLData;
+    private String jsData;
+    private String webData;
+    private WebView webView;
+    private int HTMLType = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setRetainInstance(true);
         super.onCreate(savedInstanceState);
     }
 
@@ -56,11 +58,15 @@ public class DetailWebViewFragment extends android.webkit.WebViewFragment {
                         HTMLData = new String(in);
                         break;
                 }
+                if (jsData != null) {
+                    webData = HTMLData.replace("{{{replace_data_here}}}", jsData);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
             if (webData != null) {webView.loadDataWithBaseURL(acmWebUrl, webData, mimeType, encoding, null);}
         }
+
     }
 
     public DetailWebViewFragment switchHTMLData(int type) {
@@ -73,9 +79,17 @@ public class DetailWebViewFragment extends android.webkit.WebViewFragment {
     }
 
     public void addJSData(String jsData) {
-        webData = HTMLData.replace("{{{replace_data_here}}}", jsData);
-        if (webView != null) {
+        Log.d(toString(), "addJSData: ");
+        if (HTMLData != null) {
+            Log.d(toString(), "addJSDataSuccess ");
+            webData = HTMLData.replace("{{{replace_data_here}}}", jsData);
             webView.loadDataWithBaseURL(acmWebUrl, webData, mimeType, encoding, null);
+            return;
         }
+        this.jsData = jsData;
+    }
+
+    public void setFragmentRetainInstance(boolean retain){
+        setRetainInstance(retain);
     }
 }
