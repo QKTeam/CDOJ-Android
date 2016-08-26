@@ -32,7 +32,9 @@ public class NetWorkTool {
     static {
         httpClient = new DefaultHttpClient();
     }
-
+    public static String getOrPost(String req[]){
+        return req.length == 1?get(req[0]):post(req[0], req[1]);
+    }
     public static String post(String url, String params) {
 //        Log.d("TAG", "new post: ");
         HttpPost httpPost = new HttpPost(url);
@@ -122,9 +124,9 @@ public class NetWorkTool {
         }
         return string;
     }
-    public static String sha1(String s) {
+    public static String md(String s, String algorithm) {
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            MessageDigest md = MessageDigest.getInstance(algorithm);
             byte[] bytes = s.getBytes();
             md.update(bytes);
             return new BigInteger(1, md.digest()).toString(16);
@@ -134,5 +136,7 @@ public class NetWorkTool {
 
         return null;
     }
-
+    public static String sha1(String s){
+        return md(s, "SHA-1");
+    }
 }

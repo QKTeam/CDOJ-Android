@@ -1,7 +1,10 @@
 package cn.edu.uestc.acm.cdoj_android.net;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +16,7 @@ import cn.edu.uestc.acm.cdoj_android.net.data.ContestInfo;
 import cn.edu.uestc.acm.cdoj_android.net.data.InfoList;
 import cn.edu.uestc.acm.cdoj_android.net.data.Problem;
 import cn.edu.uestc.acm.cdoj_android.net.data.ProblemInfo;
+import cn.edu.uestc.acm.cdoj_android.net.data.Rank;
 import cn.edu.uestc.acm.cdoj_android.net.data.Status;
 
 /**
@@ -36,8 +40,23 @@ public class NetData {
             loginContestUrl = severAddress + "/contest/loginContest",
             contestCommentUrl = severAddress + "/article/commentSearch",
             contestRankListUrl = severAddress + "/contest/rankList/",
-            statusListUrl = severAddress + "/status/search";
-    public static void getStutas(int contestId, int page, ViewHandler viewHandler){
+            statusListUrl = severAddress + "/status/search",
+            stutasInfoUrl = severAddress + "/stutas/info/",
+            codeSubmitUrl = severAddress + "/status/submit",
+            avatarUrl = "http://cdn.v2ex.com/gravatar/%@.jpg?s=%ld&&d=retro";
+    public static void getAvatar(String email, Object addition, ViewHandler viewHandler){
+        asyncWithAdd(ViewHandler.AVATAR, new String[]{avatarUrl.replace("%@", NetWorkTool.md(email, "md5")).replace("%ld", "200")}, viewHandler, addition);
+    }
+
+    public static void submitCode(String codeContent, int languageId, int contestId, int problemId, ViewHandler viewHandler){
+        String key[] = new String[]{"codeContent", "languageId", "contestId", "problemId"};
+        Object o[] = new Object[]{codeContent, languageId, contestId == -1?"":contestId, problemId};
+        async(ViewHandler.STUTAS_SUBMIT, new String[]{codeSubmitUrl, constructJson(key, o)}, viewHandler);
+    }
+    public static void getStutasInfo(int statusId, ViewHandler viewHandler){
+        async(ViewHandler.STUTAS_INFO, new String[]{stutasInfoUrl + statusId}, viewHandler);
+    }
+    public static void getStutasList(int contestId, int page, ViewHandler viewHandler){
         String key[] = new String[]{"contestId", "currentPage", "orderAsc", "orderFields", "result"};
         Object[] o = new Object[]{contestId, page, false, "statusId", 0};
         async(ViewHandler.STATUS_LIST, new String[]{statusListUrl, constructJson(key, o)}, viewHandler);
@@ -47,8 +66,8 @@ public class NetData {
         Object[] o = new Object[]{contestId, page, false, "id"};
         async(ViewHandler.CONTEST_COMMENT, new String[]{contestCommentUrl, constructJson(key, o)}, viewHandler);
     }
-    public static void getContestRankList(int contestId, ViewHandler viewHandler){
-        async(ViewHandler.CONTEST_RANK_LIST, new String[]{contestRankListUrl + contestId}, viewHandler);
+    public static void getContestRank(int contestId, ViewHandler viewHandler){
+        async(ViewHandler.CONTEST_RANK, new String[]{contestRankListUrl + contestId}, viewHandler);
     }
     static String constructJson(String key[], Object o[]){
         JSONObject temp = new JSONObject();
@@ -70,10 +89,10 @@ public class NetData {
         }
         async(ViewHandler.LOGCONTEST, new String[]{loginContestUrl, p}, viewHandler);
     }
-    public static void login(String userName, String password, ViewHandler viewHandler){
+    public static void login(String userName, String sha1password, ViewHandler viewHandler){
         String p = "";
         try {
-            p = new JSONObject().put("userName", userName).put("password", NetWorkTool.sha1(password)).toString();
+            p = new JSONObject().put("userName", userName).put("password", sha1password).toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -124,7 +143,11 @@ public class NetData {
         async(ViewHandler.PROBLEM_DETAIL, new String[]{problemDetailUrl + id}, viewHandler);
     }
 
+
     static void async(final int which, final String[] req, final ViewHandler viewHandler){
+        asyncWithAdd(which, req,  viewHandler, null);
+    }
+    static void asyncWithAdd(final int which, final String[] req, final ViewHandler viewHandler, final Object add) {
         final long time = System.currentTimeMillis();
         new AsyncTask<Void, Void, Object>(){
 
@@ -135,7 +158,7 @@ public class NetData {
 
             @Override
             protected void onPostExecute(Object o) {
-                handleInMain(which, o, viewHandler, time);
+                handleInMain(which, o, viewHandler, time, add);
             }
         }.execute();
 
@@ -143,42 +166,58 @@ public class NetData {
 
     static Object request(int which, String[] req){
         switch (which){
+            case ViewHandler.AVATAR:
+                return BitmapFactory.decodeStream(NetWorkTool._get(req[1]));
+        }
+        String result = NetWorkTool.getOrPost(req);
+        switch (which){
             case ViewHandler.PROBLEM_LIST:
-                return new InfoList<ProblemInfo>(NetWorkTool.post(req[0], req[1]), ProblemInfo.class);
+                return new InfoList<ProblemInfo>(result, ProblemInfo.class);
             case ViewHandler.ARTICLE_LIST:
-                return new InfoList<ArticleInfo>(NetWorkTool.post(req[0], req[1]), ArticleInfo.class);
+                return new InfoList<ArticleInfo>(result, ArticleInfo.class);
             case ViewHandler.CONTEST_LIST:
-                return new InfoList<ContestInfo>(NetWorkTool.post(req[0], req[1]), ContestInfo.class);
+                return new InfoList<ContestInfo>(result, ContestInfo.class);
             case ViewHandler.PROBLEM_DETAIL:
-                return new Problem(NetWorkTool.get(req[0]));
+                return new Problem(result);
             case ViewHandler.CONTEST_DETAIL:
-                return new Contest(NetWorkTool.get(req[0]));
+                return new Contest(result);
             case ViewHandler.ARTICLE_DETAIL:
-                return new Article(NetWorkTool.get(req[0]));
+                return new Article(result);
             case ViewHandler.LOGIN:
-                String s;
-                Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + (s = NetWorkTool.post(req[0], req[1])));;
-                return checkResult(s);
+//                String s;
+//                Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + (s = result));
+                return checkResult(result);
             case ViewHandler.LOGOUT:
-                return checkResult(NetWorkTool.get(req[0]));
+                return checkResult(result);
             case ViewHandler.LOGCONTEST:
-                Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + (s = NetWorkTool.post(req[0], req[1])));;
-                return checkResult(s);
+//                Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + (s = result));;
+                return checkResult(result);
             case ViewHandler.CONTEST_COMMENT:
-                return new InfoList<ArticleInfo>(NetWorkTool.post(req[0], req[1]), ArticleInfo.class);
-            case ViewHandler.CONTEST_RANK_LIST:
-                return null;
+                return new InfoList<ArticleInfo>(result, ArticleInfo.class);
+            case ViewHandler.CONTEST_RANK:
+                return new Rank(result);
             case ViewHandler.STATUS_LIST:
-                return new InfoList<Status>(NetWorkTool.post(req[0], req[1]), Status.class);
+                return new InfoList<Status>(result, Status.class);
+            case ViewHandler.STUTAS_INFO:
+                return Status.getCode(result);
+            case ViewHandler.STUTAS_SUBMIT:
+                return checkResult(result);
             default: return null;
         }
     }
-    static void handleInMain(int which, Object data, ViewHandler viewHandler, long time){
+    static void handleInMain(int which, Object data, ViewHandler viewHandler, long time, Object add){
         if (viewHandler != null){
-            viewHandler.show(which, data, time);
+            if (add != null){
+                viewHandler.show(which, new Object[]{add, data}, time);
+            }else {
+                viewHandler.show(which, data, time);
+            }
         }
     }
     static boolean checkResult(String json){
+        if (json == null) {
+            return false;
+        }
         try {
             return new JSONObject(json).getString("result").equals("success");
         } catch (JSONException e) {

@@ -14,8 +14,11 @@ public interface ViewHandler {
             LOGOUT = 7,
             LOGCONTEST = 8,
             CONTEST_COMMENT = 9,
-            CONTEST_RANK_LIST = 10,
-            STATUS_LIST = 11;
+            CONTEST_RANK = 10,
+            STATUS_LIST = 11,
+            STUTAS_INFO = 12,
+            STUTAS_SUBMIT = 13,
+            AVATAR = 14;
     //    void showProblemList(ProblemInfoList problemInfoList);
 //    void showContestList(ContestInfoList contestInfoList);
 //    void showArticleList(ArticleInfoList aritcleInfoList);
