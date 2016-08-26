@@ -1,6 +1,5 @@
 package cn.edu.uestc.acm.cdoj_android.net.data;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -11,20 +10,16 @@ public class ProblemInfo {
     public boolean isSpj, isVisible;
     public String source, title;
     public ProblemInfo(JSONObject jsonObject){
-        try {
-            difficulty = jsonObject.getInt("difficulty");
-            problemId = jsonObject.getInt("problemId");
-            solved = jsonObject.getInt("solved");
-            tried = jsonObject.getInt("tried");
+        difficulty = jsonObject.optInt("difficulty");
+        problemId = jsonObject.optInt("problemId");
+        solved = jsonObject.optInt("solved");
+        tried = jsonObject.optInt("tried");
 
-            isSpj = jsonObject.getBoolean("isSpj");
-            isVisible = jsonObject.getBoolean("isVisible");
+        isSpj = jsonObject.optBoolean("isSpj");
+        isVisible = jsonObject.optBoolean("isVisible");
 
-            source = jsonObject.getString("source");
-            title = jsonObject.getString("title");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        source = jsonObject.optString("source");
+        title = jsonObject.optString("title");
 
 
     }

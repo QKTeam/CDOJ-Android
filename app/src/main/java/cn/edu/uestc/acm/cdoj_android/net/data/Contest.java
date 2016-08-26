@@ -14,9 +14,15 @@ public class Contest {
     public String contentString = "";
     public ArrayList<Problem> problemList = new ArrayList<>(15);
     public Contest(String json){
+        if (json == null) {
+            return;
+        }
         try {
             JSONObject jsonObject = new JSONObject(json);
             result = jsonObject.optString("result", "fail").equals("success");
+            if (!result){
+                return;
+            }
             contentString = jsonObject.getString("contest");
             JSONArray plist = jsonObject.getJSONArray("problemList");
             for (int i = 0; i < plist.length(); i++) {

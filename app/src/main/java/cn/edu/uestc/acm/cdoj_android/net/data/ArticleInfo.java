@@ -1,5 +1,7 @@
 package cn.edu.uestc.acm.cdoj_android.net.data;
 
+import android.graphics.Bitmap;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,8 +25,8 @@ public class ArticleInfo {
             timeString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
             clicked = jsonObject.getInt("clicked");
 
-            hasMore = jsonObject.getBoolean("hasMore");
             isVisible = jsonObject.getBoolean("isVisible");
+            hasMore = jsonObject.optBoolean("hasMore", false);
 
             content = jsonObject.getString("content");
             title = jsonObject.getString("title");

@@ -13,6 +13,9 @@ public class Problem {
 
     }
     public Problem(String json){
+        if (json == null) {
+            return;
+        }
         try {
             JSONObject jsonObject = new JSONObject(json);
             result = jsonObject.optString("result", "fail").equals("success");
