@@ -1,5 +1,7 @@
 package cn.edu.uestc.acm.cdoj_android.net.data;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,10 +14,12 @@ import cn.edu.uestc.acm.cdoj_android.net.DateTemp;
  * Created by qwe on 16-8-21.
  */
 public class Rank {
+    String TAG = "--------RankTag-------";
+
     public boolean result = false;
     public long lastFecthed;
     ArrayList<ProblemInfo> problemInfoList = new ArrayList<>(15);
-    ArrayList<RankList> rankList = new ArrayList();
+    ArrayList<Performance> rankList = new ArrayList();
 
     public Rank(String json) {
         if (json == null) {
@@ -25,14 +29,14 @@ public class Rank {
             JSONObject jsonObject = new JSONObject(json);
             result = jsonObject.getString("result").equals("success");
             JSONObject rank = jsonObject.getJSONObject("rankList");
-            lastFecthed = rank.getLong("lastFecthed");
+            lastFecthed = rank.getLong("lastFetched");
             JSONArray plist = rank.getJSONArray("problemList");
             for (int i = 0; i< plist.length(); i ++) {
                 problemInfoList.add(new ProblemInfo(plist.getJSONObject(i)));
             }
             JSONArray rlist = rank.getJSONArray("rankList");
             for (int i = 0; i < rlist.length(); i++) {
-                rankList.add(new RankList(rlist.getJSONObject(i)));
+                rankList.add(new Performance(rlist.getJSONObject(i)));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -41,15 +45,15 @@ public class Rank {
     public ArrayList<ProblemInfo> getProblemInfoList(){
         return problemInfoList;
     }
-    public ArrayList<RankList> getRankList(){
+    public ArrayList<Performance> getPerformanceList(){
         return rankList;
     }
-    class RankList{
+    public class Performance{
         public String email, name, nickName, realName;
         public int penalty, rank, solved, tried;
         public String penaltyString;
         ArrayList<ProblemStatus> problemStutasList = new ArrayList<>(15);
-        public RankList(JSONObject jsonObject) {
+        public Performance(JSONObject jsonObject) {
             JSONArray itemList = jsonObject.optJSONArray("itemList");
             for (int i = 0; i < itemList.length(); i++) {
                 problemStutasList.add(new ProblemStatus(itemList.optJSONObject(i)));
@@ -69,7 +73,7 @@ public class Rank {
         public ArrayList<ProblemStatus> getProblemStatusList(){
             return problemStutasList;
         }
-        class ProblemStatus{
+        public class ProblemStatus{
             public boolean firstBlood, solved, triedAfterFrozen;
             public int penalty, solvedTime, tried;
             public ProblemStatus(JSONObject jsonObject) {
