@@ -32,7 +32,7 @@ public class ArticleUI extends Fragment {
             rootView = inflater.inflate(R.layout.article, container, false);
             webViewFragment = new DetailWebViewFragment();
             webViewFragment.switchHTMLData(ViewHandler.ARTICLE_DETAIL);
-            getChildFragmentManager().beginTransaction()
+            getFragmentManager().beginTransaction()
                     .add(R.id.webViewFragment_article,webViewFragment)
                     .commit();
             toolbar = (Toolbar) rootView.findViewById(R.id.toolbar_article);

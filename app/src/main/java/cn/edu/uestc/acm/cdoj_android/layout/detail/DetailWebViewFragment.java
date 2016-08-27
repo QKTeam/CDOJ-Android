@@ -26,6 +26,7 @@ public class DetailWebViewFragment extends WebViewFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setRetainInstance(true);
         super.onCreate(savedInstanceState);
     }
 

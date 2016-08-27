@@ -3,6 +3,7 @@ package cn.edu.uestc.acm.cdoj_android;
 import android.app.Fragment;
 import android.support.annotation.IntDef;
 
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -10,6 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj_android.layout.detail.ArticleUI;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ContestClarification;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ContestRank;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ContestStatus;
 import cn.edu.uestc.acm.cdoj_android.layout.detail.ContestUI;
 import cn.edu.uestc.acm.cdoj_android.layout.detail.ProblemUI;
 import cn.edu.uestc.acm.cdoj_android.layout.list.ArticleListFragment;
@@ -24,6 +28,8 @@ import cn.edu.uestc.acm.cdoj_android.net.data.ContestInfo;
 import cn.edu.uestc.acm.cdoj_android.net.data.InfoList;
 import cn.edu.uestc.acm.cdoj_android.net.data.Problem;
 import cn.edu.uestc.acm.cdoj_android.net.data.ProblemInfo;
+import cn.edu.uestc.acm.cdoj_android.net.data.Rank;
+import cn.edu.uestc.acm.cdoj_android.net.data.Status;
 
 /**
  * Created by great on 2016/8/15.
@@ -32,6 +38,9 @@ public class NetContent implements ViewHandler {
     private ArticleUI article;
     private ProblemUI problem;
     private ContestUI contest;
+    private ContestClarification clarification;
+    private ContestStatus status;
+    private ContestRank rank;
     private ArticleUI article_itemActivity;
     private ProblemUI problem_itemActivity;
     private ContestUI contest_itemActivity;
@@ -116,6 +125,45 @@ public class NetContent implements ViewHandler {
                     contest_itemActivity.addProblems(((Contest) data).getProblemList());
                     contest_itemActivity = null;
                 }
+                break;
+            case ViewHandler.CONTEST_COMMENT:
+                ArrayList<ArticleInfo> infoList_clarification = ((InfoList) data).getInfoList();
+                for (ArticleInfo tem : infoList_clarification) {
+                    Map<String, Object> listItem = new HashMap<>();
+//                    listItem.put("header", tem.);
+                    listItem.put("content", tem.content);
+                    listItem.put("date", tem.timeString);
+                    listItem.put("author", tem.ownerName);
+                    clarification.addListItem(listItem);
+                }
+                clarification.notifyDataSetChanged();
+                break;
+            case ViewHandler.STATUS_LIST:
+                ArrayList<Status> infoList_status = ((InfoList) data).getInfoList();
+                for (Status tem : infoList_status) {
+                    Map<String, Object> listItem = new HashMap<>();
+                    listItem.put("prob", tem.problemId);
+                    listItem.put("result", tem.returnType);
+                    listItem.put("length", tem.length);
+                    listItem.put("submitTime", tem.);
+                    listItem.put("language", tem.language);
+                    listItem.put("time", tem.timeCost);
+                    listItem.put("memory", tem.memoryCost);
+                    status.addListItem(listItem);
+                }
+                status.notifyDataSetChanged();
+                break;
+            case ViewHandler.CONTEST_RANK:
+                Rank rankInfo = (Rank) data;
+                ArrayList<Rank.Performance> infoList_rank = rankInfo.getPerformanceList();
+                for (Rank.Performance tem : infoList_rank) {
+                    Map<String, Object> listItem = new HashMap<>();
+                    listItem.put("rank", tem.rank);
+                    listItem.put("name", tem.nickName+"("+tem.name+")");
+                    listItem.put("solved", tem.solved);
+                    rank.addListItem(listItem);
+                }
+                rank.notifyDataSetChanged();
                 break;
         }
     }

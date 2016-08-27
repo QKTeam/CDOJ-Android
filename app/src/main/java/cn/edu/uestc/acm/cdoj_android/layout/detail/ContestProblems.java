@@ -52,6 +52,7 @@ public class ContestProblems extends Fragment {
                 setAdapter();
             }
             tabLayout = (TabLayout) rootView.findViewById(R.id.contestProblems_tabLayout);
+            tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         }
     }
 
