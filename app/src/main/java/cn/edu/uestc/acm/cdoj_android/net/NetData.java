@@ -41,7 +41,7 @@ public class NetData {
             contestCommentUrl = severAddress + "/article/commentSearch",
             contestRankListUrl = severAddress + "/contest/rankList/",
             statusListUrl = severAddress + "/status/search",
-            stutasInfoUrl = severAddress + "/stutas/info/",
+            statusInfoUrl = severAddress + "/stutas/info/",
             codeSubmitUrl = severAddress + "/status/submit",
             avatarUrl = "http://cdn.v2ex.com/gravatar/%@.jpg?s=%ld&&d=retro";
     public static void getAvatar(String email, Object addition, ViewHandler viewHandler){
@@ -53,10 +53,10 @@ public class NetData {
         Object o[] = new Object[]{codeContent, languageId, contestId == -1?"":contestId, problemId};
         async(ViewHandler.STUTAS_SUBMIT, new String[]{codeSubmitUrl, constructJson(key, o)}, viewHandler);
     }
-    public static void getStutasInfo(int statusId, ViewHandler viewHandler){
-        async(ViewHandler.STUTAS_INFO, new String[]{stutasInfoUrl + statusId}, viewHandler);
+    public static void getStatusInfo(int statusId, ViewHandler viewHandler){
+        async(ViewHandler.STUTAS_INFO, new String[]{statusInfoUrl + statusId}, viewHandler);
     }
-    public static void getStutasList(int contestId, int page, ViewHandler viewHandler){
+    public static void getStatusList(int contestId, int page, ViewHandler viewHandler){
         String key[] = new String[]{"contestId", "currentPage", "orderAsc", "orderFields", "result"};
         Object[] o = new Object[]{contestId, page, false, "statusId", 0};
         async(ViewHandler.STATUS_LIST, new String[]{statusListUrl, constructJson(key, o)}, viewHandler);
