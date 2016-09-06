@@ -18,23 +18,23 @@ public class Status {
 
     public Status(JSONObject jsonObject) {
         try {
-            caseNumber = jsonObject.getInt("caseNumber");
-            length = jsonObject.getInt("length");
-            memoryCost = jsonObject.getInt("memoryCost");
-            problemId = jsonObject.getInt("problemId");
-            returnTypeId = jsonObject.getInt("returnTypeId");
-            statusId = jsonObject.getLong("statusId");
-            time = jsonObject.getLong("time");
+            caseNumber = jsonObject.optInt("caseNumber");
+            length = jsonObject.optInt("length");
+            memoryCost = jsonObject.optInt("memoryCost");
+            problemId = jsonObject.optInt("problemId");
+            returnTypeId = jsonObject.optInt("returnTypeId");
+            statusId = jsonObject.optLong("statusId");
+            time = jsonObject.optLong("time");
             timeString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
-            timeCost = jsonObject.getInt("timeCost");
+            timeCost = jsonObject.optInt("timeCost");
 
-            email = jsonObject.getString("email");
-            language = jsonObject.getString("language");
-            name = jsonObject.getString("name");
-            nickName = jsonObject.getString("nickName");
-            returnType = jsonObject.getString("returnType");
-            userName = jsonObject.getString("userName");
-        } catch (JSONException e) {
+            email = jsonObject.optString("email");
+            language = jsonObject.optString("language");
+            name = jsonObject.optString("name");
+            nickName = jsonObject.optString("nickName");
+            returnType = jsonObject.optString("returnType");
+            userName = jsonObject.optString("userName");
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
