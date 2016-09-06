@@ -19,13 +19,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ItemDetailActivity"
+            android:name=".ItemContentActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".ItemDetailActivity"
+            android:parentActivityName=".ItemContentActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="cn.edu.uestc.acm.cdoj_android.ItemDetailActivity" />
+                android:value=".ItemContentActivity" />
         </activity>
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>

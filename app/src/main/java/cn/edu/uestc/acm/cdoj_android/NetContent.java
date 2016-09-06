@@ -1,5 +1,6 @@
 package cn.edu.uestc.acm.cdoj_android;
 
+import android.app.Fragment;
 import android.support.annotation.IntDef;
 
 import java.lang.annotation.Retention;
@@ -8,8 +9,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import cn.edu.uestc.acm.cdoj_android.layout.ListFragmentWithGestureLoad;
-import cn.edu.uestc.acm.cdoj_android.layout.details.DetailsWebViewFragment;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ArticleUI;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ContestUI;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ProblemUI;
+import cn.edu.uestc.acm.cdoj_android.layout.list.ArticleListFragment;
+import cn.edu.uestc.acm.cdoj_android.layout.list.ContestListFragment;
+import cn.edu.uestc.acm.cdoj_android.layout.list.ProblemListFragment;
 import cn.edu.uestc.acm.cdoj_android.net.NetData;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj_android.net.data.Article;
@@ -24,9 +29,16 @@ import cn.edu.uestc.acm.cdoj_android.net.data.ProblemInfo;
  * Created by great on 2016/8/15.
  */
 public class NetContent implements ViewHandler {
-    DetailsWebViewFragment[] detailsFragments  = new DetailsWebViewFragment[3];
-    ListFragmentWithGestureLoad[] listFragments = new ListFragmentWithGestureLoad[3];
-    DetailsWebViewFragment[] detailsFragments_itemActivity = new DetailsWebViewFragment[3];
+    private ArticleUI article;
+    private ArticleUI article_itemActivity;
+    private ProblemUI problem;
+    private ProblemUI problem_itemActivity;
+    private ContestUI contest;
+    private ContestUI contest_itemActivity;
+    private ArticleListFragment articleList;
+    private ProblemListFragment problemList;
+    private ContestListFragment contestList;
+
 
     @Override
     public void show(int which, Object data, long time) {
@@ -40,17 +52,18 @@ public class NetContent implements ViewHandler {
                     listItem.put("releaseTime", tem.timeString);
                     listItem.put("author", tem.ownerName);
                     listItem.put("id", "" + tem.articleId);
-                    listFragments[0].addListItem(listItem);
+                    articleList.addListItem(listItem);
                 }
-                listFragments[0].notifyDataSetChanged();
+                articleList.notifyDataSetChanged();
                 break;
 
             case ViewHandler.ARTICLE_DETAIL:
-                if (detailsFragments[0] != null) {
-                    detailsFragments[0].addJSData(((Article) data).getContentString());
+                if (article != null) {
+                    article.addJSData(((Article) data).getContentString());
                 }
-                if (detailsFragments_itemActivity[0] != null) {
-                    detailsFragments_itemActivity[0].addJSData(((Article) data).getContentString());
+                if (article_itemActivity != null) {
+                    article_itemActivity.addJSData(((Article) data).getContentString());
+                    article_itemActivity = null;
                 }
                 break;
 
@@ -63,17 +76,18 @@ public class NetContent implements ViewHandler {
                     listItem.put("source", tem.source);
                     listItem.put("id", "" + tem.problemId);
                     listItem.put("number", number);
-                    listFragments[1].addListItem(listItem);
+                    problemList.addListItem(listItem);
                 }
-                listFragments[1].notifyDataSetChanged();
+                problemList.notifyDataSetChanged();
                 break;
 
             case ViewHandler.PROBLEM_DETAIL:
-                if (detailsFragments[1] != null) {
-                    detailsFragments[1].addJSData(((Problem) data).getContentString());
+                if (problem != null) {
+                    problem.addJSData(((Problem) data).getContentString());
                 }
-                if (detailsFragments_itemActivity[1] != null) {
-                    detailsFragments_itemActivity[1].addJSData(((Problem) data).getContentString());
+                if (problem_itemActivity != null) {
+                    problem_itemActivity.addJSData(((Problem) data).getContentString());
+                    problem_itemActivity = null;
                 }
                 break;
 
@@ -87,17 +101,20 @@ public class NetContent implements ViewHandler {
                     listItem.put("id", "" + tem.contestId);
                     listItem.put("status", tem.status);
                     listItem.put("permissions", tem.typeName);
-                    listFragments[2].addListItem(listItem);
+                    contestList.addListItem(listItem);
                 }
-                listFragments[2].notifyDataSetChanged();
+                contestList.notifyDataSetChanged();
                 break;
 
             case ViewHandler.CONTEST_DETAIL:
-                if (detailsFragments[2] != null) {
-                    detailsFragments[2].addJSData(((Contest) data).getContentString());
+                if (contest != null) {
+                    contest.addOverView(((Contest) data).getContentString());
+                    contest.addProblems(((Contest) data).getProblemList());
                 }
-                if (detailsFragments_itemActivity[2] != null) {
-                    detailsFragments_itemActivity[2].addJSData(((Contest) data).getContentString());
+                if (contest_itemActivity != null) {
+                    contest_itemActivity.addOverView(((Contest) data).getContentString());
+                    contest_itemActivity.addProblems(((Contest) data).getProblemList());
+                    contest_itemActivity = null;
                 }
                 break;
         }
@@ -131,30 +148,45 @@ public class NetContent implements ViewHandler {
         }
     }
 
-    public void getContent(DetailsWebViewFragment webViewFragment, int idOrPage) {
-        switch (webViewFragment.getHTMLType()) {
-            case ViewHandler.ARTICLE_DETAIL:
-                detailsFragments_itemActivity[0] = webViewFragment;
-                NetData.getArticleDetail(idOrPage, this);
-                break;
-            case ViewHandler.PROBLEM_DETAIL:
-                detailsFragments_itemActivity[1] = webViewFragment;
-                NetData.getProblemDetail(idOrPage, this);
-                break;
-            case ViewHandler.CONTEST_DETAIL:
-                detailsFragments_itemActivity[2] = webViewFragment;
-                NetData.getContestDetail(idOrPage, this);
-                break;
+    public void getItemContent(Fragment detail, int idOrPage) {
+        if (detail == null) {return;}
+        if (detail instanceof ArticleUI) {
+            this.article_itemActivity = (ArticleUI) detail;
+            NetData.getArticleDetail(idOrPage,this);
+            return;
+        }
+        if (detail instanceof ProblemUI) {
+            this.problem_itemActivity = (ProblemUI) detail;
+            NetData.getProblemDetail(idOrPage, this);
+            return;
+        }
+        if (detail instanceof ContestUI) {
+            this.contest_itemActivity = (ContestUI) detail;
+            NetData.getContestDetail(idOrPage, this);
         }
     }
 
-    public NetContent addListFragments(ListFragmentWithGestureLoad[] listFragments) {
-        this.listFragments = listFragments;
-        return this;
+    public void addList(ArticleListFragment articleList) {
+        this.articleList = articleList;
     }
 
-    public NetContent addDetailsFragments(DetailsWebViewFragment[] detailsFragments) {
-        this.detailsFragments = detailsFragments;
-        return this;
+    public void addList(ProblemListFragment problemList) {
+        this.problemList = problemList;
+    }
+
+    public void addList(ContestListFragment contestList) {
+        this.contestList = contestList;
+    }
+
+    public void addDetail(ArticleUI article) {
+        this.article = article;
+    }
+
+    public void addDetail(ProblemUI problem) {
+        this.problem = problem;
+    }
+
+    public void addDetail(ContestUI contest) {
+        this.contest = contest;
     }
 }
