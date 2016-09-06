@@ -49,9 +49,9 @@ public class ListContainer extends Fragment {
             articleList = new ArticleListFragment();
             problemList = new ProblemListFragment();
             contestList = new ContestListFragment();
-            Global.netContent.addList(articleList);
-            Global.netContent.addList(problemList);
-            Global.netContent.addList(contestList);
+            Global.netContent.addListFragment(articleList);
+            Global.netContent.addListFragment(problemList);
+            Global.netContent.addListFragment(contestList);
             rootView = inflater.inflate(R.layout.list_container, container, false);
         }
         return rootView;
@@ -91,8 +91,9 @@ public class ListContainer extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        detailsContainer = ((GetInformation) Global.currentMainActivity).getDetailsContainer();
+        if (detailsContainer == null) {
+            detailsContainer = ((GetInformation) Global.currentMainActivity).getDetailsContainer();
+        }
         boolean isTwoPane = ((GetInformation) Global.currentMainActivity).isTwoPane();
         if (isTwoPane && detailsContainer != null) {
             if (onPageChangeListener == null) {

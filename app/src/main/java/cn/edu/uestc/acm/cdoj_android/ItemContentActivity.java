@@ -6,10 +6,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import cn.edu.uestc.acm.cdoj_android.layout.detail.ArticleUI;
-import cn.edu.uestc.acm.cdoj_android.layout.detail.ContestUI;
-import cn.edu.uestc.acm.cdoj_android.layout.detail.DetailWebViewFragment;
-import cn.edu.uestc.acm.cdoj_android.layout.detail.ProblemUI;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ArticleFragment;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ContestFragment;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ProblemFragment;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj_android.statusBar.FlyMeUtils;
 import cn.edu.uestc.acm.cdoj_android.statusBar.MIUIUtils;
@@ -47,18 +46,27 @@ public class ItemContentActivity extends AppCompatActivity {
         Fragment detail = null;
         switch (type) {
             case ViewHandler.ARTICLE_DETAIL:
-                detail = new ArticleUI();
+                detail = new ArticleFragment();
                 break;
             case ViewHandler.PROBLEM_DETAIL:
-                detail = new ProblemUI();
+                detail = new ProblemFragment();
                 break;
             case ViewHandler.CONTEST_DETAIL:
-                detail = new ContestUI();
+                detail = new ContestFragment();
+                ((ContestFragment)detail).setContestID(intent.getIntExtra("id", 1));
                 break;
         }
-        Global.netContent.getItemContent(detail, intent.getIntExtra("id", 1));
+        Global.netContent.getContent(detail, intent.getIntExtra("id", 1));
         getFragmentManager().beginTransaction()
                 .replace(R.id.detail_container, detail)
                 .commit();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (intent.getIntExtra("type", 0) == ViewHandler.CONTEST_DETAIL) {
+            Global.netContent.removeContestDetailFragmentInActivity();
+        }
     }
 }

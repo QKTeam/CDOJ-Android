@@ -14,7 +14,7 @@ import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 /**
  * Created by great on 2016/8/25.
  */
-public class ArticleUI extends Fragment {
+public class ArticleFragment extends Fragment {
     private View rootView;
     private DetailWebViewFragment webViewFragment;
     private Toolbar toolbar;

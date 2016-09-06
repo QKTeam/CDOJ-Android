@@ -81,8 +81,9 @@ public class ContestProblems extends Fragment {
             }
         });
         tabLayout.setupWithViewPager(viewPager);
+        char a = 'A';
         for (int i = 0; i != problemsCount; ++i) {
-            tabLayout.getTabAt(i).setText("A" + i);
+            tabLayout.getTabAt(i).setText(String.valueOf((char)(a + i)));
         }
     }
 }

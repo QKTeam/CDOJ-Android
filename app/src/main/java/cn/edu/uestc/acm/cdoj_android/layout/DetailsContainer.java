@@ -15,18 +15,18 @@ import java.lang.annotation.RetentionPolicy;
 
 import cn.edu.uestc.acm.cdoj_android.Global;
 import cn.edu.uestc.acm.cdoj_android.R;
-import cn.edu.uestc.acm.cdoj_android.layout.detail.ArticleUI;
-import cn.edu.uestc.acm.cdoj_android.layout.detail.ContestUI;
-import cn.edu.uestc.acm.cdoj_android.layout.detail.ProblemUI;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ArticleFragment;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ContestFragment;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ProblemFragment;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 
 /**
  * Created by great on 2016/8/18.
  */
 public class DetailsContainer extends Fragment {
-    private ArticleUI article;
-    private ProblemUI problem;
-    private ContestUI contest;
+    private ArticleFragment article;
+    private ProblemFragment problem;
+    private ContestFragment contest;
     private ViewPager viewPager;
     private View rootView;
 
@@ -40,12 +40,12 @@ public class DetailsContainer extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (savedInstanceState == null) {
-            article = new ArticleUI();
-            problem = new ProblemUI();
-            contest = new ContestUI();
-            Global.netContent.addDetail(article);
-            Global.netContent.addDetail(problem);
-            Global.netContent.addDetail(contest);
+            article = new ArticleFragment();
+            problem = new ProblemFragment();
+            contest = new ContestFragment();
+            Global.netContent.addDetailFragment(article);
+            Global.netContent.addDetailFragment(problem);
+            Global.netContent.addDetailFragment(contest);
             rootView = inflater.inflate(R.layout.detail_container, container, false);
         }
         return rootView;

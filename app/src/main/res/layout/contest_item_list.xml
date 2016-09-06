@@ -35,6 +35,7 @@
 
         <TextView
             android:id="@+id/contest_timeLimit"
+            android:gravity="right"
             android:layout_width="match_parent"
             android:layout_height="25dp"
             android:layout_weight="1"

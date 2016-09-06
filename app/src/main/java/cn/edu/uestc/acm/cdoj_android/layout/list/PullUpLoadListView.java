@@ -2,6 +2,7 @@ package cn.edu.uestc.acm.cdoj_android.layout.list;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
@@ -12,7 +13,7 @@ import android.widget.ListView;
 public class PullUpLoadListView extends ListView {
 
     private boolean isPullUpLoading;
-    private boolean pullUpLoadEnable = true;
+    private boolean hasMoreData = true;
     private OnPullUpLoadListener onPullUpLoadListener;
     private PullUpLoadListViewFooter footer;
     public interface OnPullUpLoadListener {
@@ -35,30 +36,27 @@ public class PullUpLoadListView extends ListView {
     }
 
     private void init() {
-        if (pullUpLoadEnable){
-            isPullUpLoading = false;
-            footer = new PullUpLoadListViewFooter(getContext());
-            footer.setVisibility(View.VISIBLE);
-            addFooterView(footer);
-            setOnScrollListener(new OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(AbsListView view, int scrollState) {
+        isPullUpLoading = false;
+        footer = new PullUpLoadListViewFooter(getContext());
+        footer.updateView(PullUpLoadListViewFooter.State.NOT_LOADING, "No More");
+        footer.setVisibility(View.VISIBLE);
+        addFooterView(footer);
+        setOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                switch (scrollState) {
+                    case SCROLL_STATE_IDLE:
+                        boolean toBottom = view.getLastVisiblePosition() == view.getCount() - 1;
+                        if (toBottom && !isPullUpLoading && hasMoreData) {
+                            startPullUpLoad();
+                        }
+                        break;
+                }
+            }
 
-                }
-
-                @Override
-                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                    if (needLoad(firstVisibleItem, visibleItemCount, totalItemCount)) {
-                        startPullUpLoad();
-                    }
-                }
-                private boolean needLoad(int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                    int lastVisibleItem = firstVisibleItem + visibleItemCount;
-                    boolean isAtListEnd = lastVisibleItem == totalItemCount;
-                    return (!isPullUpLoading && isAtListEnd);
-                }
-            });
-        }
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
+        });
     }
 
     private void startPullUpLoad() {
@@ -73,16 +71,21 @@ public class PullUpLoadListView extends ListView {
         onPullUpLoadListener = listener;
     }
 
-    public void pullUpLoadingComplete() {
+
+    public void finishAddData() {
         isPullUpLoading = false;
-        footer.updateView(PullUpLoadListViewFooter.State.NOT_LOADING,"Loading Complete");
     }
 
     public Boolean isPullUpLoading() {
         return isPullUpLoading;
     }
 
-    public void setPullUpLoadEnable(boolean pullUpLoadEnable) {
-        this.pullUpLoadEnable = pullUpLoadEnable;
+    public void pullUpLoadFinish() {
+        hasMoreData = true;
+        footer.updateView(PullUpLoadListViewFooter.State.NOT_LOADING,"No More");
+    }
+
+    public void hasMoreData() {
+        hasMoreData = true;
     }
 }

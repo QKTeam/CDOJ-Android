@@ -8,4 +8,5 @@
     <color name="main_background">#ffffff</color>
     <color name="statusBar_background_white">#ffffff</color>
     <color name="statusBar_background_gray">#666666</color>
+    <color name="main_blue">#38bdff</color>
 </resources>

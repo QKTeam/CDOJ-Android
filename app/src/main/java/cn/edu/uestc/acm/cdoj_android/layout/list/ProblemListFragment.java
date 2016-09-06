@@ -23,8 +23,6 @@ import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 public class ProblemListFragment extends ListFragmentWithGestureLoad {
     private SimpleAdapter adapter;
     private ArrayList<Map<String, Object>> listItems = new ArrayList<>();
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private PullUpLoadListView listView;
     boolean isTwoPane;
 
     @Override
@@ -39,19 +37,18 @@ public class ProblemListFragment extends ListFragmentWithGestureLoad {
         super.onActivityCreated(savedInstanceState);
         isTwoPane = ((GetInformation) Global.currentMainActivity).isTwoPane();
         if (savedInstanceState == null) {
-            swipeRefreshLayout = (SwipeRefreshLayout)(getView().findViewById(R.id.listSwipeRefresh));
-            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
                     listItems.clear();
+                    continuePullUpLoad();
                     Global.netContent.getContent(ViewHandler.PROBLEM_LIST, 1);
                 }
             });
-            listView = getListView();
-            listView.setOnPullUpLoadListener(new PullUpLoadListView.OnPullUpLoadListener(){
+            setOnPullUpLoadListener(new PullUpLoadListView.OnPullUpLoadListener(){
                 @Override
                 public void onPullUpLoading() {
-                    Global.netContent.getContent(ViewHandler.PROBLEM_LIST, listItems.size() / 20 + 1);
+                    Global.netContent.getContent(ViewHandler.PROBLEM_LIST, getPageInfo().currentPage+1);
                 }
             });
             Global.netContent.getContent(ViewHandler.PROBLEM_LIST, 1);
@@ -69,12 +66,7 @@ public class ProblemListFragment extends ListFragmentWithGestureLoad {
             createAdapter();
         }
         adapter.notifyDataSetChanged();
-        if (swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(false);
-        }
-        if (listView.isPullUpLoading()) {
-            listView.pullUpLoadingComplete();
-        }
+        super.notifyDataSetChanged();
     }
 
     private void createAdapter() {

@@ -15,6 +15,7 @@ import cn.edu.uestc.acm.cdoj_android.Global;
 import cn.edu.uestc.acm.cdoj_android.ItemContentActivity;
 import cn.edu.uestc.acm.cdoj_android.R;
 import cn.edu.uestc.acm.cdoj_android.GetInformation;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ContestFragment;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 
 /**
@@ -23,8 +24,6 @@ import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 public class ContestListFragment extends ListFragmentWithGestureLoad {
     private SimpleAdapter adapter;
     private ArrayList<Map<String,Object>> listItems = new ArrayList<>();
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private PullUpLoadListView listView;
     boolean isTwoPane;
 
     @Override
@@ -38,19 +37,18 @@ public class ContestListFragment extends ListFragmentWithGestureLoad {
         super.onActivityCreated(savedInstanceState);
         isTwoPane = ((GetInformation) Global.currentMainActivity).isTwoPane();
         if (savedInstanceState == null) {
-            swipeRefreshLayout = (SwipeRefreshLayout)(getView().findViewById(R.id.listSwipeRefresh));
-            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
                     listItems.clear();
+                    continuePullUpLoad();
                     Global.netContent.getContent(ViewHandler.CONTEST_LIST, 1);
                 }
             });
-            listView = getListView();
-            listView.setOnPullUpLoadListener(new PullUpLoadListView.OnPullUpLoadListener(){
+            setOnPullUpLoadListener(new PullUpLoadListView.OnPullUpLoadListener(){
                 @Override
                 public void onPullUpLoading() {
-                    Global.netContent.getContent(ViewHandler.CONTEST_LIST, listItems.size() / 20 + 1);
+                    Global.netContent.getContent(ViewHandler.CONTEST_LIST, getPageInfo().currentPage+1);
                 }
             });
             Global.netContent.getContent(ViewHandler.CONTEST_LIST, 1);
@@ -65,18 +63,13 @@ public class ContestListFragment extends ListFragmentWithGestureLoad {
     @Override
     public void notifyDataSetChanged() {
         if (adapter == null) {
-            creatAdapter();
+            createAdapter();
         }
         adapter.notifyDataSetChanged();
-        if (swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(false);
-        }
-        if (listView.isPullUpLoading()) {
-            listView.pullUpLoadingComplete();
-        }
+        super.notifyDataSetChanged();
     }
 
-    private void creatAdapter() {
+    private void createAdapter() {
         adapter = new SimpleAdapter(
                 Global.currentMainActivity, listItems, R.layout.contest_item_list,
                 new String[]{"title", "date", "timeLimit", "id", "status", "permission"},
@@ -95,6 +88,10 @@ public class ContestListFragment extends ListFragmentWithGestureLoad {
             context.startActivity(intent);
             return;
         }
+        ((ContestFragment) ((GetInformation) Global.currentMainActivity)
+                .getDetailsContainer()
+                .getDetail(ViewHandler.CONTEST_DETAIL))
+                .setContestID(Integer.parseInt((String) listItems.get(position).get("id")));
         Global.netContent.getContent(ViewHandler.CONTEST_DETAIL,
                 Integer.parseInt((String) listItems.get(position).get("id")));
     }
