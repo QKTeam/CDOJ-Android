@@ -47,9 +47,11 @@ public class ItemContentActivity extends AppCompatActivity {
         switch (type) {
             case ViewHandler.ARTICLE_DETAIL:
                 detail = new ArticleFragment();
+                ((ArticleFragment) detail).setTitle(intent.getStringExtra("title"));
                 break;
             case ViewHandler.PROBLEM_DETAIL:
                 detail = new ProblemFragment();
+                ((ProblemFragment) detail).setTitle(intent.getStringExtra("title"));
                 break;
             case ViewHandler.CONTEST_DETAIL:
                 detail = new ContestFragment();

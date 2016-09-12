@@ -61,7 +61,7 @@ public class NetContent implements ViewHandler {
                         articleList.addListItem(listItem);
                     }
                 }else {
-                    articleList.stopPullUpLoad();
+                    articleList.getDataFailure();
                 }
                 articleList.notifyDataSetChanged();
                 break;
@@ -80,7 +80,7 @@ public class NetContent implements ViewHandler {
                         problemList.addListItem(listItem);
                     }
                 } else {
-                    problemList.stopPullUpLoad();
+                    problemList.getDataFailure();
                 }
                 problemList.notifyDataSetChanged();
                 break;
@@ -100,7 +100,7 @@ public class NetContent implements ViewHandler {
                         contestList.addListItem(listItem);
                     }
                 } else {
-                    contestList.stopPullUpLoad();
+                    contestList.getDataFailure();
                 }
                 contestList.notifyDataSetChanged();
                 break;
@@ -155,7 +155,7 @@ public class NetContent implements ViewHandler {
                             contest.getClarification().addListItem(listItem);
                         }
                     } else {
-                        contest.getClarification().stopPullUpLoad();
+                        contest.getClarification().getDataFailure();
                     }
                     contest.getClarification().notifyDataSetChanged();
                 }
@@ -172,7 +172,7 @@ public class NetContent implements ViewHandler {
                             contest_itemActivity.getClarification().addListItem(listItem);
                         }
                     }else {
-                        contest_itemActivity.getClarification().stopPullUpLoad();
+                        contest_itemActivity.getClarification().getDataFailure();
                     }
                     contest_itemActivity.getClarification().notifyDataSetChanged();
                 }
@@ -196,7 +196,7 @@ public class NetContent implements ViewHandler {
                             contest.getStatus().addListItem(listItem);
                         }
                     } else {
-                        contest.getStatus().stopPullUpLoad();
+                        contest.getStatus().getDataFailure();
                     }
                     contest.getStatus().notifyDataSetChanged();
                 }
@@ -216,7 +216,7 @@ public class NetContent implements ViewHandler {
                             contest_itemActivity.getStatus().addListItem(listItem);
                         }
                     } else {
-                        contest_itemActivity.getStatus().stopPullUpLoad();
+                        contest_itemActivity.getStatus().getDataFailure();
                     }
                     contest_itemActivity.getStatus().notifyDataSetChanged();
                 }

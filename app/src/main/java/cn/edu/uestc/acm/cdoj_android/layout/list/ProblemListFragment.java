@@ -9,21 +9,26 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj_android.Global;
 import cn.edu.uestc.acm.cdoj_android.ItemContentActivity;
 import cn.edu.uestc.acm.cdoj_android.R;
 import cn.edu.uestc.acm.cdoj_android.GetInformation;
+import cn.edu.uestc.acm.cdoj_android.net.NetData;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
+import cn.edu.uestc.acm.cdoj_android.net.data.InfoList;
+import cn.edu.uestc.acm.cdoj_android.net.data.ProblemInfo;
 
 /**
  * Created by great on 2016/8/17.
  */
-public class ProblemListFragment extends ListFragmentWithGestureLoad {
+public class ProblemListFragment extends ListFragmentWithGestureLoad implements ViewHandler{
     private SimpleAdapter adapter;
     private ArrayList<Map<String, Object>> listItems = new ArrayList<>();
     boolean isTwoPane;
+    private String key;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,7 +53,11 @@ public class ProblemListFragment extends ListFragmentWithGestureLoad {
             setOnPullUpLoadListener(new PullUpLoadListView.OnPullUpLoadListener(){
                 @Override
                 public void onPullUpLoading() {
-                    Global.netContent.getContent(ViewHandler.PROBLEM_LIST, getPageInfo().currentPage+1);
+                    if (getPageInfo().currentPage != getPageInfo().totalPages) {
+                        NetData.getProblemList(getPageInfo().currentPage + 1, key, ProblemListFragment.this);
+                    } else {
+                        stopPullUpLoad();
+                    }
                 }
             });
             Global.netContent.getContent(ViewHandler.PROBLEM_LIST, 1);
@@ -82,6 +91,7 @@ public class ProblemListFragment extends ListFragmentWithGestureLoad {
         if (!isTwoPane) {
             Context context = l.getContext();
             Intent intent = new Intent(context, ItemContentActivity.class);
+            intent.putExtra("title", (String) listItems.get(position).get("title"));
             intent.putExtra("type", ViewHandler.PROBLEM_DETAIL);
             intent.putExtra("id", Integer.parseInt((String) listItems.get(position).get("id")));
             context.startActivity(intent);
@@ -89,5 +99,33 @@ public class ProblemListFragment extends ListFragmentWithGestureLoad {
         }
         Global.netContent.getContent(ViewHandler.PROBLEM_DETAIL,
                 Integer.parseInt((String) listItems.get(position).get("id")));
+    }
+
+    public void clearList() {
+        listItems.clear();
+    }
+
+    @Override
+    public void show(int which, Object data, long time) {
+        if (((InfoList) data).result) {
+            setPageInfo(((InfoList) data).pageInfo);
+            ArrayList<ProblemInfo> infoList_P = ((InfoList) data).getInfoList();
+            for (ProblemInfo tem : infoList_P) {
+                String number = "" + tem.solved + "/" + tem.tried;
+                Map<String, Object> listItem = new HashMap<>();
+                listItem.put("title", tem.title);
+                listItem.put("source", tem.source);
+                listItem.put("id", "" + tem.problemId);
+                listItem.put("number", number);
+                addListItem(listItem);
+            }
+        } else {
+            getDataFailure();
+        }
+        notifyDataSetChanged();
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }

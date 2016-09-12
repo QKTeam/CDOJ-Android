@@ -37,8 +37,9 @@ public class ContestClarification extends ListFragmentWithGestureLoad {
             setOnPullUpLoadListener(new PullUpLoadListView.OnPullUpLoadListener() {
                 @Override
                 public void onPullUpLoading() {
-                    Log.d("讨论下拉加载", "onPullUpLoading: "+getPageInfo().currentPage);
-                    Global.netContent.getContestPart(ViewHandler.CONTEST_COMMENT,contestID, getPageInfo().currentPage+1);
+                    if (getPageInfo().currentPage != getPageInfo().totalPages) {
+                        Global.netContent.getContestPart(ViewHandler.CONTEST_COMMENT,contestID, getPageInfo().currentPage+1);
+                    }
                 }
             });
             if (contestID != -1) {

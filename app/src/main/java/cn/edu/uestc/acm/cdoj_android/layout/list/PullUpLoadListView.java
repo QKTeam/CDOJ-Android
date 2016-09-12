@@ -81,8 +81,13 @@ public class PullUpLoadListView extends ListView {
     }
 
     public void pullUpLoadFinish() {
-        hasMoreData = true;
+        hasMoreData = false;
         footer.updateView(PullUpLoadListViewFooter.State.NOT_LOADING,"No More");
+    }
+
+    public void getDataFailure() {
+        isPullUpLoading = false;
+        footer.updateView(PullUpLoadListViewFooter.State.NOT_LOADING,"Get Data Failure");
     }
 
     public void hasMoreData() {

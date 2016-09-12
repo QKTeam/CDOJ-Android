@@ -27,6 +27,7 @@ public class DetailsContainer extends Fragment {
     private ArticleFragment article;
     private ProblemFragment problem;
     private ContestFragment contest;
+    private User user;
     private ViewPager viewPager;
     private View rootView;
 
@@ -43,6 +44,7 @@ public class DetailsContainer extends Fragment {
             article = new ArticleFragment();
             problem = new ProblemFragment();
             contest = new ContestFragment();
+            user = new User();
             Global.netContent.addDetailFragment(article);
             Global.netContent.addDetailFragment(problem);
             Global.netContent.addDetailFragment(contest);
@@ -67,12 +69,14 @@ public class DetailsContainer extends Fragment {
                             return problem;
                         case 2:
                             return contest;
+                        case 3:
+                            return user;
                     }
                     return null;
                 }
                 @Override
                 public int getCount() {
-                    return 3;
+                    return 4;
                 }
             });
         }

@@ -50,7 +50,11 @@ public class ArticleListFragment extends ListFragmentWithGestureLoad {
             setOnPullUpLoadListener(new PullUpLoadListView.OnPullUpLoadListener() {
                 @Override
                 public void onPullUpLoading() {
-                    Global.netContent.getContent(ViewHandler.ARTICLE_LIST, getPageInfo().currentPage+1);
+                    if (getPageInfo().currentPage != getPageInfo().totalPages) {
+                        Global.netContent.getContent(ViewHandler.ARTICLE_LIST, getPageInfo().currentPage + 1);
+                    }else {
+                        stopPullUpLoad();
+                    }
                 }
             });
             Global.netContent.getContent(ViewHandler.ARTICLE_LIST, 1);
@@ -76,6 +80,7 @@ public class ArticleListFragment extends ListFragmentWithGestureLoad {
         if (!isTwoPane) {
             Context context = l.getContext();
             Intent intent = new Intent(context, ItemContentActivity.class);
+            intent.putExtra("title", (String) listItems.get(position).get("title"));
             intent.putExtra("type", ViewHandler.ARTICLE_DETAIL);
             intent.putExtra("id", Integer.parseInt((String) listItems.get(position).get("id")));
             context.startActivity(intent);

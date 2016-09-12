@@ -483,6 +483,12 @@ public class ListFragmentWithGestureLoad extends Fragment {
         }
     }
 
+    public void getDataFailure() {
+        if (mList != null) {
+            mList.getDataFailure();
+        }
+    }
+
     public void setPageInfo(PageInfo pageInfo) {
         this.pageInfo = pageInfo;
     }
@@ -490,4 +496,5 @@ public class ListFragmentWithGestureLoad extends Fragment {
     public PageInfo getPageInfo() {
         return pageInfo;
     }
+
 }

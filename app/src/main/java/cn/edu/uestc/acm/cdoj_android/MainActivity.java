@@ -6,9 +6,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import cn.edu.uestc.acm.cdoj_android.layout.DetailsContainer;
 import cn.edu.uestc.acm.cdoj_android.layout.ListContainer;
+import cn.edu.uestc.acm.cdoj_android.net.UserManager;
 import cn.edu.uestc.acm.cdoj_android.statusBar.FlyMeUtils;
 import cn.edu.uestc.acm.cdoj_android.statusBar.MIUIUtils;
 import cn.edu.uestc.acm.cdoj_android.statusBar.StatusBarUtil;
@@ -32,6 +34,13 @@ public class MainActivity extends AppCompatActivity implements GetInformation {
         TabLayout bottomTab = (TabLayout) findViewById(R.id.tabLayout_bottom);
         fragmentManager = getFragmentManager();
         if (savedInstanceState == null) {
+            Global.userManager = new UserManager(this);
+            if (Global.userManager.isLogin()) {
+                Global.loginState = "(已登录）";
+            }else {
+                Global.loginState = "(未登录）";
+            }
+//            Global.userManager.l
             Global.netContent = new NetContent();
             initViews();
         } else {
@@ -85,4 +94,5 @@ public class MainActivity extends AppCompatActivity implements GetInformation {
     public ListContainer getListContainer() {
         return listContainer;
     }
+
 }

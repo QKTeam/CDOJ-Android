@@ -18,6 +18,7 @@ public class ProblemFragment extends Fragment {
     private View rootView;
     private DetailWebViewFragment webViewFragment;
     private Toolbar toolbar;
+    private String title;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,11 +37,22 @@ public class ProblemFragment extends Fragment {
                     .add(R.id.webViewFragment_problem, webViewFragment)
                     .commit();
             toolbar = (Toolbar) rootView.findViewById(R.id.toolbar_problem);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.main_blue));
+            if (title != null) {
+                toolbar.setTitle(title);
+            }
         }
         return rootView;
     }
 
     public void addJSData(String jsData) {
         webViewFragment.addJSData(jsData);
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+        if (toolbar != null) {
+            toolbar.setTitle(title);
+        }
     }
 }

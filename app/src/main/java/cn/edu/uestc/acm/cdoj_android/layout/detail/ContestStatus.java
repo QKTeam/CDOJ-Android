@@ -37,8 +37,9 @@ public class ContestStatus extends ListFragmentWithGestureLoad {
             setOnPullUpLoadListener(new PullUpLoadListView.OnPullUpLoadListener() {
                 @Override
                 public void onPullUpLoading() {
-                    Log.d("上拉获取status列表", "onPullUpLoading: ");
-                    Global.netContent.getContestPart(ViewHandler.STATUS_LIST, contestID, getPageInfo().currentPage + 1);
+                    if (getPageInfo().currentPage != getPageInfo().totalPages) {
+                        Global.netContent.getContestPart(ViewHandler.STATUS_LIST, contestID, getPageInfo().currentPage + 1);
+                    }
                 }
             });
             if (contestID != -1) {
