@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package cn.edu.uestc.acm.cdoj_android.layout;
+package cn.edu.uestc.acm.cdoj_android.layout.list;
 
 
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -234,6 +233,7 @@ public class ListFragmentWithGestureLoad extends Fragment {
         super.onDestroyView();
     }
 
+
     /**
      * This method will be called when an item in the list is selected.
      * Subclasses should override. Subclasses can call
@@ -434,4 +434,8 @@ public class ListFragmentWithGestureLoad extends Fragment {
     public void notifyDataSetChanged(){}
 
     public void addListItem(Map<String ,String> listItem){}
+
+    public void setPullUpLoad(Boolean isPullUpLoad) {
+        mList.setPullUpLoad(isPullUpLoad);
+    }
 }

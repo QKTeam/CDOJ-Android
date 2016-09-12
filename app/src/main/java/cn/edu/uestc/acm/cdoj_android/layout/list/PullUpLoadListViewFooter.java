@@ -1,4 +1,4 @@
-package cn.edu.uestc.acm.cdoj_android.layout;
+package cn.edu.uestc.acm.cdoj_android.layout.list;
 
 import android.content.Context;
 import android.util.AttributeSet;

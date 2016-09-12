@@ -1,23 +1,18 @@
-package cn.edu.uestc.acm.cdoj_android.layout.details;
+package cn.edu.uestc.acm.cdoj_android.layout.detail;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.webkit.WebViewFragment;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import cn.edu.uestc.acm.cdoj_android.ShowTestText;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 
 /**
  * Created by great on 2016/8/16.
  */
-public class DetailsWebViewFragment extends WebViewFragment {
+public class DetailWebViewFragment extends android.webkit.WebViewFragment {
     final String acmWebUrl = "http://acm.uestc.edu.cn/";
     final String mimeType = "text/html";
     final String encoding = "utf-8";
@@ -25,20 +20,11 @@ public class DetailsWebViewFragment extends WebViewFragment {
     String webData;
     WebView webView;
     int HTMLType = 0;
-    View rootView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setRetainInstance(true);
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            rootView = super.onCreateView(inflater, container, savedInstanceState);
-        }
-        return rootView;
     }
 
     @Override
@@ -77,16 +63,17 @@ public class DetailsWebViewFragment extends WebViewFragment {
         }
     }
 
-    public void switchHTMLData(int type) {
+    public DetailWebViewFragment switchHTMLData(int type) {
         this.HTMLType = type;
+        return this;
     }
 
     public int getHTMLType() {
         return HTMLType;
     }
 
-    public void addJSData(String JSData) {
-        webData = HTMLData.replace("{{{replace_data_here}}}", JSData);
+    public void addJSData(String jsData) {
+        webData = HTMLData.replace("{{{replace_data_here}}}", jsData);
         if (webView != null) {
             webView.loadDataWithBaseURL(acmWebUrl, webData, mimeType, encoding, null);
         }
