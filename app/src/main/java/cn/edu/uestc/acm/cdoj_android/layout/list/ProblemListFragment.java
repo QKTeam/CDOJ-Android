@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -13,16 +12,11 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj_android.Global;
-import cn.edu.uestc.acm.cdoj_android.NetContent;
-import cn.edu.uestc.acm.cdoj_android.ItemDetailActivity;
+import cn.edu.uestc.acm.cdoj_android.ItemContentActivity;
 import cn.edu.uestc.acm.cdoj_android.R;
-import cn.edu.uestc.acm.cdoj_android.Selection;
-import cn.edu.uestc.acm.cdoj_android.layout.ListFragmentWithGestureLoad;
-import cn.edu.uestc.acm.cdoj_android.layout.PullUpLoadListView;
-import cn.edu.uestc.acm.cdoj_android.layout.details.DetailsWebViewFragment;
-import cn.edu.uestc.acm.cdoj_android.net.NetData;
+import cn.edu.uestc.acm.cdoj_android.GetInformation;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.DetailWebViewFragment;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
-import cn.edu.uestc.acm.cdoj_android.net.data.Problem;
 
 /**
  * Created by great on 2016/8/17.
@@ -32,7 +26,7 @@ public class ProblemListFragment extends ListFragmentWithGestureLoad {
     ArrayList<Map<String,String>> listItems = new ArrayList<>();
     SwipeRefreshLayout swipeRefreshLayout;
     PullUpLoadListView listView;
-    DetailsWebViewFragment problemDetails;
+    DetailWebViewFragment problemDetails;
     boolean isTwoPane;
 
     @Override
@@ -41,10 +35,11 @@ public class ProblemListFragment extends ListFragmentWithGestureLoad {
         super.onCreate(savedInstanceState);
     }
 
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        isTwoPane = ((Selection) Global.currentMainActivity).isTwoPane();
+        isTwoPane = ((GetInformation) Global.currentMainActivity).isTwoPane();
         if (savedInstanceState == null) {
             swipeRefreshLayout = (SwipeRefreshLayout)(getView().findViewById(R.id.listSwipeRefresh));
             swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -63,9 +58,9 @@ public class ProblemListFragment extends ListFragmentWithGestureLoad {
             });
             Global.netContent.getContent(ViewHandler.PROBLEM_LIST, 1);
             if (isTwoPane) {
-                problemDetails = ((Selection) Global.currentMainActivity)
+                problemDetails = (DetailWebViewFragment)((GetInformation) Global.currentMainActivity)
                         .getDetailsContainer()
-                        .getDetailsFragment(ViewHandler.PROBLEM_DETAIL);
+                        .getDetail(ViewHandler.PROBLEM_DETAIL);
             }
         }
     }
@@ -97,13 +92,12 @@ public class ProblemListFragment extends ListFragmentWithGestureLoad {
     public void onListItemClick(ListView l, View v, int position, long id) {
         if (!isTwoPane) {
             Context context = l.getContext();
-            Intent intent = new Intent(context, ItemDetailActivity.class);
+            Intent intent = new Intent(context, ItemContentActivity.class);
             intent.putExtra("type", ViewHandler.PROBLEM_DETAIL);
             intent.putExtra("id", Integer.parseInt(listItems.get(position).get("id")));
             context.startActivity(intent);
             return;
         }
-        Log.d("执行点击", "onListItemClick: ");
         Global.netContent.getContent(ViewHandler.PROBLEM_DETAIL,Integer.parseInt(listItems.get(position).get("id")));
     }
 }
