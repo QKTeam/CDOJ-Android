@@ -43,7 +43,13 @@ public class NetData {
             statusListUrl = severAddress + "/status/search",
             statusInfoUrl = severAddress + "/stutas/info/",
             codeSubmitUrl = severAddress + "/status/submit",
-            avatarUrl = "http://cdn.v2ex.com/gravatar/%@.jpg?s=%ld&&d=retro";
+            avatarUrl = "http://cdn.v2ex.com/gravatar/%@.jpg?s=%ld&&d=retro",
+            registerUrl = severAddress + "/user/register";
+    public static void register(String userName, String password, String passwordRepeat, String nickName, String email, String motto, String name, int sex, int size, String phone, String school, int departmentId, int grade, String studentId, ViewHandler viewHandler, Object add){
+        String key[] = new String[]{"userName", "password", "passwordRepeat", "nickName", "email", "motto", "name", "sex", "size", "phone", "school", "departmentId", "grade", "studentId"};
+        Object o[] = new Object[]{userName, password, passwordRepeat, nickName, email, motto, name, sex, size, phone, school, departmentId, grade, studentId};
+        asyncWithAdd(ViewHandler.REGISTER, new String[]{registerUrl ,constructJson(key, o)}, viewHandler, add);
+    }
     public static void getAvatar(String email, Object addition, ViewHandler viewHandler){
         asyncWithAdd(ViewHandler.AVATAR, new String[]{avatarUrl.replace("%@", NetWorkTool.md(email, "md5")).replace("%ld", "200")}, viewHandler, addition);
     }
@@ -89,17 +95,17 @@ public class NetData {
         }
         async(ViewHandler.LOGCONTEST, new String[]{loginContestUrl, p}, viewHandler);
     }
-    public static void login(String userName, String sha1password, ViewHandler viewHandler){
+    public static void login(String userName, String sha1password, ViewHandler viewHandler, Object add){
         String p = "";
         try {
             p = new JSONObject().put("userName", userName).put("password", sha1password).toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        async(ViewHandler.LOGIN, new String[]{loginUrl, p}, viewHandler);
+        asyncWithAdd(ViewHandler.LOGIN, new String[]{loginUrl, p}, viewHandler, add);
     }
-    public static void logout(ViewHandler viewHandler){
-        async(ViewHandler.LOGOUT, new String[]{logoutUrl}, viewHandler);
+    public static void logout(ViewHandler viewHandler, Object extral){
+        asyncWithAdd(ViewHandler.LOGOUT, new String[]{logoutUrl}, viewHandler, extral);
     }
     public static void getProblemList(final int page, String keyword, final ViewHandler viewHandler){
         String p = "";
@@ -201,6 +207,9 @@ public class NetData {
             case ViewHandler.STUTAS_INFO:
                 return Status.getCode(result);
             case ViewHandler.STUTAS_SUBMIT:
+                return checkResult(result);
+            case ViewHandler.REGISTER:
+                Log.d(TAG, "request: " + result);
                 return checkResult(result);
             default: return null;
         }
