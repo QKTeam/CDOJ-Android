@@ -18,7 +18,9 @@ public interface ViewHandler {
             STATUS_LIST = 11,
             STUTAS_INFO = 12,
             STUTAS_SUBMIT = 13,
-            AVATAR = 14;
+            AVATAR = 14,
+            REGISTER = 15;
+
     //    void showProblemList(ProblemInfoList problemInfoList);
 //    void showContestList(ContestInfoList contestInfoList);
 //    void showArticleList(ArticleInfoList aritcleInfoList);
