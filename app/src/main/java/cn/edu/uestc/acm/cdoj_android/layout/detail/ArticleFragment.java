@@ -10,11 +10,12 @@ import android.view.ViewGroup;
 
 import cn.edu.uestc.acm.cdoj_android.R;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
+import cn.edu.uestc.acm.cdoj_android.net.data.Article;
 
 /**
  * Created by great on 2016/8/25.
  */
-public class ArticleFragment extends Fragment {
+public class ArticleFragment extends Fragment implements ViewHandler{
     private View rootView;
     private DetailWebViewFragment webViewFragment;
     private Toolbar toolbar;
@@ -54,5 +55,10 @@ public class ArticleFragment extends Fragment {
         if (toolbar != null) {
             toolbar.setTitle(title);
         }
+    }
+
+    @Override
+    public void show(int which, Object data, long time) {
+        addJSData(((Article) data).getContentString());
     }
 }

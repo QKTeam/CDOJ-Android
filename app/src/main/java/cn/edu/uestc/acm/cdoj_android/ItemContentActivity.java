@@ -60,7 +60,7 @@ public class ItemContentActivity extends AppCompatActivity {
         }
         Global.netContent.getContent(detail, intent.getIntExtra("id", 1));
         getFragmentManager().beginTransaction()
-                .replace(R.id.detail_container, detail)
+                .replace(R.id.detail_activity, detail)
                 .commit();
     }
 

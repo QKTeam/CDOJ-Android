@@ -29,19 +29,16 @@ public class MainActivity extends AppCompatActivity implements GetInformation {
         super.onCreate(savedInstanceState);
         Global.currentMainActivity = this;
         setContentView(R.layout.activity_main);
-//        isTwoPane = findViewById(R.id.landAndPadMark) != null;
-        isTwoPane = false;
+        isTwoPane = findViewById(R.id.landAndPadMark) != null;
+        Global.isTwoPane = isTwoPane;
         initStatusBar();
         TabLayout bottomTab = (TabLayout) findViewById(R.id.tabLayout_bottom);
         fragmentManager = getFragmentManager();
         if (savedInstanceState == null) {
-            if (Global.userManager == null) {
-                Global.userManager = new UserManager(this);
-            }
+            Global.userManager = new UserManager(this);
             if (Global.userManager.isLogin()) {
                 Global.userManager.keepLogin();
             }
-//            Global.userManager.l
             Global.netContent = new NetContent();
             initViews();
         } else {
@@ -69,9 +66,11 @@ public class MainActivity extends AppCompatActivity implements GetInformation {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         if (isTwoPane) {
             detailsContainer = new DetailsContainer();
+            Global.detailsContainer = detailsContainer;
             transaction.add(R.id.details_container, detailsContainer, "detailsContainer");
         }
         listContainer = new ListContainer();
+        Global.listContainer = listContainer;
         transaction.add(R.id.list_container, listContainer, "listContainer");
         transaction.commit();
     }

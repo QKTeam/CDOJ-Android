@@ -6,6 +6,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import cn.edu.uestc.acm.cdoj_android.GetInformation;
 import cn.edu.uestc.acm.cdoj_android.Global;
 import cn.edu.uestc.acm.cdoj_android.R;
 import cn.edu.uestc.acm.cdoj_android.customtoolbar.ToolBarWithSearch;
@@ -42,8 +42,6 @@ public class ListContainer extends Fragment implements ViewHandler{
     private ViewPager viewPager;
     private TabLayout bottomTab;
     private View rootView;
-    private ViewPager.OnPageChangeListener onPageChangeListener;
-    private DetailsContainer detailsContainer;
     private ToolBarWithSearch toolBarWithSearch;
 
 
@@ -71,72 +69,127 @@ public class ListContainer extends Fragment implements ViewHandler{
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
         if (savedInstanceState == null) {
             toolBarWithSearch = (ToolBarWithSearch) rootView.findViewById(R.id.toolbar_list);
-//            toolBarWithSearch.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            toolBarWithSearch.setTitleTextColor(getResources().getColor(R.color.main_blue));
-            toolBarWithSearch.setTitle("公告");
-            toolBarWithSearch.setSearchListener(new ToolBarWithSearch.ToolBarWithSearchListener() {
-                @Override
-                public void search(String key) {
-                    switch (viewPager.getCurrentItem()) {
-                        case 1:
-                            problemList.setKey(key);
-                            problemList.continuePullUpLoad();
-                            problemList.clearList();
-                            NetData.getProblemList(1, key, ListContainer.this);
-                            break;
-                        case 2:
-                            contestList.setKey(key);
-                            contestList.continuePullUpLoad();
-                            contestList.clearList();
-                            NetData.getContestList(1, key, ListContainer.this);
-                    }
-                }
-            });
-            toolBarWithSearch.setCloseListener(new ToolBarWithSearch.OnSearchCloseListener() {
-                @Override
-                public void recovery() {
-                    switch (viewPager.getCurrentItem()) {
-                        case 1:
-                            problemList.setKey(null);
-                            problemList.continuePullUpLoad();
-                            problemList.clearList();
-                            NetData.getProblemList(1, null, ListContainer.this);
-                            break;
-                        case 2:
-                            contestList.setKey(null);
-                            contestList.continuePullUpLoad();
-                            contestList.clearList();
-                            NetData.getContestList(1, null, ListContainer.this);
-                    }
-                }
-            });
+            configureToolBar();
             viewPager = (ViewPager) (rootView.findViewById(R.id.listViewPager));
-            viewPager.setOffscreenPageLimit(2);
-            viewPager.setAdapter(new FragmentPagerAdapter(getFragmentManager()) {
+            configureViewPager();
+            if (bottomTab != null) {
+                setupTabLayout();
+            }
+        }
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    private void configureToolBar() {
+        toolBarWithSearch.setTitleTextColor(ContextCompat.getColor(rootView.getContext(), R.color.main_blue));
+        toolBarWithSearch.setTitle(getString(R.string.article));
+        toolBarWithSearch.setSearchListener(new ToolBarWithSearch.ToolBarWithSearchListener() {
+            @Override
+            public void search(String key) {
+                switch (viewPager.getCurrentItem()) {
+                    case 1:
+                        problemList.setKey(key);
+                        problemList.continuePullUpLoad();
+                        problemList.clearList();
+                        NetData.getProblemList(1, key, ListContainer.this);
+                        break;
+                    case 2:
+                        contestList.setKey(key);
+                        contestList.continuePullUpLoad();
+                        contestList.clearList();
+                        NetData.getContestList(1, key, ListContainer.this);
+                }
+            }
+        });
+        toolBarWithSearch.setCloseListener(new ToolBarWithSearch.OnSearchCloseListener() {
+            @Override
+            public void recovery() {
+                switch (viewPager.getCurrentItem()) {
+                    case 1:
+                        problemList.setKey(null);
+                        problemList.continuePullUpLoad();
+                        problemList.clearList();
+                        NetData.getProblemList(1, null, ListContainer.this);
+                        break;
+                    case 2:
+                        contestList.setKey(null);
+                        contestList.continuePullUpLoad();
+                        contestList.clearList();
+                        NetData.getContestList(1, null, ListContainer.this);
+                }
+            }
+        });
+    }
+
+    private void configureViewPager() {
+        viewPager.setOffscreenPageLimit(2);
+        viewPager.setAdapter(new FragmentPagerAdapter(getFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                switch (position) {
+                    case 0:
+                        return articleList;
+                    case 1:
+                        return problemList;
+                    case 2:
+                        return contestList;
+                    case 3:
+                        return user;
+                }
+                return null;
+            }
+
+            @Override
+            public int getCount() {
+                return 4;
+            }
+        });
+
+        if (Global.isTwoPane) {
+            final DetailsContainer detailsContainer = Global.detailsContainer;
+            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
-                public Fragment getItem(int position) {
-                    switch (position) {
-                        case 0:
-                            return articleList;
-                        case 1:
-                            return problemList;
-                        case 2:
-                            return contestList;
-                        case 3:
-                            return user;
-                    }
-                    return null;
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
                 }
 
                 @Override
-                public int getCount() {
-                    return 4;
+                public void onPageSelected(int position) {
+                    switch (position) {
+                        case 0:
+                            toolBarWithSearch.setSearchViewEnable(false);
+                            toolBarWithSearch.setTitle(getString(R.string.Article));
+                            detailsContainer.show(ViewHandler.ARTICLE_DETAIL);
+                            break;
+                        case 1:
+                            toolBarWithSearch.setTitle(getString(R.string.problem));
+                            toolBarWithSearch.setSearchViewEnable(true);
+                            detailsContainer.show(ViewHandler.PROBLEM_DETAIL);
+                            break;
+                        case 2:
+                            toolBarWithSearch.setSearchViewEnable(true);
+                            toolBarWithSearch.setTitle(getString(R.string.contest));
+                            detailsContainer.show(ViewHandler.CONTEST_DETAIL);
+                            break;
+                        case 3:
+                            toolBarWithSearch.setSearchViewEnable(false);
+                            toolBarWithSearch.setTitle(getString(R.string.user));
+                            detailsContainer.show(ViewHandler.USER);
+                            /*if (Global.userManager.isLogin()) {
+                                user.setLogin(true);
+                            }else {
+                                user.setLogin(false);
+                            }*/
+                    }
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
                 }
             });
+        }else {
             viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -160,12 +213,12 @@ public class ListContainer extends Fragment implements ViewHandler{
                             break;
                         case 3:
                             toolBarWithSearch.setSearchViewEnable(false);
-                            toolBarWithSearch.setTitle("用户");
-                            if (Global.userManager.isLogin()) {
+                            toolBarWithSearch.setTitle(getString(R.string.user));
+                            /*if (Global.userManager.isLogin()) {
                                 user.setLogin(true);
                             }else {
                                 user.setLogin(false);
-                            }
+                            }*/
                     }
                 }
 
@@ -174,40 +227,6 @@ public class ListContainer extends Fragment implements ViewHandler{
 
                 }
             });
-        }
-        if (onPageChangeListener != null) {viewPager.addOnPageChangeListener(onPageChangeListener);}
-        if (bottomTab != null) {setupTabLayout();}
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (detailsContainer == null) {
-            detailsContainer = ((GetInformation) Global.currentMainActivity).getDetailsContainer();
-        }
-        boolean isTwoPane = ((GetInformation) Global.currentMainActivity).isTwoPane();
-        if (isTwoPane && detailsContainer != null) {
-            if (onPageChangeListener == null) {
-                onPageChangeListener = new ViewPager.OnPageChangeListener() {
-                    @Override
-                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-                    }
-
-                    @Override
-                    public void onPageSelected(int position) {
-                        detailsContainer.setCurrentItem(position);
-                    }
-
-                    @Override
-                    public void onPageScrollStateChanged(int state) {
-
-                    }
-                };
-            }
-            viewPager.addOnPageChangeListener(onPageChangeListener);
-        } else {
-//            viewPager.removeOnPageChangeListener(onPageChangeListener);
         }
     }
 

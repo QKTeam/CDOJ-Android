@@ -21,7 +21,6 @@ import cn.edu.uestc.acm.cdoj_android.ItemContentActivity;
 import cn.edu.uestc.acm.cdoj_android.LoginActivity;
 import cn.edu.uestc.acm.cdoj_android.R;
 import cn.edu.uestc.acm.cdoj_android.GetInformation;
-import cn.edu.uestc.acm.cdoj_android.layout.detail.ContestFragment;
 import cn.edu.uestc.acm.cdoj_android.net.NetData;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj_android.net.data.ContestInfo;
@@ -210,7 +209,7 @@ public class ContestListFragment extends ListFragmentWithGestureLoad implements 
                 }
                 notifyDataSetChanged();
                 break;
-            case ViewHandler.LOGCONTEST:
+            case ViewHandler.LOGIN_CONTEST:
                 Log.d("是够登录成功", ""+(boolean)data);
                 if ((boolean) data) {
                     showDetail();

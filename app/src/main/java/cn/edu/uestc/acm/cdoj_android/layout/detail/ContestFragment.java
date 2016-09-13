@@ -20,14 +20,16 @@ import java.util.ArrayList;
 import cn.edu.uestc.acm.cdoj_android.Global;
 import cn.edu.uestc.acm.cdoj_android.NetContent;
 import cn.edu.uestc.acm.cdoj_android.R;
+import cn.edu.uestc.acm.cdoj_android.net.NetData;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
+import cn.edu.uestc.acm.cdoj_android.net.data.Contest;
 import cn.edu.uestc.acm.cdoj_android.net.data.Problem;
 import cn.edu.uestc.acm.cdoj_android.net.data.Status;
 
 /**
  * Created by great on 2016/8/25.
  */
-public class ContestFragment extends Fragment {
+public class ContestFragment extends Fragment implements ViewHandler{
 
     private View rootView;
     private DetailWebViewFragment overview;
@@ -50,18 +52,12 @@ public class ContestFragment extends Fragment {
         if (savedInstanceState == null) {
             fragmentManager = getFragmentManager();
             rootView =  inflater.inflate(R.layout.contest, container, false);
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
             overview = new DetailWebViewFragment().switchHTMLData(ViewHandler.CONTEST_DETAIL);
             problems = new ContestProblems();
             clarification = new ContestClarification();
             status  = new ContestStatus();
             rank = new ContestRank();
-            transaction.add(R.id.contest_details, overview);
-            transaction.add(R.id.contest_details, problems);
-            transaction.add(R.id.contest_details, clarification);
-            transaction.add(R.id.contest_details, status);
-            transaction.add(R.id.contest_details, rank);
-            transaction.commit();
+            addPartFragment();
             show(0);
             if (contestID != -1) {
                 clarification.setContestID(contestID);
@@ -70,6 +66,16 @@ public class ContestFragment extends Fragment {
             }
         }
         return rootView;
+    }
+
+    private void addPartFragment() {
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.add(R.id.contest_details, overview);
+        transaction.add(R.id.contest_details, problems);
+        transaction.add(R.id.contest_details, clarification);
+        transaction.add(R.id.contest_details, status);
+        transaction.add(R.id.contest_details, rank);
+        transaction.commit();
     }
 
     @Override
@@ -208,27 +214,16 @@ public class ContestFragment extends Fragment {
         return rank;
     }
 
+    @Override
+    public void show(int which, Object data, long time) {
+        Contest contest_data = (Contest) data;
+        addOverView(contest_data.getContentString());
+        addProblems(contest_data.getProblemList());
+    }
 
-    @IntDef({ViewHandler.CONTEST_COMMENT, ViewHandler.STATUS_LIST, ViewHandler.CONTEST_RANK})
-    @Retention(RetentionPolicy.SOURCE)
-    @interface contestPart {}
-
-    /*public void loadPartContent(@contestPart int part, int page) {
-        switch (part) {
-            case ViewHandler.CONTEST_COMMENT:
-                if (clarification != null) {
-                    Global.netContent.getContestPart(part, page);
-                }
-                break;
-            case ViewHandler.STATUS_LIST:
-                if (status != null) {
-                    Global.netContent.getContestPart(part, page);
-                }
-                break;
-            case ViewHandler.CONTEST_RANK:
-                if (rank != null) {
-                    Global.netContent.getContestPart(part, page);
-                }
-        }
-    }*/
+    public void refresh() {
+        NetData.getContestDetail(contestID, this);
+        NetData.getContestComment(contestID, 1, clarification);
+        NetData.getContestRank(contestID, rank);
+    }
 }

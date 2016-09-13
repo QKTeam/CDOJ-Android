@@ -21,7 +21,7 @@ import cn.edu.uestc.acm.cdoj_android.net.data.Problem;
 /**
  * Created by great on 2016/8/25.
  */
-public class ContestProblems extends Fragment {
+public class ContestProblems extends Fragment implements ViewHandler{
     private View rootView;
     private ViewPager viewPager;
     private TabLayout tabLayout;
@@ -85,5 +85,10 @@ public class ContestProblems extends Fragment {
         for (int i = 0; i != problemsCount; ++i) {
             tabLayout.getTabAt(i).setText(String.valueOf((char)(a + i)));
         }
+    }
+
+    @Override
+    public void show(int which, Object data, long time) {
+
     }
 }
