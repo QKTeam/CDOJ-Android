@@ -2,9 +2,12 @@ package cn.edu.uestc.acm.cdoj_android.layout;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +17,13 @@ import android.widget.TextView;
 import cn.edu.uestc.acm.cdoj_android.Global;
 import cn.edu.uestc.acm.cdoj_android.LoginActivity;
 import cn.edu.uestc.acm.cdoj_android.R;
+import cn.edu.uestc.acm.cdoj_android.net.NetData;
+import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 
 /**
  * Created by great on 2016/9/12.
  */
-public class User extends Fragment {
+public class User extends Fragment implements ViewHandler{
 
     private TextView textView;
     private View rootView;
@@ -50,7 +55,17 @@ public class User extends Fragment {
                 @Override
                 public void onClick(View v) {
                     if (isLogin) {
-//                        Global.userManager.
+                        Global.userManager.logout(User.this);
+                        new AlertDialog.Builder(v.getContext())
+                                .setMessage("已成功退出")
+                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                })
+                                .show();
+                        setLogin(false);
                     } else {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, LoginActivity.class);
@@ -59,6 +74,12 @@ public class User extends Fragment {
                 }
             });
         }
+    }
+
+    @Override
+    public void onResume() {
+        setLogin(Global.userManager.isLogin());
+        super.onResume();
     }
 
     public void setLogin(boolean login) {
@@ -70,5 +91,10 @@ public class User extends Fragment {
         }
         textView.setText("未登录");
         button.setText("登录");
+    }
+
+    @Override
+    public void show(int which, Object data, long time) {
+
     }
 }

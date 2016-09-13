@@ -42,8 +42,6 @@ public class LoginActivity extends AppCompatActivity implements ViewHandler{
     public void go(View view) {
         username = et_username.getText().toString();
         password = et_password.getText().toString();
-        Log.d("账号", username);
-        Log.d("密码", password);
         Global.userManager.login(username, password, this);
         loggingDialog = ProgressDialog.show(this, getString(R.string.login), getString(R.string.linking));
     }

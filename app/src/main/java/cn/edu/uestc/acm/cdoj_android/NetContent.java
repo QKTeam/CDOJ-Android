@@ -141,7 +141,6 @@ public class NetContent implements ViewHandler {
                 break;
 
             case ViewHandler.CONTEST_COMMENT:
-                Log.d("获取Content列表", ": "+((InfoList) data).pageInfo.currentPage+"  "+((InfoList) data).result);
                 if (contest != null) {
                     if (((InfoList) data).result) {
                         contest.getClarification().setPageInfo(((InfoList) data).pageInfo);
@@ -179,7 +178,6 @@ public class NetContent implements ViewHandler {
                 break;
 
             case ViewHandler.STATUS_LIST:
-                Log.d("获取Status列表", ": "+((InfoList) data).pageInfo.currentPage+"  "+((InfoList) data).result);
                 if (contest != null) {
                     if (((InfoList) data).result) {
                         contest.getStatus().setPageInfo(((InfoList) data).pageInfo);
@@ -228,10 +226,19 @@ public class NetContent implements ViewHandler {
                     if (rankInfo.result) {
                         ArrayList<Rank.Performance> infoList_rank = rankInfo.getPerformanceList();
                         for (Rank.Performance tem : infoList_rank) {
+                            String solved = "Solved：\n";
                             Map<String, Object> listItem = new HashMap<>();
                             listItem.put("rank", tem.rank);
                             listItem.put("name", tem.nickName+"("+tem.name+")");
-                            listItem.put("solved", tem.solved);
+                            listItem.put("solvedNum", tem.solved);
+                            char temS = 'A';
+                            for (Rank.Performance.ProblemStatus temP : tem.getProblemStatusList()) {
+                                if (temP.solved) {
+                                    solved += temS + "  ";
+                                }
+                                ++temS;
+                            }
+                            listItem.put("solved", solved);
                             contest.getRank().addListItem(listItem);
                         }
                     }
@@ -241,10 +248,19 @@ public class NetContent implements ViewHandler {
                     if (rankInfo.result) {
                         ArrayList<Rank.Performance> infoList_rank = rankInfo.getPerformanceList();
                         for (Rank.Performance tem : infoList_rank) {
+                            String solved = "Solved：\n";
                             Map<String, Object> listItem = new HashMap<>();
                             listItem.put("rank", tem.rank);
                             listItem.put("name", tem.nickName+"("+tem.name+")");
-                            listItem.put("solved", tem.solved);
+                            listItem.put("solvedNum", tem.solved);
+                            char temS = 'A';
+                            for (Rank.Performance.ProblemStatus temP : tem.getProblemStatusList()) {
+                                if (temP.solved) {
+                                    solved += temS + "  ";
+                                }
+                                ++temS;
+                            }
+                            listItem.put("solved", solved);
                             contest_itemActivity.getRank().addListItem(listItem);
                         }
                     }
@@ -313,7 +329,6 @@ public class NetContent implements ViewHandler {
             switch (part) {
                 case ViewHandler.CONTEST_COMMENT:
                     NetData.getContestComment(id, page, this);
-                    Log.d("向NETdata获取content列表", "getContestPart: "+id+"  page"+page);
                     break;
                 case ViewHandler.STATUS_LIST:
                     NetData.getStatusList(id, page, this);

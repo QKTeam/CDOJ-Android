@@ -55,8 +55,8 @@ public class ContestRank extends ListFragmentWithGestureLoad {
     private void createAdapter() {
         adapter = new SimpleAdapter(
                 Global.currentMainActivity, listItems, R.layout.contest_rank_list_item,
-                new String[]{"rank", "name", /*"solved"*/},
-                new int[]{R.id.contestRank_rank, R.id.contestRank_name, /*R.id.contestRank_solved*/});
+                new String[]{"rank", "name", "solved"},
+                new int[]{R.id.contestRank_rank, R.id.contestRank_name, R.id.contestRank_solved});
         setListAdapter(adapter);
     }
 

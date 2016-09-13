@@ -29,16 +29,17 @@ public class MainActivity extends AppCompatActivity implements GetInformation {
         super.onCreate(savedInstanceState);
         Global.currentMainActivity = this;
         setContentView(R.layout.activity_main);
-        isTwoPane = findViewById(R.id.landAndPadMark) != null;
+//        isTwoPane = findViewById(R.id.landAndPadMark) != null;
+        isTwoPane = false;
         initStatusBar();
         TabLayout bottomTab = (TabLayout) findViewById(R.id.tabLayout_bottom);
         fragmentManager = getFragmentManager();
         if (savedInstanceState == null) {
-            Global.userManager = new UserManager(this);
+            if (Global.userManager == null) {
+                Global.userManager = new UserManager(this);
+            }
             if (Global.userManager.isLogin()) {
-                Global.loginState = "(已登录）";
-            }else {
-                Global.loginState = "(未登录）";
+                Global.userManager.keepLogin();
             }
 //            Global.userManager.l
             Global.netContent = new NetContent();
@@ -47,6 +48,12 @@ public class MainActivity extends AppCompatActivity implements GetInformation {
             findBackContainerFragment();
         }
         listContainer.setupWithTabLayout(bottomTab);
+    }
+
+    @Override
+    protected void onRestart() {
+        Global.userManager.keepLogin();
+        super.onRestart();
     }
 
     private void initStatusBar() {

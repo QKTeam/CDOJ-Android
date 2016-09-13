@@ -2,6 +2,7 @@ package cn.edu.uestc.acm.cdoj_android;
 
 import android.app.Activity;
 
+import cn.edu.uestc.acm.cdoj_android.layout.User;
 import cn.edu.uestc.acm.cdoj_android.net.UserManager;
 
 
@@ -12,5 +13,5 @@ public class Global {
     public static Activity currentMainActivity;
     public static NetContent netContent;
     public static UserManager userManager;
-    public static String loginState;
+    public static User user;
 }

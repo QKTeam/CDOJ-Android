@@ -45,6 +45,7 @@ public class DetailsContainer extends Fragment {
             problem = new ProblemFragment();
             contest = new ContestFragment();
             user = new User();
+            Global.user = user;
             Global.netContent.addDetailFragment(article);
             Global.netContent.addDetailFragment(problem);
             Global.netContent.addDetailFragment(contest);

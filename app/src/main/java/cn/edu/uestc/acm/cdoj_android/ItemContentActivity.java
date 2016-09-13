@@ -66,9 +66,9 @@ public class ItemContentActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        if (intent.getIntExtra("type", 0) == ViewHandler.CONTEST_DETAIL) {
+        if (intent != null && intent.getIntExtra("type", 0) == ViewHandler.CONTEST_DETAIL) {
             Global.netContent.removeContestDetailFragmentInActivity();
         }
+        super.onDestroy();
     }
 }

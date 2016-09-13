@@ -77,7 +77,7 @@ public class ListContainer extends Fragment implements ViewHandler{
             toolBarWithSearch = (ToolBarWithSearch) rootView.findViewById(R.id.toolbar_list);
 //            toolBarWithSearch.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             toolBarWithSearch.setTitleTextColor(getResources().getColor(R.color.main_blue));
-            toolBarWithSearch.setTitle("公告"+Global.loginState);
+            toolBarWithSearch.setTitle("公告");
             toolBarWithSearch.setSearchListener(new ToolBarWithSearch.ToolBarWithSearchListener() {
                 @Override
                 public void search(String key) {
@@ -148,15 +148,15 @@ public class ListContainer extends Fragment implements ViewHandler{
                     switch (position) {
                         case 0:
                             toolBarWithSearch.setSearchViewEnable(false);
-                            toolBarWithSearch.setTitle(getString(R.string.Article) + Global.loginState);
+                            toolBarWithSearch.setTitle(getString(R.string.Article));
                             break;
                         case 1:
-                            toolBarWithSearch.setTitle(getString(R.string.problem) + Global.loginState);
+                            toolBarWithSearch.setTitle(getString(R.string.problem));
                             toolBarWithSearch.setSearchViewEnable(true);
                             break;
                         case 2:
                             toolBarWithSearch.setSearchViewEnable(true);
-                            toolBarWithSearch.setTitle(getString(R.string.contest) + Global.loginState);
+                            toolBarWithSearch.setTitle(getString(R.string.contest));
                             break;
                         case 3:
                             toolBarWithSearch.setSearchViewEnable(false);
@@ -206,7 +206,9 @@ public class ListContainer extends Fragment implements ViewHandler{
                 };
             }
             viewPager.addOnPageChangeListener(onPageChangeListener);
-        } else {viewPager.removeOnPageChangeListener(onPageChangeListener);}
+        } else {
+//            viewPager.removeOnPageChangeListener(onPageChangeListener);
+        }
     }
 
     @Override
