@@ -111,11 +111,11 @@ public class ProblemListFragment extends ListFragmentWithGestureLoad implements 
             setPageInfo(((InfoList) data).pageInfo);
             ArrayList<ProblemInfo> infoList_P = ((InfoList) data).getInfoList();
             for (ProblemInfo tem : infoList_P) {
-                String number = "" + tem.solved + "/" + tem.tried;
+                String number = "solved/tried:  " + tem.solved + "/" + tem.tried;
                 Map<String, Object> listItem = new HashMap<>();
                 listItem.put("title", tem.title);
                 listItem.put("source", tem.source);
-                listItem.put("id", "" + tem.problemId);
+                listItem.put("id", "ID:  " + tem.problemId);
                 listItem.put("number", number);
                 addListItem(listItem);
             }
