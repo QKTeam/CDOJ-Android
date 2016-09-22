@@ -10,6 +10,7 @@ import java.util.ArrayList;
  * Created by lenovo on 2016/8/7.
  */
 public class Contest {
+    private int id;
     public boolean result = false;
     public String contentString = "";
     public ArrayList<Problem> problemList = new ArrayList<>(15);
@@ -37,5 +38,13 @@ public class Contest {
     }
     public String getContentString(){
         return contentString;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

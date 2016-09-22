@@ -46,6 +46,7 @@ public class UserManager implements ViewHandler{
         NetData.register(this.userName = userName, this.sha1password = NetWorkTool.sha1(password), NetWorkTool.sha1(passwordRepeat), nickName, email, motto, name, sex, size, phone, school, departmentId, grade, studentId, this, viewHandler);
     }
     public void logout(ViewHandler viewHandler){
+        sp.edit().putBoolean("isLogin", false).commit();
         NetData.logout(this, viewHandler);
     }
     void getAvatar(String email, Object addition, ViewHandler viewHandler){
@@ -69,7 +70,6 @@ public class UserManager implements ViewHandler{
                 break;
             case ViewHandler.LOGOUT:
                 if ((boolean)data1[1]){
-                    sp.edit().putBoolean("isLogin", false).commit();
                 }
         }
         ((ViewHandler)(data1[0])).show(which, data1[1], time);

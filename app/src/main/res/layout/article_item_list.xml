@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/problem_list_item"
+    android:background="@color/main_background"
+    android:id="@+id/article_list_item"
     android:layout_width="match_parent"
     android:layout_height="80dp"
     android:orientation="vertical"
@@ -10,8 +11,8 @@
     android:paddingTop="5dp">
 
     <TextView
-        android:id="@+id/problem_title"
         android:layout_width="match_parent"
+        android:id="@+id/article_title"
         android:layout_height="30dp"
         android:ellipsize="end"
         android:singleLine="true"
@@ -19,7 +20,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/problem_source"
+        android:id="@+id/article_content"
         android:layout_width="match_parent"
         android:layout_height="25dp"
         android:ellipsize="end"
@@ -32,7 +33,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/problem_id"
+            android:id="@+id/article_date"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="3"
@@ -41,7 +42,7 @@
             android:textSize="12sp" />
 
         <TextView
-            android:id="@+id/problem_number"
+            android:id="@+id/article_author"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="4"

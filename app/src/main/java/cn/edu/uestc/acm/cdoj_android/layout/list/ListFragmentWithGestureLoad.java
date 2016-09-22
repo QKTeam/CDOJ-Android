@@ -21,6 +21,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ import android.widget.TextView;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj_android.R;
+import cn.edu.uestc.acm.cdoj_android.net.data.PageInfo;
 
 /**
  * A fragment that displays a list of items by binding to a data source such as
@@ -60,7 +62,7 @@ import cn.edu.uestc.acm.cdoj_android.R;
  * The following code demonstrates an (ugly) custom list layout. It has a list
  * with a green background, and an alternate red "no data" message.
  * </p>
- *
+ * <p>
  * <pre>
  * &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
  * &lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -84,7 +86,7 @@ import cn.edu.uestc.acm.cdoj_android.R;
  *               android:text=&quot;No data&quot;/&gt;
  * &lt;/LinearLayout&gt;
  * </pre>
- *
+ * <p>
  * <p>
  * <strong>Row Layout</strong>
  * </p>
@@ -105,7 +107,7 @@ import cn.edu.uestc.acm.cdoj_android.R;
  * source for the resource two_line_list_item, which displays two data
  * fields,one above the other, for each list row.
  * </p>
- *
+ * <p>
  * <pre>
  * &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
  * &lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -125,7 +127,7 @@ import cn.edu.uestc.acm.cdoj_android.R;
  *         android:layout_height=&quot;wrap_content&quot;/&gt;
  * &lt;/LinearLayout&gt;
  * </pre>
- *
+ * <p>
  * <p>
  * You must identify the data bound to each TextView object in this layout. The
  * syntax for this is discussed in the next section.
@@ -164,12 +166,13 @@ public class ListFragmentWithGestureLoad extends Fragment {
     final private AdapterView.OnItemClickListener mOnClickListener
             = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-            onListItemClick((ListView)parent, v, position, id);
+            onListItemClick((ListView) parent, v, position, id);
         }
     };
 
     ListAdapter mAdapter;
     PullUpLoadListView mList;
+    SwipeRefreshLayout mSwipeRefresh;
     View mEmptyView;
     TextView mStandardEmptyView;
     View mProgressContainer;
@@ -178,13 +181,15 @@ public class ListFragmentWithGestureLoad extends Fragment {
     boolean mListShown;
     Context context;
     View rootView;
+    PageInfo pageInfo;
+    PullUpLoadListView.OnPullUpLoadListener onPullUpLoadListener;
+    SwipeRefreshLayout.OnRefreshListener onRefreshListener;
 
     public ListFragmentWithGestureLoad() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setRetainInstance(true);
         super.onCreate(savedInstanceState);
     }
 
@@ -195,7 +200,7 @@ public class ListFragmentWithGestureLoad extends Fragment {
      * is {@link android.R.id#list android.R.id.list} and can optionally
      * have a sibling view id {@link android.R.id#empty android.R.id.empty}
      * that is to be shown when the list is empty.
-     *
+     * <p>
      * <p>If you are overriding this method with your own custom content,
      * consider including the standard layout {@link android.R.layout#list_content}
      * in your layout file, so that you continue to retain all of the standard
@@ -240,10 +245,10 @@ public class ListFragmentWithGestureLoad extends Fragment {
      * getListView().getItemAtPosition(position) if they need to access the
      * data associated with the selected item.
      *
-     * @param l The ListView where the click happened
-     * @param v The view that was clicked within the ListView
+     * @param l        The ListView where the click happened
+     * @param v        The view that was clicked within the ListView
      * @param position The position of the view in the list
-     * @param id The row id of the item that was clicked
+     * @param id       The row id of the item that was clicked
      */
     public void onListItemClick(ListView l, View v, int position, long id) {
     }
@@ -259,7 +264,7 @@ public class ListFragmentWithGestureLoad extends Fragment {
             if (!mListShown && !hadAdapter) {
                 // The list was hidden, and previously didn't have an
                 // adapter.  It is now time to show it.
-                setListShown(true, getView().getWindowToken() != null);
+                setListShown(true, rootView.getWindowToken() != null);
             }
         }
     }
@@ -295,7 +300,6 @@ public class ListFragmentWithGestureLoad extends Fragment {
      * Get the activity's list view widget.
      */
     public PullUpLoadListView getListView() {
-        ensureList();
         return mList;
     }
 
@@ -320,7 +324,7 @@ public class ListFragmentWithGestureLoad extends Fragment {
      * Control whether the list is being displayed.  You can make it not
      * displayed if you are waiting for the initial data to show in it.  During
      * this time an indeterminant progress indicator will be shown instead.
-     *
+     * <p>
      * <p>Applications do not normally need to use this themselves.  The default
      * behavior of ListFragment is to start with the list not being shown, only
      * showing it once an adapter is given with {@link #setListAdapter(ListAdapter)}.
@@ -328,7 +332,7 @@ public class ListFragmentWithGestureLoad extends Fragment {
      * it will be do without the user ever seeing the hidden state.
      *
      * @param shown If true, the list view is shown; if false, the progress
-     * indicator.  The initial value is true.
+     *              indicator.  The initial value is true.
      */
     public void setListShown(boolean shown) {
         setListShown(shown, true);
@@ -347,10 +351,10 @@ public class ListFragmentWithGestureLoad extends Fragment {
      * displayed if you are waiting for the initial data to show in it.  During
      * this time an indeterminant progress indicator will be shown instead.
      *
-     * @param shown If true, the list view is shown; if false, the progress
-     * indicator.  The initial value is true.
+     * @param shown   If true, the list view is shown; if false, the progress
+     *                indicator.  The initial value is true.
      * @param animate If true, an animation will be used to transition to the
-     * new state.
+     *                new state.
      */
     private void setListShown(boolean shown, boolean animate) {
         ensureList();
@@ -399,16 +403,22 @@ public class ListFragmentWithGestureLoad extends Fragment {
         if (mList != null) {
             return;
         }
-        View root = getView();
-        mStandardEmptyView = (TextView)root.findViewById(R.id.internalEmpty);
+        mSwipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.listSwipeRefresh);
+        if (onRefreshListener != null) {
+            mSwipeRefresh.setOnRefreshListener(onRefreshListener);
+        }
+        mStandardEmptyView = (TextView) rootView.findViewById(R.id.internalEmpty);
         if (mStandardEmptyView == null) {
-            mEmptyView = root.findViewById(android.R.id.empty);
+            mEmptyView = rootView.findViewById(android.R.id.empty);
         } else {
             mStandardEmptyView.setVisibility(View.GONE);
         }
-        mProgressContainer = root.findViewById(R.id.progressContainer);
-        mListContainer = root.findViewById(R.id.listContainer);
-        mList = (PullUpLoadListView)root.findViewById(R.id.list);
+        mProgressContainer = rootView.findViewById(R.id.progressContainer);
+        mListContainer = rootView.findViewById(R.id.listContainer);
+        mList = (PullUpLoadListView) rootView.findViewById(R.id.list);
+        if (onPullUpLoadListener != null) {
+            mList.setOnPullUpLoadListener(onPullUpLoadListener);
+        }
         if (mEmptyView != null) {
             mList.setEmptyView(mEmptyView);
         } else if (mEmptyText != null) {
@@ -431,11 +441,59 @@ public class ListFragmentWithGestureLoad extends Fragment {
         mHandler.post(mRequestFocus);
     }
 
-    public void notifyDataSetChanged(){}
 
-    public void addListItem(Map<String ,String> listItem){}
-
-    public void setPullUpLoad(Boolean isPullUpLoad) {
-        mList.setPullUpLoad(isPullUpLoad);
+    public  void notifyDataSetChanged() {
+        if (mSwipeRefresh != null && mSwipeRefresh.isRefreshing()) {
+            mSwipeRefresh.setRefreshing(false);
+        }
+        if (mList != null  && mList.isPullUpLoading()) {
+            mList.finishAddData();
+        }
     }
+
+    public void addListItem(Map<String, Object> listItem) {
+    }
+
+    public void setOnPullUpLoadListener(PullUpLoadListView.OnPullUpLoadListener listener) {
+        if (mList != null) {
+            mList.setOnPullUpLoadListener(listener);
+            return;
+        }
+        onPullUpLoadListener = listener;
+    }
+
+    public void setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener listener) {
+        if (mSwipeRefresh != null) {
+            mSwipeRefresh.setOnRefreshListener(listener);
+            return;
+        }
+        onRefreshListener = listener;
+    }
+
+    public void stopPullUpLoad() {
+        if (mList != null) {
+            mList.pullUpLoadFinish();
+        }
+    }
+
+    public void continuePullUpLoad() {
+        if (mList != null) {
+            mList.hasMoreData();
+        }
+    }
+
+    public void getDataFailure() {
+        if (mList != null) {
+            mList.getDataFailure();
+        }
+    }
+
+    public void setPageInfo(PageInfo pageInfo) {
+        this.pageInfo = pageInfo;
+    }
+
+    public PageInfo getPageInfo() {
+        return pageInfo;
+    }
+
 }

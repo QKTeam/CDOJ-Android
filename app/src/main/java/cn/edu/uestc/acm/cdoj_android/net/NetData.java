@@ -1,10 +1,8 @@
 package cn.edu.uestc.acm.cdoj_android.net;
 
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.View;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,10 +55,10 @@ public class NetData {
     public static void submitCode(String codeContent, int languageId, int contestId, int problemId, ViewHandler viewHandler){
         String key[] = new String[]{"codeContent", "languageId", "contestId", "problemId"};
         Object o[] = new Object[]{codeContent, languageId, contestId == -1?"":contestId, problemId};
-        async(ViewHandler.STUTAS_SUBMIT, new String[]{codeSubmitUrl, constructJson(key, o)}, viewHandler);
+        async(ViewHandler.STATUS_SUBMIT, new String[]{codeSubmitUrl, constructJson(key, o)}, viewHandler);
     }
     public static void getStatusInfo(int statusId, ViewHandler viewHandler){
-        async(ViewHandler.STUTAS_INFO, new String[]{statusInfoUrl + statusId}, viewHandler);
+        async(ViewHandler.STATUS_INFO, new String[]{statusInfoUrl + statusId}, viewHandler);
     }
     public static void getStatusList(int contestId, int page, ViewHandler viewHandler){
         String key[] = new String[]{"contestId", "currentPage", "orderAsc", "orderFields", "result"};
@@ -93,7 +91,7 @@ public class NetData {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        async(ViewHandler.LOGCONTEST, new String[]{loginContestUrl, p}, viewHandler);
+        async(ViewHandler.LOGIN_CONTEST, new String[]{loginContestUrl, p}, viewHandler);
     }
     public static void login(String userName, String sha1password, ViewHandler viewHandler, Object add){
         String p = "";
@@ -195,7 +193,7 @@ public class NetData {
                 return checkResult(result);
             case ViewHandler.LOGOUT:
                 return checkResult(result);
-            case ViewHandler.LOGCONTEST:
+            case ViewHandler.LOGIN_CONTEST:
 //                Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + (s = result));;
                 return checkResult(result);
             case ViewHandler.CONTEST_COMMENT:
@@ -204,9 +202,9 @@ public class NetData {
                 return new Rank(result);
             case ViewHandler.STATUS_LIST:
                 return new InfoList<Status>(result, Status.class);
-            case ViewHandler.STUTAS_INFO:
+            case ViewHandler.STATUS_INFO:
                 return Status.getCode(result);
-            case ViewHandler.STUTAS_SUBMIT:
+            case ViewHandler.STATUS_SUBMIT:
                 return checkResult(result);
             case ViewHandler.REGISTER:
                 Log.d(TAG, "request: " + result);
