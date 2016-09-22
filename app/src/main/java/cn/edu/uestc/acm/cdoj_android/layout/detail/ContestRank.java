@@ -6,12 +6,14 @@ import android.view.View;
 import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj_android.Global;
 import cn.edu.uestc.acm.cdoj_android.R;
 import cn.edu.uestc.acm.cdoj_android.layout.list.ListFragmentWithGestureLoad;
+import cn.edu.uestc.acm.cdoj_android.net.NetData;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj_android.net.data.Rank;
 
@@ -27,17 +29,13 @@ public class ContestRank extends ListFragmentWithGestureLoad implements ViewHand
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState == null) {
+            if (contestID != -1) refresh();
             setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    listItems.clear();
-                    continuePullUpLoad();
-                    Global.netContent.getContestPart(ViewHandler.CONTEST_RANK, contestID, 1);
+                    refresh();
                 }
             });
-            if (contestID != -1) {
-                Global.netContent.getContestPart(ViewHandler.CONTEST_RANK, contestID, 1);
-            }
         }
     }
 
@@ -56,10 +54,10 @@ public class ContestRank extends ListFragmentWithGestureLoad implements ViewHand
     }
 
     private void createAdapter() {
-        adapter = new SimpleAdapter(
+        adapter = new ContestRankAdapter(
                 Global.currentMainActivity, listItems, R.layout.contest_rank_list_item,
-                new String[]{"rank", "name", "solved"},
-                new int[]{R.id.contestRank_rank, R.id.contestRank_name, R.id.contestRank_solved});
+                new String[]{"rank", "nickName", "account"},
+                new int[]{R.id.contestRank_rank, R.id.contestRank_nickName, R.id.contestRank_account});
         setListAdapter(adapter);
     }
 
@@ -76,22 +74,29 @@ public class ContestRank extends ListFragmentWithGestureLoad implements ViewHand
         if (rankInfo.result) {
             ArrayList<Rank.Performance> infoList_rank = rankInfo.getPerformanceList();
             for (Rank.Performance tem : infoList_rank) {
-                String solved = "Solved：\n";
+                int solved = 0;
                 Map<String, Object> listItem = new HashMap<>();
-                listItem.put("rank", tem.rank);
-                listItem.put("name", tem.nickName+"("+tem.name+")");
+                listItem.put("rank", "Rank  "+tem.rank);
+                listItem.put("account", tem.name);
+                listItem.put("nickName", tem.nickName);
                 listItem.put("solvedNum", tem.solved);
-                char temS = 'A';
-                for (Rank.Performance.ProblemStatus temP : tem.getProblemStatusList()) {
-                    if (temP.solved) {
-                        solved += temS + "  ";
-                    }
-                    ++temS;
+                ArrayList<Rank.Performance.ProblemStatus> problemStatusList = tem.getProblemStatusList();
+                listItem.put("probCount", problemStatusList.size());
+                Collections.reverse(problemStatusList);
+                for (Rank.Performance.ProblemStatus temP : problemStatusList) {
+                    if (temP.solved) ++solved;
+                    solved = solved << 1;
                 }
-                listItem.put("solved", solved);
+                listItem.put("solvedDetail", solved);
                 addListItem(listItem);
             }
         }
         notifyDataSetChanged();
+    }
+
+    public void refresh() {
+        if (contestID == -1) throw new IllegalStateException("Rank's contestId is null");
+        listItems.clear();
+        NetData.getContestRank(contestID, this);
     }
 }

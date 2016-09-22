@@ -79,9 +79,7 @@ public class DetailWebViewFragment extends WebViewFragment {
     }
 
     public void addJSData(String jsData) {
-        Log.d(toString(), "addJSData: ");
         if (HTMLData != null) {
-            Log.d(toString(), "addJSDataSuccess ");
             webData = HTMLData.replace("{{{replace_data_here}}}", jsData);
             webView.loadDataWithBaseURL(acmWebUrl, webData, mimeType, encoding, null);
             return;

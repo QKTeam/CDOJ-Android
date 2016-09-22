@@ -26,8 +26,10 @@ public class ContestStatus extends TextView {
     @Override
     public void setText(CharSequence text, BufferType type) {
         super.setText(text, type);
-        if (text.equals("Ended"))
+        if (text.equals("Ended")) {
             setTextColor(ContextCompat.getColor(getContext(), R.color.contestStatus_Ended));
+            return;
+        }
         if (text.equals("Running"))
             setTextColor(ContextCompat.getColor(getContext(), R.color.contestStatus_Running));
     }

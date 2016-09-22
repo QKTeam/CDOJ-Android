@@ -2,58 +2,78 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@color/main_background"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="100dp"
     android:orientation="horizontal"
     android:paddingBottom="5dp"
     android:paddingLeft="20dp"
     android:paddingRight="10dp"
     android:paddingTop="5dp">
-    <TextView
-        android:id="@+id/contestStatus_prob"
-        android:orientation="vertical"
-        android:layout_width="65dp"
-        android:layout_height="match_parent"/>
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <TextView
-            android:id="@+id/contestStatus_result"
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="0dp" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
-            <TextView
-                android:id="@+id/contestStatus_length"
+            android:layout_weight="2"
+            android:orientation="horizontal">
+            <cn.edu.uestc.acm.cdoj_android.layout.detail.text.SubmitResult
+                android:id="@+id/contestStatus_result"
+                android:text="wronganfafdas"
+                android:textSize="18sp"
+                android:textAlignment="center"
+                android:gravity="center_vertical"
+                android:lines="1"
+                android:layout_weight="3"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
-            <TextView
-                android:id="@+id/contestStatus_submitTime"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-            <TextView
-                android:id="@+id/contestStatus_memory"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
-            <TextView
-                android:id="@+id/contestStatus_time"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
+                android:layout_height="match_parent" />
             <TextView
                 android:id="@+id/contestStatus_language"
                 android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="c++ 3420mb"
+                android:textSize="16sp"
+                android:lines="1"
+                android:gravity="center_vertical"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/contestStatus_user"
+                android:layout_width="0dp"
+                android:text="fdsfsafdsa"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+            <TextView
+                android:id="@+id/contestStatus_cost"
+                android:layout_width="0dp"
+                android:text="fasfdsafdsa"
+                android:gravity="right"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/contestStatus_probOrder"
+                android:layout_width="0dp"
+                android:text="fdsafsda"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+            <TextView
+                android:id="@+id/contestStatus_submitDate"
+                android:layout_width="0dp"
+                android:text="fdsafsadfsad"
+                android:gravity="right"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
         </LinearLayout>

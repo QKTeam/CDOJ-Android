@@ -2,45 +2,77 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@color/main_background"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
-    android:orientation="horizontal"
+    android:layout_height="105dp"
+    android:orientation="vertical"
     android:paddingBottom="5dp"
     android:paddingLeft="20dp"
     android:paddingRight="10dp"
     android:paddingTop="5dp">
 
-    <TextView
-        android:id="@+id/contestRank_rank"
-        android:layout_width="65dp"
-        android:layout_height="match_parent"
-        android:singleLine="true"
-        android:textStyle="bold"
-        android:textSize="43sp"
-        android:gravity="center" />
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="75dp"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/contestRank_name"
+        <ImageView
+            android:id="@+id/contestClarification_header"
+            android:layout_width="75dp"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:textSize="20sp"
-            android:textStyle="bold"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/contestRank_solved"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal"/>
+                <TextView
+                        android:id="@+id/contestRank_nickName"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:text="fjkdhgkdsag"
+                        android:textSize="20sp"
+                        android:textStyle="bold"/>
 
+                    <TextView
+                        android:id="@+id/contestRank_account"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:text="fdsafsad"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:textSize="20sp"/>
+                </LinearLayout>
 
+                <TextView
+                    android:id="@+id/contestRank_rank"
+                    android:layout_width="105dp"
+                    android:layout_height="match_parent"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:text="Rank  100"
+                    android:lines="1"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/contestRank_solved"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"/>
 
 </LinearLayout>

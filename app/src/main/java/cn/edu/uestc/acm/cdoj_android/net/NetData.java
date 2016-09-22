@@ -60,7 +60,7 @@ public class NetData {
     public static void getStatusInfo(int statusId, ViewHandler viewHandler){
         async(ViewHandler.STATUS_INFO, new String[]{statusInfoUrl + statusId}, viewHandler);
     }
-    public static void getStatusList(int contestId, int page, ViewHandler viewHandler){
+    public static void getContestStatusList(int contestId, int page, ViewHandler viewHandler){
         String key[] = new String[]{"contestId", "currentPage", "orderAsc", "orderFields", "result"};
         Object[] o = new Object[]{contestId, page, false, "statusId", 0};
         async(ViewHandler.STATUS_LIST, new String[]{statusListUrl, constructJson(key, o)}, viewHandler);

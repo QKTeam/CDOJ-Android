@@ -161,8 +161,9 @@ public class ContestListFragment extends ListFragmentWithGestureLoad implements 
     }
 
     private void showDetail(int position, int id) {
-        if (isTwoPane) {
+        if (!isTwoPane) {
             showDetailOnActivity(position, id);
+            return;
         }
         ((ContestFragment) Global.detailsContainer.getDetail(ViewHandler.CONTEST_DETAIL)).refresh();
     }

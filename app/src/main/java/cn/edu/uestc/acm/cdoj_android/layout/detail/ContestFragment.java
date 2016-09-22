@@ -31,6 +31,7 @@ public class ContestFragment extends Fragment implements ViewHandler{
     private ContestRank rank;
     private int contestID = -1;//命名为ID会与Fragment的ID冲突
     private FragmentManager fragmentManager;
+    private boolean askRefresh;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,8 +47,11 @@ public class ContestFragment extends Fragment implements ViewHandler{
             overview = new DetailWebViewFragment().switchHTMLData(ViewHandler.CONTEST_DETAIL);
             problems = new ContestProblems();
             clarification = new ContestClarification();
+            if (contestID != -1) clarification.setContestID(contestID);
             status  = new ContestStatus();
+            if (contestID != -1) status.setContestID(contestID);
             rank = new ContestRank();
+            if (contestID != -1) rank.setContestID(contestID);
             addPartFragment();
             showPart(0);
             if (contestID != -1) {
@@ -67,6 +71,11 @@ public class ContestFragment extends Fragment implements ViewHandler{
         transaction.add(R.id.contest_details, status);
         transaction.add(R.id.contest_details, rank);
         transaction.commit();
+        if (askRefresh) {
+            clarification.refresh();
+            status.refresh();
+            rank.refresh();
+        }
     }
 
     @Override
@@ -75,33 +84,6 @@ public class ContestFragment extends Fragment implements ViewHandler{
         if (savedInstanceState == null) {
             setTopButton();
         }
-        /*if (savedInstanceState == null) {
-            ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.contestViewPager);
-            viewPager.setOffscreenPageLimit(4);
-            viewPager.setAdapter(new FragmentPagerAdapter(getFragmentManager()) {
-                @Override
-                public Fragment getItem(int position) {
-                    switch (position){
-                        case 0:
-                            return overview;
-                        case 1:
-                            return problems;
-                        case 2:
-                            return clarification;
-                        case 3:
-                            return status;
-                        case 4:
-                            return rank;
-                        default:
-                            return null;
-                    }
-                }
-                @Override
-                public int getCount() {
-                    return 5;
-                }
-            });
-        }*/
     }
 
     private void setTopButton() {
@@ -214,12 +196,20 @@ public class ContestFragment extends Fragment implements ViewHandler{
     public void show(int which, Object data, long time) {
         Contest contest_data = (Contest) data;
         addOverView(contest_data.getContentString());
-        addProblems(contest_data.getProblemList());
+        ArrayList<Problem> problemList = contest_data.getProblemList();
+        addProblems(problemList);
+        /*int[] problemsIDs = new int[problemList.size()];
+        for (int i = 0; i != problemList.size(); ++i) {
+            problemsIDs[i] = problemList.get(i).get
+        }*/
     }
 
     public void refresh() {
+        askRefresh = true;
         NetData.getContestDetail(contestID, this);
-        NetData.getContestComment(contestID, 1, clarification);
-        NetData.getContestRank(contestID, rank);
+        if (clarification != null) clarification.refresh();
+        if (rank != null) rank.refresh();
+        if (status != null) status.refresh();
+        if (clarification != null && rank != null && status != null) askRefresh = false;
     }
 }

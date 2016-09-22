@@ -67,12 +67,4 @@ public class ItemContentActivity extends AppCompatActivity {
                 .replace(R.id.detail_activity, detail)
                 .commit();
     }
-
-    @Override
-    protected void onDestroy() {
-        if (intent != null && intent.getIntExtra("type", 0) == ViewHandler.CONTEST_DETAIL) {
-            Global.netContent.removeContestDetailFragmentInActivity();
-        }
-        super.onDestroy();
-    }
 }

@@ -1,21 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <!--<android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/contest_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/main_background"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-    </android.support.design.widget.AppBarLayout>-->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -27,7 +15,7 @@
             android:layout_height="match_parent"
             android:text="@string/overview"
             android:textSize="12sp"
-            android:singleLine="true"
+            android:maxLines="1"
             android:textColor="@color/colorBlue"
             android:background="@drawable/button_selector" />
         <Button
@@ -37,9 +25,9 @@
             android:layout_height="match_parent"
             android:text="@string/problems"
             android:textSize="12sp"
-            android:singleLine="true"
             android:background="@drawable/button_selector"
-            android:textColor="@color/colorBlue"/>
+            android:textColor="@color/colorBlue"
+            android:maxLines="1" />
         <Button
             android:id="@+id/contest_button2"
             android:layout_weight="1"
@@ -47,9 +35,9 @@
             android:layout_height="match_parent"
             android:text="@string/clarification"
             android:textSize="12sp"
-            android:singleLine="true"
             android:background="@drawable/button_selector"
-            android:textColor="@color/colorBlue"/>
+            android:textColor="@color/colorBlue"
+            android:maxLines="1" />
         <Button
             android:id="@+id/contest_button3"
             android:layout_weight="1"
@@ -57,9 +45,9 @@
             android:layout_height="match_parent"
             android:text="@string/status"
             android:textSize="12sp"
-            android:singleLine="true"
             android:background="@drawable/button_selector"
-            android:textColor="@color/colorBlue"/>
+            android:textColor="@color/colorBlue"
+            android:maxLines="1" />
         <Button
             android:id="@+id/contest_button4"
             android:layout_weight="1"
@@ -67,9 +55,9 @@
             android:layout_height="match_parent"
             android:text="@string/rank"
             android:textSize="12sp"
-            android:singleLine="true"
             android:background="@drawable/button_selector"
-            android:textColor="@color/colorBlue" />
+            android:textColor="@color/colorBlue"
+            android:maxLines="1" />
 
     </LinearLayout>
     <LinearLayout

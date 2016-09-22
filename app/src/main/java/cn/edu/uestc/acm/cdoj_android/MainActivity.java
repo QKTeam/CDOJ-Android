@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageView;
 
 import cn.edu.uestc.acm.cdoj_android.layout.DetailsContainer;
 import cn.edu.uestc.acm.cdoj_android.layout.ListContainer;
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity implements GetInformation {
         super.onCreate(savedInstanceState);
         Global.currentMainActivity = this;
         setContentView(R.layout.activity_main);
+        ImageView openShowImage = (ImageView) findViewById(R.id.openShowImage);
+        openShowImage.setImageResource(R.drawable.im123456);
         isTwoPane = findViewById(R.id.landAndPadMark) != null;
         Global.isTwoPane = isTwoPane;
         initStatusBar();
@@ -45,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements GetInformation {
             findBackContainerFragment();
         }
         listContainer.setupWithTabLayout(bottomTab);
+        openShowImage.setVisibility(View.GONE);
     }
 
     @Override

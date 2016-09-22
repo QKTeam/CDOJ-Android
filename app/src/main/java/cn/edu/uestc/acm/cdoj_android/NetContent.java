@@ -2,7 +2,6 @@ package cn.edu.uestc.acm.cdoj_android;
 
 import android.app.Fragment;
 import android.support.annotation.IntDef;
-import android.util.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -23,7 +22,6 @@ import cn.edu.uestc.acm.cdoj_android.net.data.ArticleInfo;
 import cn.edu.uestc.acm.cdoj_android.net.data.Contest;
 import cn.edu.uestc.acm.cdoj_android.net.data.ContestInfo;
 import cn.edu.uestc.acm.cdoj_android.net.data.InfoList;
-import cn.edu.uestc.acm.cdoj_android.net.data.PageInfo;
 import cn.edu.uestc.acm.cdoj_android.net.data.Problem;
 import cn.edu.uestc.acm.cdoj_android.net.data.ProblemInfo;
 import cn.edu.uestc.acm.cdoj_android.net.data.Rank;
@@ -285,7 +283,7 @@ public class NetContent implements ViewHandler {
                 break;
             case ViewHandler.CONTEST_DETAIL:
                 NetData.getContestComment(idOrPage, 1, this);
-                NetData.getStatusList(idOrPage, 1, this);
+                NetData.getContestStatusList(idOrPage, 1, this);
                 NetData.getContestRank(idOrPage, this);
                 NetData.getContestDetail(idOrPage, this);
                 break;
@@ -331,7 +329,7 @@ public class NetContent implements ViewHandler {
                     NetData.getContestComment(id, page, this);
                     break;
                 case ViewHandler.STATUS_LIST:
-                    NetData.getStatusList(id, page, this);
+                    NetData.getContestStatusList(id, page, this);
                     break;
                 case ViewHandler.CONTEST_RANK:
                     NetData.getContestRank(id, this);

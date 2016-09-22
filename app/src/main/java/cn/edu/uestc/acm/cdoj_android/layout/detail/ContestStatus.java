@@ -29,28 +29,25 @@ public class ContestStatus extends ListFragmentWithGestureLoad implements ViewHa
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (contestID != -1) refresh();
         if (savedInstanceState == null) {
             setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    listItems.clear();
                     continuePullUpLoad();
-                    Global.netContent.getContestPart(ViewHandler.STATUS_LIST, contestID, 1);
+                    refresh();
                 }
             });
             setOnPullUpLoadListener(new PullUpLoadListView.OnPullUpLoadListener() {
                 @Override
                 public void onPullUpLoading() {
                     if (getPageInfo().currentPage != getPageInfo().totalPages) {
-                        Global.netContent.getContestPart(ViewHandler.STATUS_LIST, contestID, getPageInfo().currentPage + 1);
+                        NetData.getContestStatusList(contestID, getPageInfo().currentPage + 1, ContestStatus.this);
                     }else {
                         stopPullUpLoad();
                     }
                 }
             });
-            if (contestID != -1) {
-                Global.netContent.getContestPart(ViewHandler.STATUS_LIST, contestID, 1);
-            }
         }
     }
 
@@ -71,18 +68,15 @@ public class ContestStatus extends ListFragmentWithGestureLoad implements ViewHa
     private void createAdapter() {
         adapter = new SimpleAdapter(
                 Global.currentMainActivity, listItems, R.layout.contest_status_item_list,
-                new String[]{"prob", "result", "length", "submitTime", "language", "time", "memory"},
-                new int[]{R.id.contestStatus_prob, R.id.contestStatus_result,
-                        R.id.contestStatus_length, R.id.contestStatus_submitTime,
-                        R.id.contestStatus_language, R.id.contestStatus_time, R.id.contestStatus_memory});
+                new String[]{"result", "language", "user", "cost", "probOrder", "submitDate"},
+                new int[]{R.id.contestStatus_result, R.id.contestStatus_language,
+                        R.id.contestStatus_user, R.id.contestStatus_cost,
+                        R.id.contestStatus_probOrder, R.id.contestStatus_submitDate});
         setListAdapter(adapter);
     }
 
     public void setContestID(int id) {
         contestID = id;
-        if (getListView() != null) {
-            Global.netContent.getContestPart(ViewHandler.STATUS_LIST, contestID, 1);
-        }
     }
 
     @Override
@@ -92,18 +86,23 @@ public class ContestStatus extends ListFragmentWithGestureLoad implements ViewHa
             ArrayList<Status> infoList_status = ((InfoList) data).getInfoList();
             for (Status tem : infoList_status) {
                 Map<String, Object> listItem = new HashMap<>();
-                listItem.put("prob", tem.problemId);
+                listItem.put("probOrder", tem.problemId);
                 listItem.put("result", tem.returnType);
-                listItem.put("length", tem.length);
-                listItem.put("submitTime", tem.timeString);
-                listItem.put("language", tem.language);
-                listItem.put("time", tem.timeCost);
-                listItem.put("memory", tem.memoryCost);
+                listItem.put("submitDate", tem.timeString);
+                listItem.put("language", tem.language+"  "+tem.length+"B");
+                listItem.put("cost", tem.timeCost+"ms "+tem.memoryCost+"KB");
+                listItem.put("user", tem.nickName);
                 addListItem(listItem);
             }
         } else {
             getDataFailure();
         }
         notifyDataSetChanged();
+    }
+
+    public void refresh()  {
+        if (contestID == -1) throw new IllegalStateException("Status' contestID is null");
+        listItems.clear();
+        NetData.getContestStatusList(contestID, 1, this);
     }
 }

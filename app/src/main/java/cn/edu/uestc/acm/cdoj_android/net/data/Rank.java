@@ -1,7 +1,5 @@
 package cn.edu.uestc.acm.cdoj_android.net.data;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,11 +50,11 @@ public class Rank {
         public String email, name, nickName, realName;
         public int penalty, rank, solved, tried;
         public String penaltyString;
-        ArrayList<ProblemStatus> problemStutasList = new ArrayList<>(15);
+        ArrayList<ProblemStatus> problemStatusList = new ArrayList<>(15);
         public Performance(JSONObject jsonObject) {
             JSONArray itemList = jsonObject.optJSONArray("itemList");
             for (int i = 0; i < itemList.length(); i++) {
-                problemStutasList.add(new ProblemStatus(itemList.optJSONObject(i)));
+                problemStatusList.add(new ProblemStatus(itemList.optJSONObject(i)));
             }
             email = jsonObject.optString("email");
             name = jsonObject.optString("name");
@@ -71,7 +69,7 @@ public class Rank {
 
         }
         public ArrayList<ProblemStatus> getProblemStatusList(){
-            return problemStutasList;
+            return problemStatusList;
         }
         public class ProblemStatus{
             public boolean firstBlood, solved, triedAfterFrozen;
