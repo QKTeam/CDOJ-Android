@@ -32,7 +32,6 @@ public class User extends Fragment implements ViewHandler{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setRetainInstance(true);
         super.onCreate(savedInstanceState);
     }
 

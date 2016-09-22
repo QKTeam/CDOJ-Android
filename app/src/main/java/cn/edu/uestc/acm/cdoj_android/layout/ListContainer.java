@@ -124,7 +124,7 @@ public class ListContainer extends Fragment implements ViewHandler{
 
     private void configureViewPager() {
         viewPager.setOffscreenPageLimit(2);
-        viewPager.setAdapter(new FragmentPagerAdapter(getFragmentManager()) {
+        viewPager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
                 switch (position) {

@@ -21,6 +21,8 @@ import cn.edu.uestc.acm.cdoj_android.ItemContentActivity;
 import cn.edu.uestc.acm.cdoj_android.LoginActivity;
 import cn.edu.uestc.acm.cdoj_android.R;
 import cn.edu.uestc.acm.cdoj_android.GetInformation;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ArticleFragment;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ContestFragment;
 import cn.edu.uestc.acm.cdoj_android.net.NetData;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj_android.net.data.ContestInfo;
@@ -39,7 +41,6 @@ public class ContestListFragment extends ListFragmentWithGestureLoad implements 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setRetainInstance(true);
         super.onCreate(savedInstanceState);
     }
 
@@ -97,73 +98,76 @@ public class ContestListFragment extends ListFragmentWithGestureLoad implements 
     public void onListItemClick(final ListView l, View v, final int position, long id) {
         final int contestId = Integer.parseInt((String) listItems.get(position).get("id"));
         if (!Global.userManager.isLogin()){
-            AlertDialog.Builder alert = new AlertDialog.Builder(l.getContext())
-                    .setTitle("未登录")
-                    .setMessage("您还未登录，部分功能将无法使用")
-                    .setPositiveButton("登录", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Context context = l.getContext();
-                            Intent intent = new Intent(context, LoginActivity.class);
-                            context.startActivity(intent);
-                        }
-                    })
-                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+            unLogin(position, contestId);
+            return;
+        }
+        if (listItems.get(position).get("permission").equals("Private")){
+            privateContest(position, contestId);
+            return;
+        }
+        setClickInfo(position, contestId);
+        NetData.loginContest(contestId, "123456789", ContestListFragment.this);
+    }
 
-                        }
-                    });
-            if (((String) listItems.get(position).get("permission")).equals("Public")) {
-                alert.setNeutralButton("直接进入", new DialogInterface.OnClickListener() {
+    private void unLogin(final int position, final int contestId) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(rootView.getContext())
+                .setTitle("未登录")
+                .setMessage("您还未登录，部分功能将无法使用")
+                .setPositiveButton("登录", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        showDetail(position, contestId);
+                        Context context = rootView.getContext();
+                        Intent intent = new Intent(context, LoginActivity.class);
+                        context.startActivity(intent);
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
                     }
                 });
-            }
-            alert.show();
-            return;
+        if (listItems.get(position).get("permission").equals("Public")) {
+            alert.setNeutralButton("直接进入", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    showDetail(position, contestId);
+                }
+            });
         }
-        if (((String) listItems.get(position).get("permission")).equals("Private")){
-            final EditText passwordET = new EditText(l.getContext());
-            new AlertDialog.Builder(rootView.getContext())
-                    .setTitle("请输入进入该比赛的密码：")
-                    .setView(passwordET)
-                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            final String password = passwordET.getText().toString();
-                            setClickDetail(position, contestId);
-                            NetData.loginContest(contestId, password, ContestListFragment.this);
-                        }
-                    })
-                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+        alert.show();
+    }
 
-                        }
-                    })
-                    .show();
-            return;
-        }
+    private void privateContest(final int position, final int contestId) {
+        final EditText passwordET = new EditText(rootView.getContext());
+        new AlertDialog.Builder(rootView.getContext())
+                .setTitle("请输入进入该比赛的密码：")
+                .setView(passwordET)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        final String password = passwordET.getText().toString();
+                        setClickInfo(position, contestId);
+                        NetData.loginContest(contestId, password, ContestListFragment.this);
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
-        setClickDetail(position, contestId);
-        NetData.loginContest(contestId, "123456789", ContestListFragment.this);
-
-        /*if (!isTwoPane) {
-            showDetail(position, contestId);
-            return;
-        }
-        ((ContestFragment) ((GetInformation) Global.currentMainActivity)
-                .getDetailsContainer()
-                .getDetail(ViewHandler.CONTEST_DETAIL))
-                .setContestID(Integer.parseInt((String) listItems.get(position).get("id")));
-        Global.netContent.getContent(ViewHandler.CONTEST_DETAIL,
-                Integer.parseInt((String) listItems.get(position).get("id")));*/
+                    }
+                })
+                .show();
     }
 
     private void showDetail(int position, int id) {
+        if (isTwoPane) {
+            showDetailOnActivity(position, id);
+        }
+        ((ContestFragment) Global.detailsContainer.getDetail(ViewHandler.CONTEST_DETAIL)).refresh();
+    }
+
+    private void showDetailOnActivity(int position, int id) {
         Context context = rootView.getContext();
         Intent intent = new Intent(context, ItemContentActivity.class);
         intent.putExtra("title", (String) listItems.get(position).get("title"));
@@ -178,7 +182,7 @@ public class ContestListFragment extends ListFragmentWithGestureLoad implements 
         }
     }
 
-    private void setClickDetail(int position, int id) {
+    private void setClickInfo(int position, int id) {
         clickPosition = position;
         clickID = id;
     }
@@ -210,7 +214,6 @@ public class ContestListFragment extends ListFragmentWithGestureLoad implements 
                 notifyDataSetChanged();
                 break;
             case ViewHandler.LOGIN_CONTEST:
-                Log.d("是够登录成功", ""+(boolean)data);
                 if ((boolean) data) {
                     showDetail();
                     return;
@@ -222,7 +225,7 @@ public class ContestListFragment extends ListFragmentWithGestureLoad implements 
                             public void onClick(DialogInterface dialog, int which) {
                             }
                         });
-                if (((String) listItems.get(clickPosition).get("permission")).equals("Private")) {
+                if (listItems.get(clickPosition).get("permission").equals("Private")) {
                     alert.setMessage("密码错误，请重新输入！");
                 } else {
                     alert.setMessage("您无查看该比赛的相关权限！");

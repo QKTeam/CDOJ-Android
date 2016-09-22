@@ -27,7 +27,6 @@ public class ContestClarification extends ListFragmentWithGestureLoad implements
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
         if (savedInstanceState == null) {
             setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
@@ -51,6 +50,7 @@ public class ContestClarification extends ListFragmentWithGestureLoad implements
                 Global.netContent.getContestPart(ViewHandler.CONTEST_COMMENT, contestID, 1);
             }
         }
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override

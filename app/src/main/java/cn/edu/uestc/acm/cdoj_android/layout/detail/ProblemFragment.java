@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import cn.edu.uestc.acm.cdoj_android.R;
+import cn.edu.uestc.acm.cdoj_android.net.NetData;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj_android.net.data.Problem;
 
@@ -23,7 +24,6 @@ public class ProblemFragment extends Fragment implements ViewHandler{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setRetainInstance(true);
         super.onCreate(savedInstanceState);
     }
 
@@ -50,11 +50,17 @@ public class ProblemFragment extends Fragment implements ViewHandler{
         webViewFragment.addJSData(jsData);
     }
 
-    public void setTitle(String title) {
+    public ProblemFragment setTitle(String title) {
         this.title = title;
         if (toolbar != null) {
             toolbar.setTitle(title);
         }
+        return this;
+    }
+
+    public ProblemFragment refresh(int id) {
+        NetData.getProblemDetail(id, this);
+        return this;
     }
 
     @Override

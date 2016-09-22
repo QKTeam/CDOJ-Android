@@ -4,27 +4,19 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
-import android.support.v13.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 
-import cn.edu.uestc.acm.cdoj_android.Global;
-import cn.edu.uestc.acm.cdoj_android.NetContent;
 import cn.edu.uestc.acm.cdoj_android.R;
 import cn.edu.uestc.acm.cdoj_android.net.NetData;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj_android.net.data.Contest;
 import cn.edu.uestc.acm.cdoj_android.net.data.Problem;
-import cn.edu.uestc.acm.cdoj_android.net.data.Status;
 
 /**
  * Created by great on 2016/8/25.
@@ -42,7 +34,6 @@ public class ContestFragment extends Fragment implements ViewHandler{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setRetainInstance(true);
         super.onCreate(savedInstanceState);
     }
 
@@ -50,7 +41,7 @@ public class ContestFragment extends Fragment implements ViewHandler{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (savedInstanceState == null) {
-            fragmentManager = getFragmentManager();
+            fragmentManager = getChildFragmentManager();
             rootView =  inflater.inflate(R.layout.contest, container, false);
             overview = new DetailWebViewFragment().switchHTMLData(ViewHandler.CONTEST_DETAIL);
             problems = new ContestProblems();
@@ -58,7 +49,7 @@ public class ContestFragment extends Fragment implements ViewHandler{
             status  = new ContestStatus();
             rank = new ContestRank();
             addPartFragment();
-            show(0);
+            showPart(0);
             if (contestID != -1) {
                 clarification.setContestID(contestID);
                 status.setContestID(contestID);
@@ -82,42 +73,7 @@ public class ContestFragment extends Fragment implements ViewHandler{
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (savedInstanceState == null) {
-            Button[] buttons = new Button[5];
-            buttons[0] = (Button) rootView.findViewById(R.id.contest_button0);
-            buttons[0].setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    show(0);
-                }
-            });
-            buttons[1] = (Button) rootView.findViewById(R.id.contest_button1);
-            buttons[1].setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    show(1);
-                }
-            });
-            buttons[2] = (Button) rootView.findViewById(R.id.contest_button2);
-            buttons[2].setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    show(2);
-                }
-            });
-            buttons[3] = (Button) rootView.findViewById(R.id.contest_button3);
-            buttons[3].setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    show(3);
-                }
-            });
-            buttons[4] = (Button) rootView.findViewById(R.id.contest_button4);
-            buttons[4].setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    show(4);
-                }
-            });
+            setTopButton();
         }
         /*if (savedInstanceState == null) {
             ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.contestViewPager);
@@ -148,7 +104,46 @@ public class ContestFragment extends Fragment implements ViewHandler{
         }*/
     }
 
-    private void show(int i) {
+    private void setTopButton() {
+        Button[] buttons = new Button[5];
+        buttons[0] = (Button) rootView.findViewById(R.id.contest_button0);
+        buttons[0].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPart(0);
+            }
+        });
+        buttons[1] = (Button) rootView.findViewById(R.id.contest_button1);
+        buttons[1].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPart(1);
+            }
+        });
+        buttons[2] = (Button) rootView.findViewById(R.id.contest_button2);
+        buttons[2].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPart(2);
+            }
+        });
+        buttons[3] = (Button) rootView.findViewById(R.id.contest_button3);
+        buttons[3].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPart(3);
+            }
+        });
+        buttons[4] = (Button) rootView.findViewById(R.id.contest_button4);
+        buttons[4].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPart(4);
+            }
+        });
+    }
+
+    private void showPart(int i) {
         hideAll();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         switch (i) {
@@ -193,13 +188,14 @@ public class ContestFragment extends Fragment implements ViewHandler{
         return contestID;
     }
 
-    public void setContestID(int contestID) {
+    public ContestFragment setContestID(int contestID) {
         this.contestID = contestID;
         if (clarification != null && status != null && rank != null) {
             clarification.setContestID(contestID);
             status.setContestID(contestID);
             rank.setContestID(contestID);
         }
+        return this;
     }
 
     public ContestClarification getClarification() {

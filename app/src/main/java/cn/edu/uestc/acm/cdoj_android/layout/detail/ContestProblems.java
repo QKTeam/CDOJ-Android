@@ -30,7 +30,6 @@ public class ContestProblems extends Fragment implements ViewHandler{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setRetainInstance(true);
         super.onCreate(savedInstanceState);
     }
 
@@ -69,7 +68,7 @@ public class ContestProblems extends Fragment implements ViewHandler{
     }
 
     private void setAdapter() {
-        viewPager.setAdapter(new FragmentPagerAdapter(getFragmentManager()) {
+        viewPager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
                 return problems[position];

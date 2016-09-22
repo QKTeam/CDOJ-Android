@@ -16,6 +16,8 @@ import cn.edu.uestc.acm.cdoj_android.Global;
 import cn.edu.uestc.acm.cdoj_android.ItemContentActivity;
 import cn.edu.uestc.acm.cdoj_android.R;
 import cn.edu.uestc.acm.cdoj_android.GetInformation;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ArticleFragment;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ProblemFragment;
 import cn.edu.uestc.acm.cdoj_android.net.NetData;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj_android.net.data.InfoList;
@@ -32,10 +34,8 @@ public class ProblemListFragment extends ListFragmentWithGestureLoad implements 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setRetainInstance(true);
         super.onCreate(savedInstanceState);
     }
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -89,16 +89,20 @@ public class ProblemListFragment extends ListFragmentWithGestureLoad implements 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         if (!isTwoPane) {
-            Context context = l.getContext();
-            Intent intent = new Intent(context, ItemContentActivity.class);
-            intent.putExtra("title", (String) listItems.get(position).get("title"));
-            intent.putExtra("type", ViewHandler.PROBLEM_DETAIL);
-            intent.putExtra("id", Integer.parseInt((String) listItems.get(position).get("id")));
-            context.startActivity(intent);
+            showDetailOnActivity(position);
             return;
         }
-        Global.netContent.getContent(ViewHandler.PROBLEM_DETAIL,
-                Integer.parseInt((String) listItems.get(position).get("id")));
+        ((ProblemFragment) Global.detailsContainer.getDetail(ViewHandler.PROBLEM_DETAIL))
+                .refresh(Integer.parseInt((String) listItems.get(position).get("id")));
+    }
+
+    private void showDetailOnActivity(int position) {
+        Context context = rootView.getContext();
+        Intent intent = new Intent(context, ItemContentActivity.class);
+        intent.putExtra("title", (String) listItems.get(position).get("title"));
+        intent.putExtra("type", ViewHandler.PROBLEM_DETAIL);
+        intent.putExtra("id", Integer.parseInt((String) listItems.get(position).get("id")));
+        context.startActivity(intent);
     }
 
     public void clearList() {
