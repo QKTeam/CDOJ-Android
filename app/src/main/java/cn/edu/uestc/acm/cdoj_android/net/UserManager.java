@@ -14,6 +14,7 @@ public class UserManager implements ViewHandler{
     SharedPreferences sp;
 
     String userName, sha1password;
+    boolean keepLoginCancleFlag = false;
     public UserManager(Context c) {
         this.context = c;
         sp = context.getSharedPreferences("user", Context.MODE_PRIVATE);
@@ -22,11 +23,16 @@ public class UserManager implements ViewHandler{
         return sp.getBoolean("isLogin", false);
     }
     void keepLogin(final String userName, final String sha1password, boolean im){
+        keepLoginCancleFlag = false;
         int s = im?0:20*60*1000;
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                NetData.login(userName, sha1password, null, null);
+                NetData.login(userName, sha1password, UserManager.this, null);
+            }
+            @Override
+            public boolean cancel() {
+                return keepLoginCancleFlag;
             }
         }, s , 20*60*1000);
     }
@@ -46,6 +52,7 @@ public class UserManager implements ViewHandler{
         NetData.register(this.userName = userName, this.sha1password = NetWorkTool.sha1(password), NetWorkTool.sha1(passwordRepeat), nickName, email, motto, name, sex, size, phone, school, departmentId, grade, studentId, this, viewHandler);
     }
     public void logout(ViewHandler viewHandler){
+        sp.edit().putBoolean("isLogin", false).commit();
         NetData.logout(this, viewHandler);
     }
     void getAvatar(String email, Object addition, ViewHandler viewHandler){
@@ -61,6 +68,9 @@ public class UserManager implements ViewHandler{
                 if ((boolean)data1[1]) {
                     setUser(userName, sha1password);
                 }
+                else {
+                    keepLoginCancleFlag= true;
+                }
                 break;
             case ViewHandler.REGISTER:
                 if ((boolean)data1[1]){
@@ -69,9 +79,10 @@ public class UserManager implements ViewHandler{
                 break;
             case ViewHandler.LOGOUT:
                 if ((boolean)data1[1]){
-                    sp.edit().putBoolean("isLogin", false).commit();
                 }
         }
-        ((ViewHandler)(data1[0])).show(which, data1[1], time);
+        if (data1[0] != null){
+            ((ViewHandler)(data1[0])).show(which, data1[1], time);
+        }
     }
 }
