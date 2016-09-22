@@ -5,7 +5,18 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorBlue">#33CCFF</color>
     <color name="content_background">#e8e8e8</color>
-    <color name="toolbar_background">#f0f0f0</color>
+    <color name="main_background">#ffffff</color>
     <color name="statusBar_background_white">#ffffff</color>
     <color name="statusBar_background_gray">#666666</color>
+    <color name="main_blue">#38BDFF</color>
+    <color name="red">#FF0000</color>
+    <color name="green">#00FF00</color>
+    <color name="blue">#0000FF</color>
+    <color name="contestPermission_Invited">#FFE000</color>
+    <color name="contestPermission_Diy">#FF9403</color>
+    <color name="contestPermission_Onsite">#00A9FF</color>
+    <color name="contestPermission_Private">#FF0000</color>
+    <color name="contestPermission_Public">#00FF00</color>
+    <color name="contestStatus_Ended">#FF0000</color>
+    <color name="contestStatus_Running">#00FF00</color>
 </resources>

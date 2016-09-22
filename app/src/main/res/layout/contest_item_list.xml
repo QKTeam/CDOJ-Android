@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/main_background"
     android:id="@+id/contest_list_item"
     android:layout_width="match_parent"
     android:layout_height="80dp"
@@ -24,7 +25,7 @@
         android:layout_height="25dp">
 
         <TextView
-            android:id="@+id/contest_releaseTime"
+            android:id="@+id/contest_date"
             android:layout_width="match_parent"
             android:layout_height="25dp"
             android:layout_weight="1"
@@ -34,6 +35,7 @@
 
         <TextView
             android:id="@+id/contest_timeLimit"
+            android:gravity="right"
             android:layout_width="match_parent"
             android:layout_height="25dp"
             android:layout_weight="1"
@@ -62,7 +64,7 @@
             android:layout_weight="4"
             android:orientation="horizontal">
 
-            <TextView
+            <cn.edu.uestc.acm.cdoj_android.layout.list.text.ContestStatus
                 android:id="@+id/contest_status"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -72,8 +74,8 @@
                 android:singleLine="true"
                 android:textSize="12sp" />
 
-            <TextView
-                android:id="@+id/contest_permissions"
+            <cn.edu.uestc.acm.cdoj_android.layout.list.text.ContestPermission
+                android:id="@+id/contest_permission"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"

@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +21,7 @@ import cn.edu.uestc.acm.cdoj_android.net.data.Problem;
 /**
  * Created by great on 2016/8/25.
  */
-public class ContestProblems extends Fragment {
+public class ContestProblems extends Fragment implements ViewHandler{
     private View rootView;
     private ViewPager viewPager;
     private TabLayout tabLayout;
@@ -28,7 +30,6 @@ public class ContestProblems extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setRetainInstance(true);
         super.onCreate(savedInstanceState);
     }
 
@@ -45,12 +46,13 @@ public class ContestProblems extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (savedInstanceState == null) {
-            viewPager = (ViewPager) rootView.findViewById(R.id.contestProblemsViewPager);
+            viewPager = (ViewPager) rootView.findViewById(R.id.contestProblems_viewPager);
             if (problems != null) {
                 setAdapter();
             }
+            tabLayout = (TabLayout) rootView.findViewById(R.id.contestProblems_tabLayout);
+            tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         }
-
     }
 
     public void addProblems(ArrayList<Problem> problemList) {
@@ -66,7 +68,7 @@ public class ContestProblems extends Fragment {
     }
 
     private void setAdapter() {
-        viewPager.setAdapter(new FragmentPagerAdapter(getFragmentManager()) {
+        viewPager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
                 return problems[position];
@@ -77,5 +79,15 @@ public class ContestProblems extends Fragment {
                 return problemsCount;
             }
         });
+        tabLayout.setupWithViewPager(viewPager);
+        char a = 'A';
+        for (int i = 0; i != problemsCount; ++i) {
+            tabLayout.getTabAt(i).setText(String.valueOf((char)(a + i)));
+        }
+    }
+
+    @Override
+    public void show(int which, Object data, long time) {
+
     }
 }

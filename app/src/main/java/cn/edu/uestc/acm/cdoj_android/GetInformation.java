@@ -1,7 +1,7 @@
 package cn.edu.uestc.acm.cdoj_android;
 
 import cn.edu.uestc.acm.cdoj_android.layout.DetailsContainer;
-import cn.edu.uestc.acm.cdoj_android.layout.ListContainerFragment;
+import cn.edu.uestc.acm.cdoj_android.layout.ListContainer;
 
 /**
  * Created by great on 2016/8/15.
@@ -12,5 +12,5 @@ public interface GetInformation {
 
     DetailsContainer getDetailsContainer();
 
-    ListContainerFragment getListContainer();
+    ListContainer getListContainer();
 }

@@ -4,21 +4,83 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <android.support.design.widget.AppBarLayout
+    <!--<android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/contest_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:background="@color/main_background"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
-    </android.support.design.widget.AppBarLayout>
+    </android.support.design.widget.AppBarLayout>-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/contest_button0"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/overview"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:textColor="@color/colorBlue"
+            android:background="@drawable/button_selector" />
+        <Button
+            android:id="@+id/contest_button1"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/problems"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:background="@drawable/button_selector"
+            android:textColor="@color/colorBlue"/>
+        <Button
+            android:id="@+id/contest_button2"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/clarification"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:background="@drawable/button_selector"
+            android:textColor="@color/colorBlue"/>
+        <Button
+            android:id="@+id/contest_button3"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/status"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:background="@drawable/button_selector"
+            android:textColor="@color/colorBlue"/>
+        <Button
+            android:id="@+id/contest_button4"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="@string/rank"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:background="@drawable/button_selector"
+            android:textColor="@color/colorBlue" />
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/contestViewPager"
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/contest_details"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+    <!--<android.support.v4.view.ViewPager
+        android:id="@+id/contestViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>-->
 
 </LinearLayout>

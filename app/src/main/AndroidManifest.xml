@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cn.edu.uestc.acm.cdoj_android">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,7 +11,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="cn.edu.uestc.acm.cdoj_android.MainActivity"
+
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -19,14 +22,17 @@
             </intent-filter>
         </activity>
         <activity
+
             android:name=".ItemContentActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".ItemContentActivity"
+            android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ItemContentActivity" />
         </activity>
+        <activity
+
+            android:name=".LoginActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
-    <uses-permission android:name="android.permission.INTERNET"/>
+
 </manifest>
