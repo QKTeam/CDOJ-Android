@@ -45,8 +45,8 @@ public class ContestClarification extends ListFragmentWithGestureLoad implements
             setOnPullUpLoadListener(new PullUpLoadListView.OnPullUpLoadListener() {
                 @Override
                 public void onPullUpLoading() {
-                    if (getPageInfo().currentPage != getPageInfo().totalPages) {
-                        NetData.getContestComment(contestID, getPageInfo().currentPage, ContestClarification.this);
+                    if (getPageInfo().currentPage < getPageInfo().totalPages) {
+                        NetData.getContestComment(contestID, getPageInfo().currentPage + 1, ContestClarification.this);
                     } else {
                         stopPullUpLoad();
                     }
@@ -73,25 +73,24 @@ public class ContestClarification extends ListFragmentWithGestureLoad implements
     private void createAdapter() {
         adapter = new SimpleAdapter(
                 Global.currentMainActivity, listItems, R.layout.contest_clarification_item_list,
-                new String[]{/*"header",*/ "user", "submitDate", "content"},
-                new int[]{/*R.id.contestClarification_header,*/ R.id.contestClarification_user,
+                new String[]{"header", "user", "submitDate", "content"},
+                new int[]{R.id.contestClarification_header, R.id.contestClarification_user,
                         R.id.contestClarification_submitDate, R.id.contestClarification_content});
         setListAdapter(adapter);
     }
 
     public void setContestID(int id) {
         contestID = id;
-        if (getListView() != null) {
-            Global.netContent.getContestPart(ViewHandler.CONTEST_COMMENT, contestID, 1);
-        }
     }
+
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         Context context = l.getContext();
-        Intent intent = new Intent(context, ContestClarificationItemActivity.class);
+        Intent intent = new Intent(context, ItemContentActivity.class);
         intent.putExtra("title", (String) listItems.get(position).get("title"));
-        intent.putExtra("id", Integer.parseInt((String) listItems.get(position).get("id")));
+        intent.putExtra("type", ViewHandler.ARTICLE_DETAIL);
+        intent.putExtra("id", (int) listItems.get(position).get("id"));
         context.startActivity(intent);
     }
 
@@ -102,8 +101,8 @@ public class ContestClarification extends ListFragmentWithGestureLoad implements
             ArrayList<ArticleInfo> infoList_clarification = ((InfoList) data).getInfoList();
             for (ArticleInfo tem : infoList_clarification) {
                 Map<String, Object> listItem = new HashMap<>();
-//                    listItem.put("header", tem.);
-                listItem.put("content", tem.content);
+                listItem.put("header", R.drawable.logo);
+                listItem.put("content", tem.content.replaceAll("!\\[title].*\\)", "[图片]"));
                 listItem.put("submitDate", tem.timeString);
                 listItem.put("user", tem.ownerName);
                 listItem.put("title", tem.title);
@@ -115,6 +114,7 @@ public class ContestClarification extends ListFragmentWithGestureLoad implements
         }
         notifyDataSetChanged();
     }
+
 
     public void refresh() {
         if (contestID == -1) throw new IllegalStateException("Clarification's contestId is null");

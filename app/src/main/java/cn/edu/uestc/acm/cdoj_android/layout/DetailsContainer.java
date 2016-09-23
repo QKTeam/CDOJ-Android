@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import cn.edu.uestc.acm.cdoj_android.Global;
 import cn.edu.uestc.acm.cdoj_android.R;
 import cn.edu.uestc.acm.cdoj_android.layout.detail.ArticleFragment;
 import cn.edu.uestc.acm.cdoj_android.layout.detail.ContestFragment;
@@ -45,16 +44,13 @@ public class DetailsContainer extends Fragment {
             problem = new ProblemFragment();
             contest = new ContestFragment();
             user = new User();
-            addPartFragment();
-            Global.netContent.addDetailFragment(article);
-            Global.netContent.addDetailFragment(problem);
-            Global.netContent.addDetailFragment(contest);
+            addParts();
             rootView = inflater.inflate(R.layout.detail_container, container, false);
         }
         return rootView;
     }
 
-    private void addPartFragment() {
+    private void addParts() {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.add(R.id.details_container, article);
         transaction.add(R.id.details_container, problem);

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@color/main_background"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="85dp"
     android:orientation="horizontal"
     android:paddingBottom="5dp"
     android:paddingLeft="20dp"
@@ -34,7 +34,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="c++ 3420mb"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 android:lines="1"
                 android:gravity="center_vertical"
                 android:textStyle="bold"/>
@@ -48,13 +48,14 @@
                 android:id="@+id/contestStatus_user"
                 android:layout_width="0dp"
                 android:text="fdsfsafdsa"
+                android:gravity="center"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
             <TextView
                 android:id="@+id/contestStatus_cost"
                 android:layout_width="0dp"
                 android:text="fasfdsafdsa"
-                android:gravity="right"
+                android:gravity="center"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
         </LinearLayout>

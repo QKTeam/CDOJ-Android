@@ -2,18 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@color/main_background"
     android:layout_width="match_parent"
-    android:layout_height="95dp"
+    android:layout_height="85dp"
     android:orientation="horizontal"
     android:paddingBottom="5dp"
-    android:paddingLeft="20dp"
+    android:paddingLeft="10dp"
     android:paddingRight="10dp"
     android:paddingTop="5dp">
     <ImageView
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
         android:id="@+id/contestClarification_header"
-        android:layout_width="75dp"
-        android:layout_height="match_parent" />
+        android:layout_gravity="left"
+        android:layout_width="65dp"
+        android:layout_marginRight="5dp"
+        android:layout_height="wrap_content" />
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -50,8 +52,9 @@
             android:layout_height="0dp"
             android:maxLines="3"
             android:gravity="center_vertical"
+            android:text="fdsjghkdjsaghkadjsghkjdsafhjkdashfjksdahfjkdsahfkjsdafhkjsdafhkjsadfhjksdfhkjsadfhjksdafsdajkfhdsjkafhkasdjfhkadsfhskdjfhakjs"
             android:textStyle="bold"
             android:ellipsize="end"
-            android:textSize="17sp"/>
+            android:textSize="15sp"/>
     </LinearLayout>
 </LinearLayout>

@@ -39,7 +39,7 @@ public class NetData {
             contestCommentUrl = severAddress + "/article/commentSearch",
             contestRankListUrl = severAddress + "/contest/rankList/",
             statusListUrl = severAddress + "/status/search",
-            statusInfoUrl = severAddress + "/stutas/info/",
+            statusInfoUrl = severAddress + "/status/info/",
             codeSubmitUrl = severAddress + "/status/submit",
             avatarUrl = "http://cdn.v2ex.com/gravatar/%@.jpg?s=%ld&&d=retro",
             registerUrl = severAddress + "/user/register";

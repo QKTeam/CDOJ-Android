@@ -1,7 +1,8 @@
-package cn.edu.uestc.acm.cdoj_android.layout.detail;
+package cn.edu.uestc.acm.cdoj_android.layout.detail.adapter;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,6 @@ import android.widget.TextView;
 
 import java.util.List;
 import java.util.Map;
-import java.util.zip.Inflater;
 
 import cn.edu.uestc.acm.cdoj_android.R;
 
@@ -22,6 +22,7 @@ public class ContestRankAdapter extends SimpleAdapter {
 
     private List<? extends Map<String, ?>> data;
     private Context context;
+    private View[] items;
     /**
      * Constructor
      *
@@ -40,13 +41,14 @@ public class ContestRankAdapter extends SimpleAdapter {
         super(context, data, resource, from, to);
         this.data = data;
         this.context = context;
+        items = new View[data.size()+1];
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View v = super.getView(position, convertView, parent);
-        LinearLayout solvedContainer = (LinearLayout) v.findViewById(R.id.contestRank_solved);
-        if (convertView == null) {
+        if (items[position] == null) {
+            View v = super.getView(position, null, parent);
+            LinearLayout solvedContainer = (LinearLayout) v.findViewById(R.id.contestRank_solved);
             LayoutInflater inflate = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             int probCount = (Integer) data.get(position).get("probCount");
             int solvedDetail = (Integer) data.get(position).get("solvedDetail");
@@ -54,7 +56,7 @@ public class ContestRankAdapter extends SimpleAdapter {
             for (int i = 0; i != probCount; ++i) {
                 TextView textView = (TextView) inflate.inflate(R.layout.contest_rank_problem_mark, solvedContainer, false);
                 textView.setText(String.valueOf(text));
-                if ((solvedDetail & (Integer.MAX_VALUE - 1)) != solvedDetail){
+                if ((solvedDetail & 1) == 1){
                     textView.setBackgroundColor(ContextCompat.getColor(context, R.color.green));
                 }
                 solvedContainer.addView(textView);
@@ -62,8 +64,9 @@ public class ContestRankAdapter extends SimpleAdapter {
                 ++text;
                 solvedDetail = solvedDetail >> 1;
             }
-        }
+            items[position] = v;
 
-        return v;
+        }
+        return items[position];
     }
 }

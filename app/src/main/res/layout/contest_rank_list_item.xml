@@ -2,22 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@color/main_background"
     android:layout_width="match_parent"
-    android:layout_height="105dp"
+    android:layout_height="85dp"
     android:orientation="vertical"
     android:paddingBottom="5dp"
-    android:paddingLeft="20dp"
+    android:paddingLeft="10dp"
     android:paddingRight="10dp"
     android:paddingTop="5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="75dp"
+        android:layout_height="0dp"
+        android:layout_weight="3"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/contestClarification_header"
-            android:layout_width="75dp"
-            android:layout_height="match_parent" />
+            android:layout_width="65dp"
+            android:layout_marginRight="5dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -41,7 +44,7 @@
                         android:ellipsize="end"
                         android:lines="1"
                         android:text="fjkdhgkdsag"
-                        android:textSize="20sp"
+                        android:textSize="17sp"
                         android:textStyle="bold"/>
 
                     <TextView
@@ -52,7 +55,7 @@
                         android:text="fdsafsad"
                         android:ellipsize="end"
                         android:lines="1"
-                        android:textSize="20sp"/>
+                        android:textSize="17sp"/>
                 </LinearLayout>
 
                 <TextView
@@ -63,7 +66,7 @@
                     android:gravity="center_vertical"
                     android:text="Rank  100"
                     android:lines="1"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:textStyle="bold"/>
             </LinearLayout>
         </LinearLayout>
@@ -72,7 +75,9 @@
     <LinearLayout
         android:id="@+id/contestRank_solved"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:paddingTop="2dp"
+        android:layout_weight="1"
         android:orientation="horizontal"/>
 
 </LinearLayout>

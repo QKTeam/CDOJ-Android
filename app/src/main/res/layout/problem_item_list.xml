@@ -15,17 +15,17 @@
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:ellipsize="end"
-        android:singleLine="true"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:maxLines="1" />
 
     <TextView
         android:id="@+id/problem_source"
         android:layout_width="match_parent"
         android:layout_height="25dp"
         android:ellipsize="end"
-        android:singleLine="true"
-        android:textSize="16sp" />
+        android:textSize="15sp"
+        android:maxLines="1" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,8 +38,8 @@
             android:layout_height="match_parent"
             android:layout_weight="3"
             android:ellipsize="end"
-            android:singleLine="true"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:maxLines="1" />
 
         <TextView
             android:id="@+id/problem_number"
@@ -48,7 +48,7 @@
             android:layout_weight="4"
             android:ellipsize="end"
             android:gravity="right"
-            android:singleLine="true"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:maxLines="1" />
     </LinearLayout>
 </LinearLayout>

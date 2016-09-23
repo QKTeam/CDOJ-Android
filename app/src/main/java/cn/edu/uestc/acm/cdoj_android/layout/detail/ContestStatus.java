@@ -89,8 +89,8 @@ public class ContestStatus extends ListFragmentWithGestureLoad implements ViewHa
                 listItem.put("probOrder", tem.problemId);
                 listItem.put("result", tem.returnType);
                 listItem.put("submitDate", tem.timeString);
-                listItem.put("language", tem.language+"  "+tem.length+"B");
-                listItem.put("cost", tem.timeCost+"ms "+tem.memoryCost+"KB");
+                listItem.put("language", tem.language+"/"+tem.length+"B");
+                listItem.put("cost", "cost:"+tem.timeCost+"ms/"+tem.memoryCost+"KB");
                 listItem.put("user", tem.nickName);
                 addListItem(listItem);
             }

@@ -48,26 +48,24 @@ public class ContestListFragment extends ListFragmentWithGestureLoad implements 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         isTwoPane = ((GetInformation) Global.currentMainActivity).isTwoPane();
+        refresh();
         if (savedInstanceState == null) {
             setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    listItems.clear();
-                    continuePullUpLoad();
-                    Global.netContent.getContent(ViewHandler.CONTEST_LIST, 1);
+                    refresh();
                 }
             });
             setOnPullUpLoadListener(new PullUpLoadListView.OnPullUpLoadListener(){
                 @Override
                 public void onPullUpLoading() {
-                    if (getPageInfo().currentPage != getPageInfo().totalPages) {
+                    if (getPageInfo().currentPage < getPageInfo().totalPages) {
                         NetData.getContestList(getPageInfo().currentPage + 1, key, ContestListFragment.this);
                     }else {
                         stopPullUpLoad();
                     }
                 }
             });
-            Global.netContent.getContent(ViewHandler.CONTEST_LIST, 1);
         }
     }
 
@@ -107,6 +105,11 @@ public class ContestListFragment extends ListFragmentWithGestureLoad implements 
         }
         setClickInfo(position, contestId);
         NetData.loginContest(contestId, "123456789", ContestListFragment.this);
+    }
+
+    private void setClickInfo(int position, int id) {
+        clickPosition = position;
+        clickID = id;
     }
 
     private void unLogin(final int position, final int contestId) {
@@ -160,12 +163,20 @@ public class ContestListFragment extends ListFragmentWithGestureLoad implements 
                 .show();
     }
 
+    private void showDetail() {
+        if (clickPosition != -1 && clickID != -1) {
+            showDetail(clickPosition, clickID);
+        }
+    }
+
     private void showDetail(int position, int id) {
         if (!isTwoPane) {
             showDetailOnActivity(position, id);
             return;
         }
-        ((ContestFragment) Global.detailsContainer.getDetail(ViewHandler.CONTEST_DETAIL)).refresh();
+        ((ContestFragment) Global.detailsContainer.getDetail(ViewHandler.CONTEST_DETAIL))
+                .setContestID(id)
+                .refresh();
     }
 
     private void showDetailOnActivity(int position, int id) {
@@ -175,17 +186,6 @@ public class ContestListFragment extends ListFragmentWithGestureLoad implements 
         intent.putExtra("type", ViewHandler.CONTEST_DETAIL);
         intent.putExtra("id",id);
         context.startActivity(intent);
-    }
-
-    private void showDetail() {
-        if (clickPosition != -1 && clickID != -1) {
-            showDetail(clickPosition, clickID);
-        }
-    }
-
-    private void setClickInfo(int position, int id) {
-        clickPosition = position;
-        clickID = id;
     }
 
     public void clearList() {
@@ -238,5 +238,12 @@ public class ContestListFragment extends ListFragmentWithGestureLoad implements 
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public ContestListFragment refresh() {
+        continuePullUpLoad();
+        listItems.clear();
+        NetData.getContestList(1, key, this);
+        return this;
     }
 }

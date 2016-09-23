@@ -47,18 +47,15 @@ public class ContestFragment extends Fragment implements ViewHandler{
             overview = new DetailWebViewFragment().switchHTMLData(ViewHandler.CONTEST_DETAIL);
             problems = new ContestProblems();
             clarification = new ContestClarification();
-            if (contestID != -1) clarification.setContestID(contestID);
             status  = new ContestStatus();
-            if (contestID != -1) status.setContestID(contestID);
             rank = new ContestRank();
-            if (contestID != -1) rank.setContestID(contestID);
-            addPartFragment();
-            showPart(0);
             if (contestID != -1) {
                 clarification.setContestID(contestID);
                 status.setContestID(contestID);
                 rank.setContestID(contestID);
             }
+            addPartFragment();
+            showPart(0);
         }
         return rootView;
     }
@@ -71,11 +68,11 @@ public class ContestFragment extends Fragment implements ViewHandler{
         transaction.add(R.id.contest_details, status);
         transaction.add(R.id.contest_details, rank);
         transaction.commit();
-        if (askRefresh) {
+        /*if (askRefresh) {
             clarification.refresh();
             status.refresh();
             rank.refresh();
-        }
+        }*/
     }
 
     @Override
@@ -205,6 +202,7 @@ public class ContestFragment extends Fragment implements ViewHandler{
     }
 
     public void refresh() {
+        if (contestID == -1) throw new IllegalStateException("contest's contestID is null");
         askRefresh = true;
         NetData.getContestDetail(contestID, this);
         if (clarification != null) clarification.refresh();

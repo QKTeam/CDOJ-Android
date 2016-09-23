@@ -30,8 +30,6 @@ public class MainActivity extends AppCompatActivity implements GetInformation {
         super.onCreate(savedInstanceState);
         Global.currentMainActivity = this;
         setContentView(R.layout.activity_main);
-        ImageView openShowImage = (ImageView) findViewById(R.id.openShowImage);
-        openShowImage.setImageResource(R.drawable.im123456);
         isTwoPane = findViewById(R.id.landAndPadMark) != null;
         Global.isTwoPane = isTwoPane;
         initStatusBar();
@@ -39,16 +37,11 @@ public class MainActivity extends AppCompatActivity implements GetInformation {
         fragmentManager = getFragmentManager();
         if (savedInstanceState == null) {
             Global.userManager = new UserManager(this);
-            if (Global.userManager.isLogin()) {
-                Global.userManager.keepLogin();
-            }
+            if (Global.userManager.isLogin()) Global.userManager.keepLogin();
             Global.netContent = new NetContent();
             initViews();
-        } else {
-            findBackContainerFragment();
-        }
+        } else findBackContainerFragment();
         listContainer.setupWithTabLayout(bottomTab);
-        openShowImage.setVisibility(View.GONE);
     }
 
     @Override

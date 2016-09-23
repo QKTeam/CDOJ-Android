@@ -41,27 +41,25 @@ public class ArticleListFragment extends ListFragmentWithGestureLoad implements 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        isTwoPane = ((GetInformation) Global.currentMainActivity).isTwoPane();
         if (savedInstanceState == null) {
+            isTwoPane = ((GetInformation) Global.currentMainActivity).isTwoPane();
+            refresh();
             setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    listItems.clear();
-                    continuePullUpLoad();
-                    Global.netContent.getContent(ViewHandler.ARTICLE_LIST, 1);
+                    refresh();
                 }
             });
             setOnPullUpLoadListener(new PullUpLoadListView.OnPullUpLoadListener() {
                 @Override
                 public void onPullUpLoading() {
-                    if (getPageInfo().currentPage != getPageInfo().totalPages) {
-                        Global.netContent.getContent(ViewHandler.ARTICLE_LIST, getPageInfo().currentPage + 1);
+                    if (getPageInfo().currentPage < getPageInfo().totalPages) {
+                        NetData.getArticleList(getPageInfo().currentPage + 1, ArticleListFragment.this);
                     }else {
                         stopPullUpLoad();
                     }
                 }
             });
-            Global.netContent.getContent(ViewHandler.ARTICLE_LIST, 1);
         }
     }
 
@@ -86,7 +84,7 @@ public class ArticleListFragment extends ListFragmentWithGestureLoad implements 
             return;
         }
         ((ArticleFragment) Global.detailsContainer.getDetail(ViewHandler.ARTICLE_DETAIL))
-                .refresh(Integer.parseInt((String) listItems.get(position).get("id")));
+                .refresh((int) listItems.get(position).get("id"));
     }
 
     private void showDetailOnActivity(int position) {
@@ -94,7 +92,7 @@ public class ArticleListFragment extends ListFragmentWithGestureLoad implements 
         Intent intent = new Intent(context, ItemContentActivity.class);
         intent.putExtra("title", (String) listItems.get(position).get("title"));
         intent.putExtra("type", ViewHandler.ARTICLE_DETAIL);
-        intent.putExtra("id", Integer.parseInt((String) listItems.get(position).get("id")));
+        intent.putExtra("id", (int[]) listItems.get(position).get("id"));
         context.startActivity(intent);
     }
 
@@ -123,12 +121,19 @@ public class ArticleListFragment extends ListFragmentWithGestureLoad implements 
                 listItem.put("content", tem.content);
                 listItem.put("date", tem.timeString);
                 listItem.put("author", tem.ownerName);
-                listItem.put("id", "" + tem.articleId);
+                listItem.put("id", tem.articleId);
                 addListItem(listItem);
             }
         }else {
             getDataFailure();
         }
         notifyDataSetChanged();
+    }
+
+    public ArticleListFragment refresh() {
+        continuePullUpLoad();
+        listItems.clear();
+        NetData.getArticleList(1, this);
+        return this;
     }
 }

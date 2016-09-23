@@ -41,26 +41,24 @@ public class ProblemListFragment extends ListFragmentWithGestureLoad implements 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         isTwoPane = ((GetInformation) Global.currentMainActivity).isTwoPane();
+        refresh();
         if (savedInstanceState == null) {
             setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    listItems.clear();
-                    continuePullUpLoad();
-                    Global.netContent.getContent(ViewHandler.PROBLEM_LIST, 1);
+                    refresh();
                 }
             });
             setOnPullUpLoadListener(new PullUpLoadListView.OnPullUpLoadListener(){
                 @Override
                 public void onPullUpLoading() {
-                    if (getPageInfo().currentPage != getPageInfo().totalPages) {
+                    if (getPageInfo().currentPage < getPageInfo().totalPages) {
                         NetData.getProblemList(getPageInfo().currentPage + 1, key, ProblemListFragment.this);
                     } else {
                         stopPullUpLoad();
                     }
                 }
             });
-            Global.netContent.getContent(ViewHandler.PROBLEM_LIST, 1);
         }
     }
 
@@ -81,7 +79,7 @@ public class ProblemListFragment extends ListFragmentWithGestureLoad implements 
     private void createAdapter() {
         adapter = new SimpleAdapter(
                 Global.currentMainActivity, listItems, R.layout.problem_item_list,
-                new String[]{"title", "source", "id", "number"},
+                new String[]{"title", "source", "idString", "number"},
                 new int[]{R.id.problem_title, R.id.problem_source, R.id.problem_id, R.id.problem_number});
         setListAdapter(adapter);
     }
@@ -93,7 +91,7 @@ public class ProblemListFragment extends ListFragmentWithGestureLoad implements 
             return;
         }
         ((ProblemFragment) Global.detailsContainer.getDetail(ViewHandler.PROBLEM_DETAIL))
-                .refresh(Integer.parseInt((String) listItems.get(position).get("id")));
+                .refresh((int) listItems.get(position).get("id"));
     }
 
     private void showDetailOnActivity(int position) {
@@ -101,7 +99,7 @@ public class ProblemListFragment extends ListFragmentWithGestureLoad implements 
         Intent intent = new Intent(context, ItemContentActivity.class);
         intent.putExtra("title", (String) listItems.get(position).get("title"));
         intent.putExtra("type", ViewHandler.PROBLEM_DETAIL);
-        intent.putExtra("id", Integer.parseInt((String) listItems.get(position).get("id")));
+        intent.putExtra("id", (int) listItems.get(position).get("id"));
         context.startActivity(intent);
     }
 
@@ -119,8 +117,9 @@ public class ProblemListFragment extends ListFragmentWithGestureLoad implements 
                 Map<String, Object> listItem = new HashMap<>();
                 listItem.put("title", tem.title);
                 listItem.put("source", tem.source);
-                listItem.put("id", "ID:  " + tem.problemId);
+                listItem.put("id", tem.problemId);
                 listItem.put("number", number);
+                listItem.put("idString", "ID: " + tem.problemId);
                 addListItem(listItem);
             }
         } else {
@@ -131,5 +130,12 @@ public class ProblemListFragment extends ListFragmentWithGestureLoad implements 
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public ProblemListFragment refresh() {
+        continuePullUpLoad();
+        listItems.clear();
+        NetData.getProblemList(1, key, this);
+        return this;
     }
 }
