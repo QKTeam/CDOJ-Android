@@ -16,13 +16,13 @@ import java.util.TimerTask;
 /**
  * Created by qwe on 16-8-21.
  */
-public class UserManager implements ViewHandler{
+public class UserManager implements ViewHandler, NetStateListener {
     private String TAG = "tagUserManager";
     Context context;
     SharedPreferences sp;
 
-    String userName, sha1password, cacheDir;
-    boolean keepLoginCancelFlag = false;
+    String userName = "ssss", sha1password = "hahahhaha", cacheDir;
+    private boolean keepLoginCancelFlag = false, hasAddListener = false;
     public UserManager(Context c) {
         this.context = c;
         sp = context.getSharedPreferences("user", Context.MODE_PRIVATE);
@@ -37,7 +37,8 @@ public class UserManager implements ViewHandler{
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                NetData.login(userName, sha1password, UserManager.this, null);
+                Log.d(TAG, "run: 执行一次登录");
+                _login(userName, sha1password, null);
             }
             @Override
             public boolean cancel() {
@@ -47,6 +48,10 @@ public class UserManager implements ViewHandler{
     }
     public void keepLogin(){
         if (isLogin()) {
+            if (!hasAddListener){
+                hasAddListener = true;
+                NetWorkTool.addNetStateListener(this);
+            }
             keepLogin(sp.getString("userName", ""), sp.getString("password", ""), true);
         }
     }
@@ -55,7 +60,10 @@ public class UserManager implements ViewHandler{
         keepLogin(userName, sha1password, false);
     }
     public void login(String userName, String password, ViewHandler viewHandler){
-        NetData.login(this.userName = userName, this.sha1password = NetWorkTool.sha1(password), this, viewHandler);
+        _login(userName, NetWorkTool.sha1(password), viewHandler);
+    }
+    void _login(String userName, String sha1password, ViewHandler viewHandler){
+        NetData.login(this.userName = userName, this.sha1password = sha1password, this, viewHandler);
     }
     public void register(String userName, String password, String passwordRepeat, String nickName, String email, String motto, String name, int sex, int size, String phone, String school, int departmentId, int grade, String studentId, ViewHandler viewHandler){
         NetData.register(this.userName = userName, this.sha1password = NetWorkTool.sha1(password), NetWorkTool.sha1(passwordRepeat), nickName, email, motto, name, sex, size, phone, school, departmentId, grade, studentId, this, viewHandler);
@@ -87,12 +95,18 @@ public class UserManager implements ViewHandler{
     }
     @Override
     public void show(int which, Object data, long time) {
-        Object[] data1 = (Object[])data;
+        Object[] data1 = new Object[2];
+        data1[0] = null;
+        data1[1] = data;
+        if (data instanceof Object[]){
+            data1 = (Object[])data;
+        }
         //0 add
         //1 realData
         switch (which){
             case ViewHandler.LOGIN:
                 if ((boolean)data1[1]) {
+                    Log.d(TAG, "show: 登录成功");
                     setUser(userName, sha1password);
                 }
                 else {
@@ -125,7 +139,15 @@ public class UserManager implements ViewHandler{
                 data1[0] = extra[0];
         }
         if (data1[0] != null){
+            Log.d(TAG, "show: " + data1[0]);
             ((ViewHandler)(data1[0])).show(which, data1[1], time);
+        }
+    }
+
+    @Override
+    public void onNetStateChange(int last, int now) {
+        if (last == NetWorkTool.STATE_ERROR && now == NetWorkTool.STATE_OK && keepLoginCancelFlag){
+            keepLogin();
         }
     }
 }

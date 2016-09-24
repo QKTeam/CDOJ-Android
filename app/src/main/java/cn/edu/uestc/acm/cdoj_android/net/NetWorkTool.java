@@ -21,19 +21,38 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 /**
  * Created by lenovo on 2016/8/7.
  */
 public class NetWorkTool {
-    static String TAG = "---------NetWorkTool----------";
+    public final static int STATE_OK = 1, STATE_ERROR = 2;
+    private static ArrayList<NetStateListener> listeners = new ArrayList();
+    private static int state = STATE_ERROR;
+    final static String TAG = "------NetWorkTool------";
     static HttpClient httpClient;
 
     static {
         httpClient = new DefaultHttpClient();
     }
+    public static void addNetStateListener(NetStateListener listener){
+        listeners.add(listener);
+    }
     public static String getOrPost(String req[]){
-        return req.length == 1?get(req[0]):post(req[0], req[1]);
+        String re = req.length == 1?get(req[0]):post(req[0], req[1]);
+        int now;
+        if (re == null){
+            now = STATE_ERROR;
+        }
+        else {
+            now = STATE_OK;
+        }
+        for (NetStateListener listener:listeners) {
+            listener.onNetStateChange(state, now);
+        }
+        state = now;
+        return re;
     }
     public static String post(String url, String params) {
 //        Log.d("TAG", "new post: ");

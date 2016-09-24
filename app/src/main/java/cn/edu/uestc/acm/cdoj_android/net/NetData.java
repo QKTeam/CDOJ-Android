@@ -188,12 +188,12 @@ public class NetData {
                 return new Article(result);
             case ViewHandler.LOGIN:
 //                String s;
-//                Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + (s = result));
+                Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + result);
                 return checkResult(result);
             case ViewHandler.LOGOUT:
                 return checkResult(result);
             case ViewHandler.LOGIN_CONTEST:
-//                Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + (s = result));;
+                Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + result);;
                 return checkResult(result);
             case ViewHandler.CONTEST_COMMENT:
                 return new InfoList<ArticleInfo>(result, ArticleInfo.class);
