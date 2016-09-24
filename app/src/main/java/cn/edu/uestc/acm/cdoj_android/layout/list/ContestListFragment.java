@@ -175,6 +175,7 @@ public class ContestListFragment extends ListFragmentWithGestureLoad implements 
             return;
         }
         ((ContestFragment) Global.detailsContainer.getDetail(ViewHandler.CONTEST_DETAIL))
+                .showPart(ContestFragment.OVERVIEW)
                 .setContestID(id)
                 .refresh();
     }

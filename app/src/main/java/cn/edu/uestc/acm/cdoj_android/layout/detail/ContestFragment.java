@@ -4,12 +4,16 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 
 import cn.edu.uestc.acm.cdoj_android.R;
@@ -23,6 +27,16 @@ import cn.edu.uestc.acm.cdoj_android.net.data.Problem;
  */
 public class ContestFragment extends Fragment implements ViewHandler{
 
+    public static final int OVERVIEW = 0;
+    public static final int PROBLEMS = 1;
+    public static final int CLARIFICATION = 2;
+    public static final int STATUS = 3;
+    public static final int RANK = 4;
+    @IntDef({ContestFragment.OVERVIEW, ContestFragment.PROBLEMS, ContestFragment.CLARIFICATION,
+            ContestFragment.STATUS, ContestFragment.RANK})
+    @Retention(RetentionPolicy.SOURCE)
+    @interface contestPart {}
+
     private View rootView;
     private DetailWebViewFragment overview;
     private ContestProblems problems;
@@ -32,6 +46,9 @@ public class ContestFragment extends Fragment implements ViewHandler{
     private int contestID = -1;//命名为ID会与Fragment的ID冲突
     private FragmentManager fragmentManager;
     private boolean askRefresh;
+    private Button[] buttons = new Button[5];
+    private int currentPage = ContestFragment.OVERVIEW;
+    private int lastPage = ContestFragment.OVERVIEW;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,7 +72,7 @@ public class ContestFragment extends Fragment implements ViewHandler{
                 rank.setContestID(contestID);
             }
             addPartFragment();
-            showPart(0);
+            showPart(ContestFragment.OVERVIEW);
         }
         return rootView;
     }
@@ -84,45 +101,61 @@ public class ContestFragment extends Fragment implements ViewHandler{
     }
 
     private void setTopButton() {
-        Button[] buttons = new Button[5];
         buttons[0] = (Button) rootView.findViewById(R.id.contest_button0);
+        changeButtonColor(ContestFragment.OVERVIEW);
         buttons[0].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPart(0);
+                changeButtonColor(ContestFragment.OVERVIEW);
+                showPart(ContestFragment.OVERVIEW);
             }
         });
         buttons[1] = (Button) rootView.findViewById(R.id.contest_button1);
         buttons[1].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPart(1);
+                changeButtonColor(ContestFragment.PROBLEMS);
+                showPart(ContestFragment.PROBLEMS);
             }
         });
         buttons[2] = (Button) rootView.findViewById(R.id.contest_button2);
         buttons[2].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPart(2);
+                changeButtonColor(ContestFragment.CLARIFICATION);
+                showPart(ContestFragment.CLARIFICATION);
             }
         });
         buttons[3] = (Button) rootView.findViewById(R.id.contest_button3);
         buttons[3].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPart(3);
+                changeButtonColor(ContestFragment.STATUS);
+                showPart(ContestFragment.STATUS);
             }
         });
         buttons[4] = (Button) rootView.findViewById(R.id.contest_button4);
         buttons[4].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPart(4);
+                changeButtonColor(ContestFragment.RANK);
+                showPart(ContestFragment.RANK);
             }
         });
     }
 
-    private void showPart(int i) {
+    private void changeButtonColor(@contestPart int which) {
+        lastPage = currentPage;
+        currentPage = which;
+        if (buttons[lastPage] != null)
+            buttons[lastPage].setTextColor(ContextCompat.getColor(rootView.getContext(), R.color.main_blue));
+        if (buttons[currentPage] != null)
+            buttons[currentPage].setTextColor(ContextCompat.getColor(rootView.getContext(), R.color.black));
+    }
+
+
+
+    public ContestFragment showPart(@contestPart int i) {
         hideAll();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         switch (i) {
@@ -140,9 +173,9 @@ public class ContestFragment extends Fragment implements ViewHandler{
                 break;
             case 4:
                 transaction.show(rank);
-                break;
         }
         transaction.commit();
+        return this;
     }
 
     private void hideAll() {
@@ -169,11 +202,9 @@ public class ContestFragment extends Fragment implements ViewHandler{
 
     public ContestFragment setContestID(int contestID) {
         this.contestID = contestID;
-        if (clarification != null && status != null && rank != null) {
-            clarification.setContestID(contestID);
-            status.setContestID(contestID);
-            rank.setContestID(contestID);
-        }
+        if (clarification != null) clarification.setContestID(contestID);
+        if (status != null) status.setContestID(contestID);
+        if (rank != null) rank.setContestID(contestID);
         return this;
     }
 

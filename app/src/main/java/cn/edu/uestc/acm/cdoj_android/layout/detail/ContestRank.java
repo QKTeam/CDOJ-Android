@@ -2,6 +2,7 @@ package cn.edu.uestc.acm.cdoj_android.layout.detail;
 
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class ContestRank extends ListFragmentWithGestureLoad implements ViewHand
         adapter = new ContestRankAdapter(
                 Global.currentMainActivity, listItems, R.layout.contest_rank_list_item,
                 new String[]{"header", "rank", "nickName", "account"},
-                new int[]{R.id.contestClarification_header, R.id.contestRank_rank,
+                new int[]{R.id.contestRank_header, R.id.contestRank_rank,
                         R.id.contestRank_nickName, R.id.contestRank_account});
         setListAdapter(adapter);
     }
@@ -76,6 +77,7 @@ public class ContestRank extends ListFragmentWithGestureLoad implements ViewHand
                 Map<String, Object> listItem = new HashMap<>();
                 listItem.put("header", R.drawable.logo);
                 listItem.put("rank", "Rank  "+tem.rank);
+                listItem.put("email", tem.email);
                 listItem.put("account", tem.name);
                 listItem.put("nickName", tem.nickName);
                 listItem.put("solvedNum", tem.solved);

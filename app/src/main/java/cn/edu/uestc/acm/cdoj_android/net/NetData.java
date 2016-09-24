@@ -171,7 +171,7 @@ public class NetData {
     static Object request(int which, String[] req){
         switch (which){
             case ViewHandler.AVATAR:
-                return BitmapFactory.decodeStream(NetWorkTool._get(req[1]));
+                return BitmapFactory.decodeStream(NetWorkTool._get(req[0]));
         }
         String result = NetWorkTool.getOrPost(req);
         switch (which){

@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -45,7 +46,6 @@ public class DetailsContainer extends Fragment {
             contest = new ContestFragment();
             user = new User();
             addParts();
-            rootView = inflater.inflate(R.layout.detail_container, container, false);
         }
         return rootView;
     }
@@ -57,7 +57,7 @@ public class DetailsContainer extends Fragment {
         transaction.add(R.id.details_container, contest);
         transaction.add(R.id.details_container, user);
         transaction.commit();
-        hideAll();
+        show(ViewHandler.ARTICLE_DETAIL);
     }
 
     private void hideAll() {
@@ -69,7 +69,12 @@ public class DetailsContainer extends Fragment {
         transaction.commit();
     }
 
-    public void show(int which) {
+    @IntDef({ViewHandler.ARTICLE_DETAIL, ViewHandler.PROBLEM_DETAIL,
+            ViewHandler.CONTEST_DETAIL, ViewHandler.USER})
+    @Retention(RetentionPolicy.SOURCE)
+    @interface details {}
+
+    public void show(@details int which) {
         hideAll();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         switch (which) {
@@ -88,10 +93,6 @@ public class DetailsContainer extends Fragment {
         transaction.commit();
     }
 
-    @IntDef({ViewHandler.ARTICLE_DETAIL, ViewHandler.PROBLEM_DETAIL,
-            ViewHandler.CONTEST_DETAIL, ViewHandler.USER})
-    @Retention(RetentionPolicy.SOURCE)
-    @interface details {}
 
     public Fragment getDetail(@details int which) {
         switch (which) {

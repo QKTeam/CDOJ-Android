@@ -92,7 +92,7 @@ public class ArticleListFragment extends ListFragmentWithGestureLoad implements 
         Intent intent = new Intent(context, ItemContentActivity.class);
         intent.putExtra("title", (String) listItems.get(position).get("title"));
         intent.putExtra("type", ViewHandler.ARTICLE_DETAIL);
-        intent.putExtra("id", (int[]) listItems.get(position).get("id"));
+        intent.putExtra("id", (int) listItems.get(position).get("id"));
         context.startActivity(intent);
     }
 
