@@ -103,8 +103,7 @@ public class NetWorkTool {
             return null;
         }
     }
-    public static String getString(InputStream is) {
-        String string = null;
+    public static Object[] getBytes(InputStream is){
         if (is == null) {
             return null;
         }
@@ -117,7 +116,19 @@ public class NetWorkTool {
                     len += tlen;
                 }
             }
-            string = new String(buffer, 0, len, "utf-8");
+            return new Object[]{buffer, len};
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static String getString(InputStream is) {
+        String string = null;
+        try {
+            Object[] objects = getBytes(is);
+            if(objects != null){
+                string = new String((byte[]) objects[0], 0, (int)objects[1], "utf-8");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return null;
