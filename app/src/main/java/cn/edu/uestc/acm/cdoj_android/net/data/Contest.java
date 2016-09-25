@@ -11,6 +11,7 @@ import java.util.ArrayList;
  */
 public class Contest {
     private int id;
+    public int contestId;
     public boolean result = false;
     public String contentString = "";
     public ArrayList<Problem> problemList = new ArrayList<>(15);
@@ -24,7 +25,9 @@ public class Contest {
             if (!result){
                 return;
             }
-            contentString = jsonObject.getString("contest");
+            JSONObject contestObject = jsonObject.getJSONObject("contest");
+            contestId = contestObject.getInt("contestId");
+            contentString = contestObject.toString();
             JSONArray plist = jsonObject.getJSONArray("problemList");
             for (int i = 0; i < plist.length(); i++) {
                 problemList.add(Problem.newInstance(plist.getJSONObject(i)));

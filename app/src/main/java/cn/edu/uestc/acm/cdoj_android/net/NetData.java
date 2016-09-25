@@ -1,6 +1,5 @@
 package cn.edu.uestc.acm.cdoj_android.net;
 
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -43,13 +42,13 @@ public class NetData {
             codeSubmitUrl = severAddress + "/status/submit",
             avatarUrl = "http://cdn.v2ex.com/gravatar/%@.jpg?s=%ld&&d=retro",
             registerUrl = severAddress + "/user/register";
-    public static void register(String userName, String password, String passwordRepeat, String nickName, String email, String motto, String name, int sex, int size, String phone, String school, int departmentId, int grade, String studentId, ViewHandler viewHandler, Object add){
+    public static void register(String userName, String password, String passwordRepeat, String nickName, String email, String motto, String name, int sex, int size, String phone, String school, int departmentId, int grade, String studentId, ViewHandler viewHandler, Object extra){
         String key[] = new String[]{"userName", "password", "passwordRepeat", "nickName", "email", "motto", "name", "sex", "size", "phone", "school", "departmentId", "grade", "studentId"};
         Object o[] = new Object[]{userName, password, passwordRepeat, nickName, email, motto, name, sex, size, phone, school, departmentId, grade, studentId};
-        asyncWithAdd(ViewHandler.REGISTER, new String[]{registerUrl ,constructJson(key, o)}, viewHandler, add);
+        asyncWithAdd(ViewHandler.REGISTER, new String[]{registerUrl ,constructJson(key, o)}, viewHandler, extra);
     }
-    public static void getAvatar(String email, Object addition, ViewHandler viewHandler){
-        asyncWithAdd(ViewHandler.AVATAR, new String[]{avatarUrl.replace("%@", NetWorkTool.md(email, "md5")).replace("%ld", "200")}, viewHandler, addition);
+    public static void getAvatar(String email, Object extra, ViewHandler viewHandler){
+        asyncWithAdd(ViewHandler.AVATAR, new String[]{avatarUrl.replace("%@", NetWorkTool.md(email, "md5")).replace("%ld", "200")}, viewHandler, extra);
     }
 
     public static void submitCode(String codeContent, int languageId, int contestId, int problemId, ViewHandler viewHandler){
@@ -60,9 +59,9 @@ public class NetData {
     public static void getStatusInfo(int statusId, ViewHandler viewHandler){
         async(ViewHandler.STATUS_INFO, new String[]{statusInfoUrl + statusId}, viewHandler);
     }
-    public static void getContestStatusList(int contestId, int page, ViewHandler viewHandler){
-        String key[] = new String[]{"contestId", "currentPage", "orderAsc", "orderFields", "result"};
-        Object[] o = new Object[]{contestId, page, false, "statusId", 0};
+    public static void getStatusList(int problemId, String userName, int contestId, int page, ViewHandler viewHandler){
+        String key[] = new String[]{"problemId","userName","contestId", "currentPage", "orderAsc", "orderFields", "result"};
+        Object[] o = new Object[]{problemId == -1?"":problemId, userName, contestId, page, false, "statusId", 0};
         async(ViewHandler.STATUS_LIST, new String[]{statusListUrl, constructJson(key, o)}, viewHandler);
     }
     public static void getContestComment(int contestId, int page, ViewHandler viewHandler){
@@ -93,17 +92,17 @@ public class NetData {
         }
         async(ViewHandler.LOGIN_CONTEST, new String[]{loginContestUrl, p}, viewHandler);
     }
-    public static void login(String userName, String sha1password, ViewHandler viewHandler, Object add){
+    public static void login(String userName, String sha1password, ViewHandler viewHandler, Object extra){
         String p = "";
         try {
             p = new JSONObject().put("userName", userName).put("password", sha1password).toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        asyncWithAdd(ViewHandler.LOGIN, new String[]{loginUrl, p}, viewHandler, add);
+        asyncWithAdd(ViewHandler.LOGIN, new String[]{loginUrl, p}, viewHandler, extra);
     }
-    public static void logout(ViewHandler viewHandler, Object extral){
-        asyncWithAdd(ViewHandler.LOGOUT, new String[]{logoutUrl}, viewHandler, extral);
+    public static void logout(ViewHandler viewHandler, Object extra){
+        asyncWithAdd(ViewHandler.LOGOUT, new String[]{logoutUrl}, viewHandler, extra);
     }
     public static void getProblemList(final int page, String keyword, final ViewHandler viewHandler){
         String p = "";
@@ -151,7 +150,7 @@ public class NetData {
     static void async(final int which, final String[] req, final ViewHandler viewHandler){
         asyncWithAdd(which, req,  viewHandler, null);
     }
-    static void asyncWithAdd(final int which, final String[] req, final ViewHandler viewHandler, final Object add) {
+    static void asyncWithAdd(final int which, final String[] req, final ViewHandler viewHandler, final Object extra) {
         final long time = System.currentTimeMillis();
         new AsyncTask<Void, Void, Object>(){
 
@@ -162,7 +161,7 @@ public class NetData {
 
             @Override
             protected void onPostExecute(Object o) {
-                handleInMain(which, o, viewHandler, time, add);
+                handleInMain(which, o, viewHandler, time, extra);
             }
         }.execute();
 
@@ -171,7 +170,7 @@ public class NetData {
     static Object request(int which, String[] req){
         switch (which){
             case ViewHandler.AVATAR:
-                return BitmapFactory.decodeStream(NetWorkTool._get(req[0]));
+                return NetWorkTool.getBytes(NetWorkTool._get(req[0]));
         }
         String result = NetWorkTool.getOrPost(req);
         switch (which){
@@ -189,12 +188,12 @@ public class NetData {
                 return new Article(result);
             case ViewHandler.LOGIN:
 //                String s;
-//                Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + (s = result));
+                Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + result);
                 return checkResult(result);
             case ViewHandler.LOGOUT:
                 return checkResult(result);
             case ViewHandler.LOGIN_CONTEST:
-//                Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + (s = result));;
+                Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + result);;
                 return checkResult(result);
             case ViewHandler.CONTEST_COMMENT:
                 return new InfoList<ArticleInfo>(result, ArticleInfo.class);
@@ -212,10 +211,10 @@ public class NetData {
             default: return null;
         }
     }
-    static void handleInMain(int which, Object data, ViewHandler viewHandler, long time, Object add){
+    static void handleInMain(int which, Object data, ViewHandler viewHandler, long time, Object extra){
         if (viewHandler != null){
-            if (add != null){
-                viewHandler.show(which, new Object[]{add, data}, time);
+            if (extra != null){
+                viewHandler.show(which, new Object[]{extra, data}, time);
             }else {
                 viewHandler.show(which, data, time);
             }

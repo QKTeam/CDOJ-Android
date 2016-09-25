@@ -7,6 +7,7 @@ import org.json.JSONObject;
  * Created by qwe on 16-8-15.
  */
 public class Problem {
+    public int problemId;
     boolean result;
     String contentString = "";
     public Problem(){
@@ -20,6 +21,7 @@ public class Problem {
             JSONObject jsonObject = new JSONObject(json);
             result = jsonObject.optString("result", "fail").equals("success");
             contentString = jsonObject.getJSONObject("problem").toString();
+            problemId = jsonObject.getInt("problemId");
         } catch (JSONException e) {
             e.printStackTrace();
         }
