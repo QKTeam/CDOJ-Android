@@ -6,11 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
+    <cn.edu.uestc.acm.cdoj_android.customtoolbar.ToolBarWithSearch
         android:id="@+id/toolbar_list"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/toolbar_background"
+        android:background="@color/main_background"
         app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     <android.support.v4.view.ViewPager

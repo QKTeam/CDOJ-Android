@@ -21,18 +21,39 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 /**
  * Created by lenovo on 2016/8/7.
  */
 public class NetWorkTool {
-    static String TAG = "---------NetWorkTool----------";
+    public final static int STATE_OK = 1, STATE_ERROR = 2;
+    private static ArrayList<NetStateListener> listeners = new ArrayList();
+    private static int state = STATE_ERROR;
+    final static String TAG = "------NetWorkTool------";
     static HttpClient httpClient;
 
     static {
         httpClient = new DefaultHttpClient();
     }
-
+    public static void addNetStateListener(NetStateListener listener){
+        listeners.add(listener);
+    }
+    public static String getOrPost(String req[]){
+        String re = req.length == 1?get(req[0]):post(req[0], req[1]);
+        int now;
+        if (re == null){
+            now = STATE_ERROR;
+        }
+        else {
+            now = STATE_OK;
+        }
+        for (NetStateListener listener:listeners) {
+            listener.onNetStateChange(state, now);
+        }
+        state = now;
+        return re;
+    }
     public static String post(String url, String params) {
 //        Log.d("TAG", "new post: ");
         HttpPost httpPost = new HttpPost(url);
@@ -101,8 +122,7 @@ public class NetWorkTool {
             return null;
         }
     }
-    public static String getString(InputStream is) {
-        String string = null;
+    public static Object[] getBytes(InputStream is){
         if (is == null) {
             return null;
         }
@@ -115,16 +135,28 @@ public class NetWorkTool {
                     len += tlen;
                 }
             }
-            string = new String(buffer, 0, len, "utf-8");
+            return new Object[]{buffer, len};
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static String getString(InputStream is) {
+        String string = null;
+        try {
+            Object[] objects = getBytes(is);
+            if(objects != null){
+                string = new String((byte[]) objects[0], 0, (int)objects[1], "utf-8");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
         return string;
     }
-    public static String sha1(String s) {
+    public static String md(String s, String algorithm) {
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            MessageDigest md = MessageDigest.getInstance(algorithm);
             byte[] bytes = s.getBytes();
             md.update(bytes);
             return new BigInteger(1, md.digest()).toString(16);
@@ -134,5 +166,7 @@ public class NetWorkTool {
 
         return null;
     }
-
+    public static String sha1(String s){
+        return md(s, "SHA-1");
+    }
 }

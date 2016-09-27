@@ -4,106 +4,132 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj_android.Global;
-import cn.edu.uestc.acm.cdoj_android.NetContent;
-import cn.edu.uestc.acm.cdoj_android.ItemDetailActivity;
+import cn.edu.uestc.acm.cdoj_android.ItemContentActivity;
 import cn.edu.uestc.acm.cdoj_android.R;
-import cn.edu.uestc.acm.cdoj_android.Selection;
-import cn.edu.uestc.acm.cdoj_android.layout.ListFragmentWithGestureLoad;
-import cn.edu.uestc.acm.cdoj_android.layout.PullUpLoadListView;
-import cn.edu.uestc.acm.cdoj_android.layout.details.DetailsWebViewFragment;
+import cn.edu.uestc.acm.cdoj_android.GetInformation;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ArticleFragment;
+import cn.edu.uestc.acm.cdoj_android.layout.detail.ProblemFragment;
 import cn.edu.uestc.acm.cdoj_android.net.NetData;
 import cn.edu.uestc.acm.cdoj_android.net.ViewHandler;
-import cn.edu.uestc.acm.cdoj_android.net.data.Problem;
+import cn.edu.uestc.acm.cdoj_android.net.data.InfoList;
+import cn.edu.uestc.acm.cdoj_android.net.data.ProblemInfo;
 
 /**
  * Created by great on 2016/8/17.
  */
-public class ProblemListFragment extends ListFragmentWithGestureLoad {
-    SimpleAdapter adapter;
-    ArrayList<Map<String,String>> listItems = new ArrayList<>();
-    SwipeRefreshLayout swipeRefreshLayout;
-    PullUpLoadListView listView;
-    DetailsWebViewFragment problemDetails;
+public class ProblemListFragment extends ListFragmentWithGestureLoad implements ViewHandler{
+    private SimpleAdapter adapter;
+    private ArrayList<Map<String, Object>> listItems = new ArrayList<>();
     boolean isTwoPane;
+    private String key;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setRetainInstance(true);
         super.onCreate(savedInstanceState);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        isTwoPane = ((Selection) Global.currentMainActivity).isTwoPane();
+        isTwoPane = ((GetInformation) Global.currentMainActivity).isTwoPane();
         if (savedInstanceState == null) {
-            swipeRefreshLayout = (SwipeRefreshLayout)(getView().findViewById(R.id.listSwipeRefresh));
-            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
                     listItems.clear();
+                    continuePullUpLoad();
                     Global.netContent.getContent(ViewHandler.PROBLEM_LIST, 1);
                 }
             });
-            listView = getListView();
-            listView.setOnPullUpLoadListener(new PullUpLoadListView.OnPullUpLoadListener(){
+            setOnPullUpLoadListener(new PullUpLoadListView.OnPullUpLoadListener(){
                 @Override
                 public void onPullUpLoading() {
-                    Global.netContent.getContent(ViewHandler.PROBLEM_LIST, listItems.size() / 20 + 1);
+                    if (getPageInfo().currentPage != getPageInfo().totalPages) {
+                        NetData.getProblemList(getPageInfo().currentPage + 1, key, ProblemListFragment.this);
+                    } else {
+                        stopPullUpLoad();
+                    }
                 }
             });
             Global.netContent.getContent(ViewHandler.PROBLEM_LIST, 1);
-            if (isTwoPane) {
-                problemDetails = ((Selection) Global.currentMainActivity)
-                        .getDetailsContainer()
-                        .getDetailsFragment(ViewHandler.PROBLEM_DETAIL);
-            }
         }
     }
 
     @Override
-    public void addListItem(Map<String ,String> listItem) {
+    public void addListItem(Map<String, Object> listItem) {
         listItems.add(listItem);
     }
 
     @Override
     public void notifyDataSetChanged() {
         if (adapter == null) {
-            adapter = new SimpleAdapter(
-                    Global.currentMainActivity, listItems, R.layout.problem_list_item,
-                    new String[]{"title", "source", "id", "number"},
-                    new int[]{R.id.problem_title, R.id.problem_source, R.id.problem_id, R.id.problem_number});
-            setListAdapter(adapter);
+            createAdapter();
         }
         adapter.notifyDataSetChanged();
-        if (swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(false);
-        }
-        if (listView.isPullUpLoading()) {
-            listView.pullUpLoadingComplete();
-        }
+        super.notifyDataSetChanged();
+    }
+
+    private void createAdapter() {
+        adapter = new SimpleAdapter(
+                Global.currentMainActivity, listItems, R.layout.problem_item_list,
+                new String[]{"title", "source", "id", "number"},
+                new int[]{R.id.problem_title, R.id.problem_source, R.id.problem_id, R.id.problem_number});
+        setListAdapter(adapter);
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         if (!isTwoPane) {
-            Context context = l.getContext();
-            Intent intent = new Intent(context, ItemDetailActivity.class);
-            intent.putExtra("type", ViewHandler.PROBLEM_DETAIL);
-            intent.putExtra("id", Integer.parseInt(listItems.get(position).get("id")));
-            context.startActivity(intent);
+            showDetailOnActivity(position);
             return;
         }
-        Log.d("执行点击", "onListItemClick: ");
-        Global.netContent.getContent(ViewHandler.PROBLEM_DETAIL,Integer.parseInt(listItems.get(position).get("id")));
+        ((ProblemFragment) Global.detailsContainer.getDetail(ViewHandler.PROBLEM_DETAIL))
+                .refresh(Integer.parseInt((String) listItems.get(position).get("id")));
+    }
+
+    private void showDetailOnActivity(int position) {
+        Context context = rootView.getContext();
+        Intent intent = new Intent(context, ItemContentActivity.class);
+        intent.putExtra("title", (String) listItems.get(position).get("title"));
+        intent.putExtra("type", ViewHandler.PROBLEM_DETAIL);
+        intent.putExtra("id", Integer.parseInt((String) listItems.get(position).get("id")));
+        context.startActivity(intent);
+    }
+
+    public void clearList() {
+        listItems.clear();
+    }
+
+    @Override
+    public void show(int which, Object data, long time) {
+        if (((InfoList) data).result) {
+            setPageInfo(((InfoList) data).pageInfo);
+            ArrayList<ProblemInfo> infoList_P = ((InfoList) data).getInfoList();
+            for (ProblemInfo tem : infoList_P) {
+                String number = "solved/tried:  " + tem.solved + "/" + tem.tried;
+                Map<String, Object> listItem = new HashMap<>();
+                listItem.put("title", tem.title);
+                listItem.put("source", tem.source);
+                listItem.put("id", "ID:  " + tem.problemId);
+                listItem.put("number", number);
+                addListItem(listItem);
+            }
+        } else {
+            getDataFailure();
+        }
+        notifyDataSetChanged();
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 }

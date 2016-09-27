@@ -1,49 +1,49 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <meta charset="utf-8">
-    <link href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-    <script src="http://cdn.bootcss.com/marked/0.3.3/marked.min.js"></script>
-    <style>
-        * { word-break: break-all; word-wrap: break-word; white-space: normal; }
-        html, body { background-color: transparent; }
-        body { padding: 0 20px 20px; }
-        img { max-width: 100%; vertical-align: middle; }
-        table, tr { max-width: 100%; }
-        .sample pre {
-        font-family: "Source Code Pro",Monaco,Menlo,Consolas,"Courier New",monospace;
-        margin: 0;
-        border: 0;
-        background-color: transparent;
-        padding: 0;
-        }
-        .title {
-        color: rgb(243, 152, 0);
-        }
-    </style>
-</head>
-<body>
-<h2 class="title" id="title"></h2>
-<p class="title" id="limit"></p>
-<markdown id="description"></markdown>
-<h3 class="title">Input</h3>
-<markdown id="input"></markdown>
-<h3 class="title">Output</h3>
-<markdown id="output"></markdown>
-<h3 class="title">Sample input and output</h3>
-<table class="table table-bordered sample" id="sample">
-    <tr>
-        <th>Sample Input</th>
-        <th>Sample Output</th>
-    </tr>
-</table>
-<h3 class="title">Hint</h3>
-<markdown id="hint"></markdown>
-<h3 class="title">Source</h3>
-<markdown id="source"></markdown>
-</body>
-<script type="text/javascript">
+	<head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta charset="utf-8">
+		<link href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+		<script src="http://cdn.bootcss.com/marked/0.3.3/marked.min.js"></script>
+        <style>
+            * { word-break: break-all; word-wrap: break-word; white-space: normal; }
+            html, body { background-color: transparent; }
+            body { padding: 0 20px 20px; }
+            img { max-width: 100%; vertical-align: middle; }
+            table, tr { max-width: 100%; }
+            .sample pre {
+                font-family: "Source Code Pro",Monaco,Menlo,Consolas,"Courier New",monospace;
+                margin: 0;
+                border: 0;
+                background-color: transparent;
+                padding: 0;
+            }
+            .title {
+                color: rgb(243, 152, 0);
+            }
+        </style>
+	</head>
+    <body>
+        <h2 class="title" id="title"></h2>
+        <p class="title" id="limit"></p>
+        <markdown id="description"></markdown>
+        <h3 class="title">Input</h3>
+        <markdown id="input"></markdown>
+        <h3 class="title">Output</h3>
+        <markdown id="output"></markdown>
+        <h3 class="title">Sample input and output</h3>
+        <table class="table table-bordered sample" id="sample">
+            <tr>
+                <th>Sample Input</th>
+                <th>Sample Output</th>
+            </tr>
+        </table>
+        <h3 class="title">Hint</h3>
+        <markdown id="hint"></markdown>
+        <h3 class="title">Source</h3>
+        <markdown id="source"></markdown>
+	</body>
+    <script type="text/javascript">
         var data = {{{replace_data_here}}};
         document.getElementById("title").innerHTML = data.title;
         document.getElementById("limit").innerHTML = data.javaTimeLimit + "/" + data.timeLimit + "MS, " + data.javaMemoryLimit + "/" + data.memoryLimit + "KB (Java/Others)";
@@ -74,6 +74,6 @@
             sample.appendChild(tr);
         }
     </script>
-<script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>
-<script src="http://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>
+    <script src="http://cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_SVG"></script>
 </html>

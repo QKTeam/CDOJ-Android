@@ -5,11 +5,13 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 
+import cn.edu.uestc.acm.cdoj_android.net.DateTemp;
+
 /**
  * Created by lenovo on 2016/8/7.
  */
 public class ContestInfo {
-    public final static int TYPE_PUBLIC = 0, TYPE_PRIVATE = 1, TYPE_INVITED = 3, TYPE_ONSITE = 5;
+    public final static int TYPE_PUBLIC = 0, TYPE_PRIVATE = 1, TYPE_DIY = 2, TYPE_INVITED = 3, TYPE_ONSITE = 5;
     public int contestId, type;
     public long time, length;
     public boolean isVisible;
@@ -20,7 +22,8 @@ public class ContestInfo {
         }
         try {
             length = jsonObject.getLong("length");
-            lengthString = new SimpleDateFormat("HH:mm:ss").format(length);
+//            lengthString = new SimpleDateFormat("HH:mm:ss").format(length);
+            lengthString = DateTemp.format(length);
             time = jsonObject.getLong("time");
             timeString = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
             type = jsonObject.getInt("type");

@@ -2,4 +2,26 @@
     <string name="app_name">CDOJ</string>
     <string name="action_settings">Settings</string>
     <string name="loading">loading</string>
+    <string name="title_activity_login">Sign in</string>
+
+
+    <string name="overview">概览</string>
+    <string name="problems">题目</string>
+    <string name="clarification">讨论</string>
+    <string name="status">状态</string>
+    <string name="rank">排名</string>
+    <string name="Article">公告</string>
+    <string name="problem">问题</string>
+    <string name="contest">比赛</string>
+    <string name="login">登录</string>
+    <string name="Username">用户名</string>
+    <string name="Password">密码</string>
+    <string name="go">确定</string>
+    <string name="linking">正在连接网络.....</string>
+    <string name="confirm">确定</string>
+    <string name="loginSuccess">登录成功</string>
+    <string name="loginFail">登录失败</string>
+    <string name="login_success">已登录</string>
+    <string name="article">公告</string>
+    <string name="user">用户</string>
 </resources>
