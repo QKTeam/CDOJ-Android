@@ -64,7 +64,7 @@
             android:layout_weight="4"
             android:orientation="horizontal">
 
-            <cn.edu.uestc.acm.cdoj_android.layout.list.text.ContestStatus
+            <cn.edu.uestc.acm.cdoj.layout.list.text.ContestStatus
                 android:id="@+id/contest_status"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -74,7 +74,7 @@
                 android:textSize="12sp"
                 android:maxLines="1" />
 
-            <cn.edu.uestc.acm.cdoj_android.layout.list.text.ContestPermission
+            <cn.edu.uestc.acm.cdoj.layout.list.text.ContestPermission
                 android:id="@+id/contest_permission"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

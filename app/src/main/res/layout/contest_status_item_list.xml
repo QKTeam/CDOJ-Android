@@ -18,7 +18,7 @@
             android:layout_height="0dp"
             android:layout_weight="2"
             android:orientation="horizontal">
-            <cn.edu.uestc.acm.cdoj_android.layout.detail.text.SubmitResult
+            <cn.edu.uestc.acm.cdoj.layout.detail.text.SubmitResult
                 android:id="@+id/contestStatus_result"
                 android:text="wronganfafdas"
                 android:textSize="18sp"
