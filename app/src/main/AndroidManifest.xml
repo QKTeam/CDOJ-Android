@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cn.edu.uestc.acm.cdoj_android">
+    package="cn.edu.uestc.acm.cdoj">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -11,8 +11,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-
-            android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            android:name="cn.edu.uestc.acm.cdoj.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -22,17 +22,15 @@
             </intent-filter>
         </activity>
         <activity
-
-            android:name=".ItemContentActivity"
+            android:screenOrientation="portrait"
+            android:name="cn.edu.uestc.acm.cdoj.ItemContentActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity
-
-            android:name=".LoginActivity"
-            android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:screenOrientation="portrait"
+            android:name="cn.edu.uestc.acm.cdoj.LoginActivity"
+            android:parentActivityName="cn.edu.uestc.acm.cdoj.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

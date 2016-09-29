@@ -43,7 +43,7 @@
             android:id="@+id/listSwipeRefresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <cn.edu.uestc.acm.cdoj_android.layout.list.PullUpLoadListView
+            <cn.edu.uestc.acm.cdoj.layout.list.PullUpLoadListView
                 android:id="@+id/list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>

@@ -4,7 +4,8 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/main_background">
     <LinearLayout
         android:id="@+id/detail_activity"
         android:layout_width="match_parent"
