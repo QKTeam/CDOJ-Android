@@ -17,11 +17,12 @@
     <string name="Username">用户名</string>
     <string name="Password">密码</string>
     <string name="go">确定</string>
-    <string name="linking">正在连接网络.....</string>
+    <string name="linking">网络连接中.....</string>
     <string name="confirm">确定</string>
     <string name="loginSuccess">登录成功</string>
-    <string name="loginFail">登录失败</string>
+    <string name="loginFail">账号密码错误，或者网络有问题</string>
     <string name="login_success">已登录</string>
     <string name="article">公告</string>
     <string name="user">用户</string>
+    <string name="getingContest">正在获取该比赛</string>
 </resources>
