@@ -75,7 +75,7 @@ public class UserManager implements ViewHandler, NetStateListener {
     public void getAvatar(String email, Object extra, ViewHandler viewHandler){
         File file;
         Object[] objects = null;
-        if ((file = new File(cacheDir + File.pathSeparator + email)).exists()){
+        if ((file = new File(cacheDir + File.separator + email)).exists()){
             try {
                 objects = NetWorkTool.getBytes(new FileInputStream(file));
             } catch (FileNotFoundException e) {
@@ -127,7 +127,7 @@ public class UserManager implements ViewHandler, NetStateListener {
                 if (bytes != null){
                     File file;
                     try {
-                        if (!(file = new File(cacheDir + File.pathSeparator + extra[2])).exists()){
+                        if (!(file = new File(cacheDir+ File.separator  + extra[2])).exists()){
                             file.createNewFile();
                         }
                         new FileOutputStream(file).write((byte[]) bytes[0], 0, (int) bytes[1]);
@@ -135,7 +135,7 @@ public class UserManager implements ViewHandler, NetStateListener {
                         e.printStackTrace();
                     }
                 }
-                data1[1] = new Object[]{extra[1], BitmapFactory.decodeByteArray((byte[]) bytes[0], 0, (Integer) bytes[1])};
+                data1[1] = new Object[]{extra[1], bytes == null?null:BitmapFactory.decodeByteArray((byte[]) bytes[0], 0, (Integer) bytes[1])};
                 data1[0] = extra[0];
         }
         if (data1[0] != null){

@@ -21,7 +21,7 @@ public class Problem {
             JSONObject jsonObject = new JSONObject(json);
             result = jsonObject.optString("result", "fail").equals("success");
             contentString = jsonObject.getJSONObject("problem").toString();
-            problemId = jsonObject.getInt("problemId");
+            problemId = jsonObject.optInt("problemId");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -33,6 +33,7 @@ public class Problem {
         Problem p = new Problem();
         p.result = true;
         p.contentString = jsonObject.toString();
+        p.problemId = jsonObject.optInt("problemId");
         return p;
     }
 }
