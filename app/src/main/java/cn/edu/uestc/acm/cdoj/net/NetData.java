@@ -6,6 +6,8 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.concurrent.Executors;
+
 import cn.edu.uestc.acm.cdoj.net.data.Article;
 import cn.edu.uestc.acm.cdoj.net.data.ArticleInfo;
 import cn.edu.uestc.acm.cdoj.net.data.Contest;
@@ -48,6 +50,7 @@ public class NetData {
         asyncWithAdd(ViewHandler.REGISTER, new String[]{registerUrl ,constructJson(key, o)}, viewHandler, extra);
     }
     public static void getAvatar(String email, Object extra, ViewHandler viewHandler){
+        Log.d(TAG, "getAvatar: 获取头像");
         asyncWithAdd(ViewHandler.AVATAR, new String[]{avatarUrl.replace("%@", NetWorkTool.md(email, "md5")).replace("%ld", "200")}, viewHandler, extra);
     }
 
@@ -60,6 +63,7 @@ public class NetData {
         async(ViewHandler.STATUS_INFO, new String[]{statusInfoUrl + statusId}, viewHandler);
     }
     public static void getStatusList(int problemId, String userName, int contestId, int page, ViewHandler viewHandler){
+        Log.d(TAG, "getStatusList: 获取记录");
         String key[] = new String[]{"problemId","userName","contestId", "currentPage", "orderAsc", "orderFields", "result"};
         Object[] o = new Object[]{problemId == -1?"":problemId, userName, contestId, page, false, "statusId", 0};
         async(ViewHandler.STATUS_LIST, new String[]{statusListUrl, constructJson(key, o)}, viewHandler);
@@ -150,6 +154,7 @@ public class NetData {
     static void async(final int which, final String[] req, final ViewHandler viewHandler){
         asyncWithAdd(which, req,  viewHandler, null);
     }
+
     static void asyncWithAdd(final int which, final String[] req, final ViewHandler viewHandler, final Object extra) {
         final long time = System.currentTimeMillis();
         new AsyncTask<Void, Void, Object>(){
@@ -163,13 +168,14 @@ public class NetData {
             protected void onPostExecute(Object o) {
                 handleInMain(which, o, viewHandler, time, extra);
             }
-        }.execute();
+        }.executeOnExecutor(Executors.newFixedThreadPool(1));
 
     }
 
     static Object request(int which, String[] req){
         switch (which){
             case ViewHandler.AVATAR:
+                Log.d(TAG, "request: 获取头像");
                 return NetWorkTool.getBytes(NetWorkTool._get(req[0]));
         }
         String result = NetWorkTool.getOrPost(req);
@@ -200,6 +206,7 @@ public class NetData {
             case ViewHandler.CONTEST_RANK:
                 return new Rank(result);
             case ViewHandler.STATUS_LIST:
+                Log.d(TAG, "request: 获取记录");
                 return new InfoList<Status>(result, Status.class);
             case ViewHandler.STATUS_INFO:
                 return Status.getCode(result);
