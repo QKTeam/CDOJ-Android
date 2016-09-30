@@ -17,7 +17,7 @@ public class Result <T> {
     public String resultString, errorMsg = "if you see this, it represents this response doesn't contain errorMsg!";
     T content;
     Object extra = null;
-    public Result(String json, Class cls) {
+    public Result(String json, Class cls, Class inner) {
         if (json == null) {
             resultType = NETWORK_ERROR;
         }
@@ -26,8 +26,16 @@ public class Result <T> {
             resultString = jsonObject.getString("result");
             result = resultString.equals("success");
             errorMsg = jsonObject.optString("error_msg", errorMsg);
-                Constructor c1 = cls.getDeclaredConstructor(new Class[]{JSONObject.class});
-                content = (T)c1.newInstance(jsonObject);
+            if (cls != null){
+                if (inner != null){
+                    Constructor c1 = cls.getDeclaredConstructor(new Class[]{JSONObject.class, Class.class});
+                    content = (T)c1.newInstance(jsonObject, inner);
+                }
+                else {
+                    Constructor c1 = cls.getDeclaredConstructor(new Class[]{JSONObject.class});
+                    content = (T)c1.newInstance(jsonObject);
+                }
+            }
         } catch (JSONException e) {
             resultType = CONTENT_ERROR;
             e.printStackTrace();
@@ -41,7 +49,19 @@ public class Result <T> {
             e.printStackTrace();
         }
     }
+    public Result(String json, Class cls){
+        this(json, cls, null);
+    }
+
     public T getContent(){
         return content;
+    }
+
+    public Object getExtra() {
+        return extra;
+    }
+
+    public void setExtra(Object extra) {
+        this.extra = extra;
     }
 }
