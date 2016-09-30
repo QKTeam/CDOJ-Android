@@ -197,7 +197,6 @@ public class ContestFragment extends Fragment implements ViewHandler{
         for (int i = 0; i != problemList.size(); ++i) {
             Problem tem = problemList.get(i);
             problemIDs[i] = tem.problemId;
-            Log.d("contest得到的题号", "show: "+tem.problemId);
         }
         if (status != null) status.setProblemIDs(problemIDs);
     }

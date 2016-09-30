@@ -102,9 +102,12 @@ public class ContestStatus extends ListFragmentWithGestureLoad implements ViewHa
                 if (problemIDs != null) {
                     int i = 0;
                     char charTem = 'A';
-                    Log.d("status得到的题号", "show: " + tem.problemId);
                     while (i != problemIDs.length && tem.problemId != problemIDs[i]) ++i;
-                    listItem.put("probOrder", String.valueOf((char)(charTem + i-1)));
+                    if (i == problemIDs.length) {
+                        listItem.put("probOrder", "?");
+                    } else {
+                        listItem.put("probOrder", String.valueOf((char)(charTem + i)));
+                    }
                 }
                 addListItem(listItem);
             }
