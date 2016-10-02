@@ -16,7 +16,7 @@ import cn.edu.uestc.acm.cdoj.Global;
 import cn.edu.uestc.acm.cdoj.ItemContentActivity;
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.GetInformation;
-import cn.edu.uestc.acm.cdoj.layout.detail.ProblemFragment;
+import cn.edu.uestc.acm.cdoj.layout.detail.problem.ProblemFragment;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.InfoList;
@@ -40,7 +40,6 @@ public class ProblemListFragment extends ListFragmentWithGestureLoad implements 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         isTwoPane = ((GetInformation) Global.currentMainActivity).isTwoPane();
-        refresh();
         if (savedInstanceState == null) {
             setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override

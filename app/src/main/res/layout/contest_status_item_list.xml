@@ -18,11 +18,10 @@
             android:layout_height="0dp"
             android:layout_weight="2"
             android:orientation="horizontal">
-            <cn.edu.uestc.acm.cdoj.layout.detail.text.SubmitResult
+            <cn.edu.uestc.acm.cdoj.layout.detail.contest.text.SubmitResult
                 android:id="@+id/contestStatus_result"
                 android:text="wronganfafdas"
                 android:textSize="18sp"
-                android:textAlignment="center"
                 android:gravity="center_vertical"
                 android:lines="1"
                 android:layout_weight="3"

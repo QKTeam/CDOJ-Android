@@ -81,7 +81,7 @@ public class ListFragmentWithGestureLoad extends Fragment {
     final public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                    Bundle savedInstanceState) {
         if (savedInstanceState == null) {
-            rootView = inflater.inflate(R.layout.list, container, false);
+            rootView = inflater.inflate(R.layout.gesture_load_list_view, container, false);
         }
         return rootView;
     }
@@ -116,7 +116,7 @@ public class ListFragmentWithGestureLoad extends Fragment {
         if (mList != null) {
             mList.setAdapter(adapter);
             if (!mListShown && !hadAdapter) {
-                // The list was hidden, and previously didn't have an
+                // The gesture_load_list_view was hidden, and previously didn't have an
                 // adapter.  It is now time to show it.
                 setListShown(true, rootView.getWindowToken() != null);
             }

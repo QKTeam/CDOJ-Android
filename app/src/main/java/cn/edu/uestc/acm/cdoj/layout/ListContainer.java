@@ -207,8 +207,7 @@ public class ListContainer extends Fragment {
 
     @IntDef({ViewHandler.ARTICLE_LIST, ViewHandler.PROBLEM_LIST, ViewHandler.CONTEST_LIST})
     @Retention(RetentionPolicy.SOURCE)
-    @interface lists {
-    }
+    @interface lists {}
 
     public ListFragmentWithGestureLoad getList(@lists int which) {
         switch (which) {

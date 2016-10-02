@@ -1,6 +1,7 @@
 package cn.edu.uestc.acm.cdoj.layout.detail;
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewFragment;
@@ -8,6 +9,7 @@ import android.webkit.WebViewFragment;
 import java.io.IOException;
 import java.io.InputStream;
 
+import cn.edu.uestc.acm.cdoj.Global;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 
 /**
@@ -39,23 +41,31 @@ public class DetailWebViewFragment extends WebViewFragment {
                 byte[] in;
                 switch (HTMLType) {
                     case ViewHandler.ARTICLE_DETAIL:
-                        input = getResources().getAssets().open("articleRender.html");
-                        in = new byte[input.available()];
-                        input.read(in);
-                        HTMLData = new String(in);
+                        if (Global.HTMLDATA_ARTICLE == null) {
+                            input = getResources().getAssets().open("articleRender.html");
+                            in = new byte[input.available()];
+                            input.read(in);
+                            Global.HTMLDATA_ARTICLE = new String(in);
+                        }
+                        HTMLData = Global.HTMLDATA_ARTICLE;
                         break;
                     case ViewHandler.PROBLEM_DETAIL:
-                        input = getResources().getAssets().open("problemRender.html");
-                        in = new byte[input.available()];
-                        input.read(in);
-                        HTMLData = new String(in);
+                        if (Global.HTMLDATA_PROBLEM == null) {
+                            input = getResources().getAssets().open("problemRender.html");
+                            in = new byte[input.available()];
+                            input.read(in);
+                            Global.HTMLDATA_PROBLEM = new String(in);
+                        }
+                        HTMLData = Global.HTMLDATA_PROBLEM;
                         break;
                     case ViewHandler.CONTEST_DETAIL:
-                        input = getResources().getAssets().open("contestOverviewRender.html");
-                        in = new byte[input.available()];
-                        input.read(in);
-                        HTMLData = new String(in);
-                        break;
+                        if (Global.HTMLDATA_CONTEST == null) {
+                            input = getResources().getAssets().open("contestOverviewRender.html");
+                            in = new byte[input.available()];
+                            input.read(in);
+                            Global.HTMLDATA_CONTEST = new String(in);
+                        }
+                        HTMLData = Global.HTMLDATA_CONTEST;
                 }
                 if (jsData != null) {
                     webData = HTMLData.replace("{{{replace_data_here}}}", jsData);

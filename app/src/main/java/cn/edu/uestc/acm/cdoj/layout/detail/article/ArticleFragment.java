@@ -1,4 +1,4 @@
-package cn.edu.uestc.acm.cdoj.layout.detail;
+package cn.edu.uestc.acm.cdoj.layout.detail.article;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import cn.edu.uestc.acm.cdoj.R;
+import cn.edu.uestc.acm.cdoj.layout.detail.DetailWebViewFragment;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.Article;

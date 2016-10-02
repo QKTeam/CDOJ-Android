@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -16,7 +17,7 @@ import cn.edu.uestc.acm.cdoj.Global;
 import cn.edu.uestc.acm.cdoj.ItemContentActivity;
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.GetInformation;
-import cn.edu.uestc.acm.cdoj.layout.detail.ArticleFragment;
+import cn.edu.uestc.acm.cdoj.layout.detail.article.ArticleFragment;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.ArticleInfo;
@@ -43,7 +44,6 @@ public class ArticleListFragment extends ListFragmentWithGestureLoad implements 
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState == null) {
             isTwoPane = ((GetInformation) Global.currentMainActivity).isTwoPane();
-            refresh();
             setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
@@ -104,6 +104,7 @@ public class ArticleListFragment extends ListFragmentWithGestureLoad implements 
                 new int[]{R.id.article_title, R.id.article_content,
                         R.id.article_date, R.id.article_author});
         setListAdapter(adapter);
+
     }
 
     public ArticleListFragment refresh(int id) {
@@ -113,6 +114,7 @@ public class ArticleListFragment extends ListFragmentWithGestureLoad implements 
 
     @Override
     public void show(int which, Object data, long time) {
+        Log.d("获取列表", "show: ");
         if (((InfoList) data).result) {
             setPageInfo(((InfoList) data).pageInfo);
             ArrayList<ArticleInfo> infoList_A = ((InfoList) data).getInfoList();

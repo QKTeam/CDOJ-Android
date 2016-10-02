@@ -21,9 +21,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.layout.detail.ArticleFragment;
-import cn.edu.uestc.acm.cdoj.layout.detail.ContestFragment;
-import cn.edu.uestc.acm.cdoj.layout.detail.ProblemFragment;
+import cn.edu.uestc.acm.cdoj.layout.detail.article.ArticleFragment;
+import cn.edu.uestc.acm.cdoj.layout.detail.contest.ContestFragment;
+import cn.edu.uestc.acm.cdoj.layout.detail.problem.ProblemFragment;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 
 /**

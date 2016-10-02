@@ -1,4 +1,4 @@
-package cn.edu.uestc.acm.cdoj.layout.detail.text;
+package cn.edu.uestc.acm.cdoj.layout.detail.contest.text;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;

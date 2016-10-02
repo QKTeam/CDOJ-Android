@@ -1,8 +1,7 @@
-package cn.edu.uestc.acm.cdoj.layout.detail;
+package cn.edu.uestc.acm.cdoj.layout.detail.contest;
 
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;

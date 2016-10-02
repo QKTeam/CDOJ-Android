@@ -6,9 +6,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import cn.edu.uestc.acm.cdoj.layout.detail.ArticleFragment;
-import cn.edu.uestc.acm.cdoj.layout.detail.ContestFragment;
-import cn.edu.uestc.acm.cdoj.layout.detail.ProblemFragment;
+import cn.edu.uestc.acm.cdoj.layout.detail.article.ArticleFragment;
+import cn.edu.uestc.acm.cdoj.layout.detail.contest.ContestFragment;
+import cn.edu.uestc.acm.cdoj.layout.detail.problem.ProblemFragment;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.statusBar.FlyMeUtils;
 import cn.edu.uestc.acm.cdoj.statusBar.MIUIUtils;

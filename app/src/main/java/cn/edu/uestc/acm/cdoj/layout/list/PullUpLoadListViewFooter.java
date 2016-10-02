@@ -56,7 +56,7 @@ public class PullUpLoadListViewFooter extends LinearLayout {
 
     // pul in R.id.pul*** means "pull up load"
     private void init() {
-        inflate(getContext(), R.layout.pul_listview_footer, this);
+        inflate(getContext(), R.layout.pull_up_load_list_view_footer, this);
         mLoadingLinearLayout = (LinearLayout) findViewById(R.id.pulListViewFooter_loading);
         mLoadingLabel = (TextView) findViewById(R.id.pulListViewFooter_loadingLabel);
         mNotLoadingLinearLayout = (LinearLayout) findViewById(R.id.pulListViewFooter_notLoading);

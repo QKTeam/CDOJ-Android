@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import cn.edu.uestc.acm.cdoj.layout.detail.ArticleFragment;
-import cn.edu.uestc.acm.cdoj.layout.detail.ContestFragment;
-import cn.edu.uestc.acm.cdoj.layout.detail.ProblemFragment;
+import cn.edu.uestc.acm.cdoj.layout.detail.article.ArticleFragment;
+import cn.edu.uestc.acm.cdoj.layout.detail.contest.ContestFragment;
+import cn.edu.uestc.acm.cdoj.layout.detail.problem.ProblemFragment;
 import cn.edu.uestc.acm.cdoj.layout.list.ArticleListFragment;
 import cn.edu.uestc.acm.cdoj.layout.list.ContestListFragment;
 import cn.edu.uestc.acm.cdoj.layout.list.ProblemListFragment;

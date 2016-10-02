@@ -1,17 +1,23 @@
-package cn.edu.uestc.acm.cdoj.layout.detail;
+package cn.edu.uestc.acm.cdoj.layout.detail.contest;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +29,7 @@ import cn.edu.uestc.acm.cdoj.layout.list.ListFragmentWithGestureLoad;
 import cn.edu.uestc.acm.cdoj.layout.list.PullUpLoadListView;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
+import cn.edu.uestc.acm.cdoj.net.data.Article;
 import cn.edu.uestc.acm.cdoj.net.data.ArticleInfo;
 import cn.edu.uestc.acm.cdoj.net.data.InfoList;
 
@@ -37,6 +44,7 @@ public class ContestClarification extends ListFragmentWithGestureLoad implements
     private ArrayList<Map<String, Object>> listItems = new ArrayList<>();
     private ListView mListView;
     private boolean firstLoad = true;
+    private ProgressDialog mProgressDialog;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -113,12 +121,15 @@ public class ContestClarification extends ListFragmentWithGestureLoad implements
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Context context = l.getContext();
+        mProgressDialog = ProgressDialog
+                .show(l.getContext(), getString(R.string.getting), getString(R.string.linking));
+        NetData.getArticleDetail((int) listItems.get(position).get("id"), this);
+        /*Context context = l.getContext();
         Intent intent = new Intent(context, ItemContentActivity.class);
         intent.putExtra("title", (String) listItems.get(position).get("title"));
         intent.putExtra("type", ViewHandler.ARTICLE_DETAIL);
         intent.putExtra("id", (int) listItems.get(position).get("id"));
-        context.startActivity(intent);
+        context.startActivity(intent);*/
     }
 
     @Override
@@ -160,6 +171,34 @@ public class ContestClarification extends ListFragmentWithGestureLoad implements
                         headerImage = (ImageView) viewGroup.findViewById(R.id.contestClarification_header);
                     if (headerImage != null) headerImage.setImageBitmap((Bitmap) dataReceive[1]);
                 }
+                return;
+            case ViewHandler.ARTICLE_DETAIL:
+                mProgressDialog.cancel();
+                WebView webView = new WebView(mListView.getContext());
+                webView.getSettings().setJavaScriptEnabled(true);
+                if (Global.HTMLDATA_ARTICLE == null) {
+                    try {
+                        InputStream input;
+                        byte[] in;
+                        input = getResources().getAssets().open("articleRender.html");
+                        in = new byte[input.available()];
+                        input.read(in);
+                        Global.HTMLDATA_ARTICLE = new String(in);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                String webData = Global.HTMLDATA_ARTICLE.replace("{{{replace_data_here}}}", ((Article) data).getContentString());
+                webView.loadDataWithBaseURL("http://acm.uestc.edu.cn/", webData, "text/html", "utf-8", null);
+                new AlertDialog.Builder(mListView.getContext())
+                        .setView(webView)
+                        .setNegativeButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .show();
         }
 
     }

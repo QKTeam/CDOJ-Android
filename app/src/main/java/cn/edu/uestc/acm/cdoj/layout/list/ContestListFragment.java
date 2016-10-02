@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -22,7 +21,7 @@ import cn.edu.uestc.acm.cdoj.ItemContentActivity;
 import cn.edu.uestc.acm.cdoj.LoginActivity;
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.GetInformation;
-import cn.edu.uestc.acm.cdoj.layout.detail.ContestFragment;
+import cn.edu.uestc.acm.cdoj.layout.detail.contest.ContestFragment;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.ContestInfo;
@@ -49,7 +48,6 @@ public class ContestListFragment extends ListFragmentWithGestureLoad implements 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         isTwoPane = ((GetInformation) Global.currentMainActivity).isTwoPane();
-        refresh();
         if (savedInstanceState == null) {
             setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override

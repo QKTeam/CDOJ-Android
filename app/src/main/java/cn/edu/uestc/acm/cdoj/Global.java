@@ -19,4 +19,8 @@ public class Global {
     public static boolean isTwoPane;
     public static DetailsContainer detailsContainer;
     public static ListContainer listContainer;
+    public static String HTMLDATA_ARTICLE;
+    public static String HTMLDATA_PROBLEM;
+    public static String HTMLDATA_CONTEST;
+
 }

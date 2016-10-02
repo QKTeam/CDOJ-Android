@@ -88,6 +88,7 @@
             android:paddingRight="15dp">
 
             <ImageView
+                android:src="@drawable/contest_rank_mark_bg_gray"
                 android:id="@+id/contest_rank_mark_bg_0"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
@@ -106,6 +107,7 @@
             android:paddingRight="15dp">
 
             <ImageView
+                android:src="@drawable/contest_rank_mark_bg_gray"
                 android:id="@+id/contest_rank_mark_bg_1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
@@ -124,6 +126,7 @@
             android:paddingRight="15dp">
 
             <ImageView
+                android:src="@drawable/contest_rank_mark_bg_gray"
                 android:id="@+id/contest_rank_mark_bg_2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
@@ -142,6 +145,7 @@
             android:paddingRight="15dp">
 
             <ImageView
+                android:src="@drawable/contest_rank_mark_bg_gray"
                 android:id="@+id/contest_rank_mark_bg_3"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
@@ -160,6 +164,7 @@
             android:paddingRight="15dp">
 
             <ImageView
+                android:src="@drawable/contest_rank_mark_bg_gray"
                 android:id="@+id/contest_rank_mark_bg_4"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
@@ -178,6 +183,7 @@
             android:paddingRight="15dp">
 
             <ImageView
+                android:src="@drawable/contest_rank_mark_bg_gray"
                 android:id="@+id/contest_rank_mark_bg_5"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
@@ -196,6 +202,7 @@
             android:paddingRight="15dp">
 
             <ImageView
+                android:src="@drawable/contest_rank_mark_bg_gray"
                 android:id="@+id/contest_rank_mark_bg_6"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
@@ -214,6 +221,7 @@
             android:paddingRight="15dp">
 
             <ImageView
+                android:src="@drawable/contest_rank_mark_bg_gray"
                 android:id="@+id/contest_rank_mark_bg_7"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
@@ -232,6 +240,7 @@
             android:paddingRight="15dp">
 
             <ImageView
+                android:src="@drawable/contest_rank_mark_bg_gray"
                 android:id="@+id/contest_rank_mark_bg_8"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
