@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/contestRankItem_container"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="@color/main_background"
     android:orientation="horizontal"
     android:paddingBottom="5dp"
     android:paddingLeft="10dp"
@@ -10,7 +10,7 @@
     android:paddingTop="5dp">
 
     <TextView
-        android:id="@+id/contestRankItem_Prob"
+        android:id="@+id/contestRankItem_ProblemOrder"
         android:layout_width="65dp"
         android:layout_height="match_parent"
         android:gravity="center"
@@ -93,7 +93,7 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
             <TextView
-                android:id="@+id/contestRankItem_isFirstSuccess"
+                android:id="@+id/contestRankItem_isTheFirstSuccess"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"

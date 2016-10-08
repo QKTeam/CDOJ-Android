@@ -20,10 +20,11 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.edu.uestc.acm.cdoj.tools.DrawImage;
+import cn.edu.uestc.acm.cdoj.tools.RGBAColor;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
@@ -38,17 +39,17 @@ import static cn.edu.uestc.acm.cdoj.ui.modules.Global.userManager;
  * Created by great on 2016/8/25.
  */
 public class ContestRank extends Fragment implements ViewHandler {
-    public static final int NOTHING = 0;
-    public static final int TRIED = 1;
-    public static final int SOLVED = 2;
-    public static final int THEFIRSTSOLVED = 3;
+    public static final int TRIED = 0;
+    public static final int SOLVED = 1;
+    public static final int THEFIRSTSOLVED = 2;
+    public static final int DIDNOTHING = 2;
 
     private SimpleAdapter mListAdapter;
     private ArrayList<Map<String, Object>> listItems = new ArrayList<>();
     private ListViewWithGestureLoad mListView;
     private Context context;
     private int contestID;
-    private int probCount;
+    private int problemsCount;
     private boolean refreshed;
 
     @Override
@@ -66,18 +67,6 @@ public class ContestRank extends Fragment implements ViewHandler {
         if (refreshed) refresh();
     }
 
-    public void addListItem(Map<String, Object> listItem) {
-        listItems.add(listItem);
-    }
-
-    public void notifyDataSetChanged() {
-        if (mListAdapter == null) createAdapter();
-        mListAdapter.notifyDataSetChanged();
-        if (mListView.isRefreshing()) {
-            mListView.setRefreshing(false);
-        }
-    }
-
     private void configOnListItemClick() {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -86,14 +75,14 @@ public class ContestRank extends Fragment implements ViewHandler {
                 ListView itemDetailListView = new ListView(context);
                 ArrayList<Map<String, Object>> itemProblemsStatusList
                         = (ArrayList<Map<String, Object>>) listItems.get(position).get("problemsStatus");
-                itemDetailListView.setAdapter(generateItemDetailListViewAdapter(itemProblemsStatusList));
-                itemDetailListView.addHeaderView(generateItemDetailListHeader(listItem));
-                showItemDetail(itemDetailListView);
+                itemDetailListView.addHeaderView(setupItemListHeader(listItem));
+                itemDetailListView.setAdapter(setupItemListAdapter(itemProblemsStatusList));
+                showItemList(itemDetailListView);
             }
         });
     }
 
-    private View generateItemDetailListHeader(Map<String, Object> listItem) {
+    private View setupItemListHeader(Map<String, Object> listItem) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout headerView = (LinearLayout) inflater.inflate(R.layout.contest_rank_list_item_detail_header, null);
         ImageView headerImageView = (ImageView) headerView.findViewById(R.id.contestRankItemHeader_header);
@@ -111,33 +100,42 @@ public class ContestRank extends Fragment implements ViewHandler {
         return headerView;
     }
 
-    private ListAdapter generateItemDetailListViewAdapter(final ArrayList<Map<String, Object>> problemsStatusList) {
-        return new SimpleAdapter(
-                Global.currentMainUIActivity, problemsStatusList, R.layout.contest_rank_list_item_detail,
-                new String[]{"probOrder", "solvedTime", "failureNum", "isFirstSuccess"},
-                new int[]{R.id.contestRankItem_Prob, R.id.contestRankItem_solvedTime,
-                        R.id.contestRankItem_failureCount, R.id.contestRankItem_isFirstSuccess}){
+    private ListAdapter setupItemListAdapter(final ArrayList<Map<String, Object>> problemsStatusMapList) {
+        SimpleAdapter adapter = new SimpleAdapter(
+                Global.currentMainUIActivity, problemsStatusMapList, R.layout.contest_rank_list_item_detail,
+                new String[]{"solvedStatus", "problemOrder", "solvedTime", "failureCount", "isTheFirstSolved"},
+                new int[]{R.id.contestRankItem_container, R.id.contestRankItem_ProblemOrder, R.id.contestRankItem_solvedTime,
+                        R.id.contestRankItem_failureCount, R.id.contestRankItem_isTheFirstSuccess});
+
+        adapter.setViewBinder(new SimpleAdapter.ViewBinder() {
             @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View v = super.getView(position, convertView, parent);
-                switch ((int) (problemsStatusList.get(position).get("solvedStatus"))) {
-                    case ContestRank.TRIED:
-                        v.setBackgroundColor(ContextCompat.getColor(v.getContext(), R.color.rank_yellow));
-                        return v;
-                    case ContestRank.SOLVED:
-                        v.setBackgroundColor(ContextCompat.getColor(v.getContext(), R.color.rank_halfGreen));
-                        return v;
-                    case ContestRank.THEFIRSTSOLVED:
-                        v.setBackgroundColor(ContextCompat.getColor(v.getContext(), R.color.rank_green));
-                        return v;
+            public boolean setViewValue(View view, Object data, String textRepresentation) {
+                if (view instanceof TextView) {
+                    ((TextView) view).setText(String.valueOf(data));
+                    return true;
+                } else if (view instanceof LinearLayout) {
+                    switch ((int) data) {
+                        case THEFIRSTSOLVED:
+                            view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.rank_green));
+                            break;
+                        case SOLVED:
+                            view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.rank_halfGreen));
+                            break;
+                        case TRIED:
+                            view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.rank_yellow));
+                            break;
+                        default:
+                            view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.rank_gray));
+                    }
+                    return true;
                 }
-                v.setBackgroundColor(ContextCompat.getColor(v.getContext(), R.color.rank_gray));
-                return v;
+                return false;
             }
-        };
+        });
+        return adapter;
     }
 
-    private void showItemDetail(View itemDetailView) {
+    private void showItemList(View itemDetailView) {
         new AlertDialog.Builder(context)
                 .setView(itemDetailView)
                 .setNegativeButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
@@ -149,23 +147,93 @@ public class ContestRank extends Fragment implements ViewHandler {
                 .show();
     }
 
-    private void createAdapter() {
+    @Override
+    public void show(int which, Object data, long time) {
+        switch (which) {
+            case ViewHandler.CONTEST_RANK:
+                Rank rankInfo = (Rank) data;
+                if (rankInfo.result) {
+                    ArrayList<Rank.Performance> infoList_rank = rankInfo.getPerformanceList();
+                    for (int i = 0; i != infoList_rank.size(); ++i) {
+                        Rank.Performance competitorInfo = infoList_rank.get(i);
+                        this.listItems.add(getListItem(competitorInfo));
+                        userManager.getAvatar(competitorInfo.email, i, this);
+                    }
+                }else {
+                    mListView.setPullUpLoadFailure();
+                }
+                notifyDataSetChanged();
+            case ViewHandler.AVATAR:
+                Object[] dataReceive = (Object[]) data;
+                int position = (int) dataReceive[0];
+                if (position < listItems.size())
+                    listItems.get(position).put("header", dataReceive[1]);
+                View view = mListView.findItemViewWithTag(position);
+                if (view != null) {
+                    ((ImageView) view.findViewById(R.id.contestClarification_header))
+                            .setImageBitmap((Bitmap) dataReceive[1]);
+                }
+        }
+    }
+
+    private Map<String, Object> getListItem(Rank.Performance competitorInfo) {
+        Map<String, Object> listItem = new HashMap<>();
+        listItem.put("header", R.drawable.logo);
+        listItem.put("rank", competitorInfo.rank);
+        listItem.put("account", competitorInfo.name);
+        listItem.put("nickName", competitorInfo.nickName);
+        listItem.put("solvedNum", competitorInfo.solved);
+        listItem.put("problemsStatus", getProblemsStatusMapList(competitorInfo.getProblemStatusList()));
+        return listItem;
+    }
+
+    private ArrayList<Map<String, Object>> getProblemsStatusMapList(ArrayList<Rank.Performance.ProblemStatus> problemStatusList) {
+        ArrayList<Map<String, Object>> problemsStatusMapList = new ArrayList<>();
+        for (int j = 0; j != problemsCount; ++j) {
+            Map<String, Object> problemStatusMap = new HashMap<>();
+            Rank.Performance.ProblemStatus temProbStatus = problemStatusList.get(j);
+            problemStatusMap.put("problemOrder", String.valueOf((char) ('A' + j)));
+            problemStatusMap.put("failureCount", temProbStatus.tried);
+            problemStatusMap.put("solvedTime", TimeFormat.getFormatTime(temProbStatus.solvedTime));
+            if (temProbStatus.firstBlood) {
+                problemStatusMap.put("solvedStatus", THEFIRSTSOLVED);
+            } else if (temProbStatus.solved) {
+                problemStatusMap.put("solvedStatus", SOLVED);
+            } else if (temProbStatus.tried > 0) {
+                problemStatusMap.put("solvedStatus", TRIED);
+            } else {
+                problemStatusMap.put("solvedStatus", DIDNOTHING);
+            }
+            problemsStatusMapList.add(problemStatusMap);
+        }
+        return problemsStatusMapList;
+    }
+
+    public void notifyDataSetChanged() {
+        if (mListAdapter == null) setupRankListAdapter();
+        mListAdapter.notifyDataSetChanged();
+        if (mListView.isRefreshing()) {
+            mListView.setRefreshing(false);
+        }
+    }
+
+    private void setupRankListAdapter() {
         mListAdapter = new SimpleAdapter(
                 Global.currentMainUIActivity, listItems, R.layout.contest_rank_list_item,
-                new String[]{"header", "rank", "nickName", "account", "solvedDetail"},
+                new String[]{"header", "rank", "nickName", "account", "problemsStatus"},
                 new int[]{R.id.contestRank_header, R.id.contestRank_rank, R.id.contestRank_nickName,
-                        R.id.contestRank_account, R.id.contestRank_solved}) {
+                        R.id.contestRank_account, R.id.contestRank_problemsStatus}) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 convertView.setTag(position);
                 return super.getView(position, convertView, parent);
             }
         };
-        generateAdapterBinder();
+        setupRankAdapterBinder();
         mListView.setAdapter(mListAdapter);
     }
 
-    private void generateAdapterBinder() {
+    private void setupRankAdapterBinder() {
         mListAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
             @Override
             public boolean setViewValue(View view, Object data, String textRepresentation) {
@@ -181,119 +249,57 @@ public class ContestRank extends Fragment implements ViewHandler {
                     ((TextView) view).setText(data.toString());
                     return true;
                 } else if (view instanceof LinearLayout) {
-                    configSolveProblemsDetailView(view, data);
+                    setupRankProblemsStatusView(view, data);
+                    return true;
                 }
                 return false;
             }
         });
     }
 
-    public void configSolveProblemsDetailView(View view, Object data) {
-        int[] solvedDetail = (int[]) data;
-        char text = 'A';
-        for (int i = 0; i < 9 && i < probCount; ++i) {
+    public void setupRankProblemsStatusView(View view, Object data) {
+        Context context = view.getContext();
+        ArrayList<Map<String, Object>> problemsStatusList = (ArrayList<Map<String, Object>>) data;
+        for (int i = 0; i < 9 && i < problemsCount; ++i) {
+            Map<String, Object> problemStatus = problemsStatusList.get(i);
             FrameLayout markContainer = (FrameLayout) ((LinearLayout) view).getChildAt(i);
             ImageView bg = (ImageView) markContainer.getChildAt(0);
-            TextView tx = (TextView) markContainer.getChildAt(1);
-            tx.setText(String.valueOf((char) (text + i)));
-            if (((solvedDetail[2] >> i) & 1) == 1) {
-                bg.setImageResource(R.drawable.contest_rank_mark_bg_green);
-            } else if (((solvedDetail[1] >> i) & 1) == 1) {
-                bg.setImageResource(R.drawable.contest_rank_mark_bg_green_half);
-            } else if (((solvedDetail[0] >> i) & 1) == 1) {
-                bg.setImageResource(R.drawable.contest_rank_mark_bg_yellow);
-            } else
-                bg.setImageResource(R.drawable.contest_rank_mark_bg_gray);
+            ((TextView) markContainer.getChildAt(1)).setText((String) problemStatus.get("problemOrder"));
+            switch ((int) problemStatus.get("solvedStatus")) {
+                case THEFIRSTSOLVED:
+                    bg.setImageBitmap(DrawImage.draw(context, R.drawable.contest_rank_mark_bg_white,
+                            RGBAColor.getColorMatrix(context, R.color.rank_green)));
+                    break;
+                case SOLVED:
+                    bg.setImageBitmap(DrawImage.draw(context, R.drawable.contest_rank_mark_bg_white,
+                            RGBAColor.getColorMatrix(context, R.color.rank_halfGreen)));
+                    break;
+                case TRIED:
+                    bg.setImageBitmap(DrawImage.draw(context, R.drawable.contest_rank_mark_bg_white,
+                            RGBAColor.getColorMatrix(context, R.color.rank_yellow)));
+                    break;
+                default:
+                    bg.setImageBitmap(DrawImage.draw(context, R.drawable.contest_rank_mark_bg_white,
+                            RGBAColor.getColorMatrix(context, R.color.rank_gray)));
+            }
         }
-        if (probCount >= 9) {
-            TextView tx = (TextView) ((LinearLayout) view).getChildAt(9);
-            tx.setText("......");
+        if (problemsCount >= 9) {
+            ((TextView) ((LinearLayout) view).getChildAt(9)).setText("......");
         } else {
-            for (int i = probCount; i < 9; i++) {
-                FrameLayout markContainer = (FrameLayout) ((LinearLayout) view).getChildAt(i);
-                markContainer.setVisibility(View.INVISIBLE);
+            for (int i = problemsCount; i < 9; i++) {
+                ((LinearLayout) view).getChildAt(i).setVisibility(View.INVISIBLE);
             }
         }
     }
 
-    public void setContestID(int id) {
-        contestID = id;
-    }
-
-    @Override
-    public void show(int which, Object data, long time) {
-        switch (which) {
-            case ViewHandler.CONTEST_RANK:
-                Rank rankInfo = (Rank) data;
-                if (rankInfo.result) {
-                    ArrayList<Rank.Performance> infoList_rank = rankInfo.getPerformanceList();
-                    for (int i = 0; i != infoList_rank.size(); ++i) {
-                        Rank.Performance tem = infoList_rank.get(i);
-                        Map<String, Object> listItem = new HashMap<>();
-                        listItem.put("header", R.drawable.logo);
-                        listItem.put("rank", "Rank  " + tem.rank);
-                        listItem.put("account", tem.name);
-                        listItem.put("nickName", tem.nickName);
-                        listItem.put("solvedNum", tem.solved);
-                        ArrayList<Rank.Performance.ProblemStatus> problemStatusList = tem.getProblemStatusList();
-                        probCount = problemStatusList.size();
-                        Collections.reverse(problemStatusList);
-                        int[] solvedDetail = {0, 0, 0};
-                        ArrayList<Map<String, Object>> problemStatus = new ArrayList<>();
-                        for (int j = 0; j != probCount; ++j) {
-                            Map<String, Object> temStatus = new HashMap<>();
-                            Rank.Performance.ProblemStatus temProbStatus = problemStatusList.get(j);
-                            temStatus.put("probOrder", String.valueOf((char) ('A' + (probCount - j -1))));
-                            temStatus.put("solvedTime", TimeFormat.getFormatTime(temProbStatus.solvedTime));
-                            temStatus.put("failureNum", temProbStatus.tried);
-                            if (temProbStatus.firstBlood) {
-                                temStatus.put("isFirstSuccess", "是");
-                            }else temStatus.put("isFirstSuccess", "否");
-                            problemStatus.add(temStatus);
-                            solvedDetail[0] = solvedDetail[0] << 1;
-                            solvedDetail[1] = solvedDetail[1] << 1;
-                            solvedDetail[2] = solvedDetail[2] << 1;
-                            if (temProbStatus.firstBlood){
-                                ++solvedDetail[2];
-                                temStatus.put("solvedStatus", ContestRank.THEFIRSTSOLVED);
-                            }else if (temProbStatus.solved){
-                                ++solvedDetail[1];
-                                temStatus.put("solvedStatus", ContestRank.SOLVED);
-                            }else if (temProbStatus.tried > 0){
-                                ++solvedDetail[0];
-                                temStatus.put("solvedStatus", ContestRank.TRIED);
-                            }else temStatus.put("solvedStatus", ContestRank.NOTHING);
-                        }
-                        Collections.reverse(problemStatus);
-                        listItem.put("problemsStatus", problemStatus);
-                        listItem.put("solvedDetail", solvedDetail);
-                        listItem.put("detail", problemStatusList);
-                        addListItem(listItem);
-                        userManager.getAvatar(tem.email, i, this);
-                    }
-                }
-                notifyDataSetChanged();
-                return;
-            case ViewHandler.AVATAR:
-                Object[] dataReceive = (Object[]) data;
-                int position = (int) dataReceive[0];
-                if (position < listItems.size())
-                    listItems.get(position).put("header", dataReceive[1]);
-                View view = mListView.findItemViewWithTag(position);
-                if (view != null) {
-                    ImageView headerImage = (ImageView) view.findViewById(R.id.contestClarification_header);
-                    if (headerImage != null) headerImage.setImageBitmap((Bitmap) dataReceive[1]);
-                }
-        }
-    }
-
     private void refresh() {
-        if (contestID != -1) refresh(contestID);
+        if (contestID != -1) refresh(contestID, problemsCount);
     }
 
-    public void refresh(int contestID) {
+    public void refresh(int contestID, int probCount) {
         refreshed = true;
         this.contestID = contestID;
+        this.problemsCount = probCount;
         listItems.clear();
         NetData.getContestRank(contestID, this);
     }

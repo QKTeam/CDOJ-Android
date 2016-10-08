@@ -57,26 +57,6 @@ public class DrawImage {
         return draw(context, imageResource, colorMatrix, true);
     }
 
-    public static Bitmap draw(Context context, @DrawableRes int imageResource, RGBColor color) {
-        float[] colorMatrix = new float[]{
-                0, 0, 0, 0, color.R,
-                0, 0, 0, 0, color.G,
-                0, 0, 0, 0, color.B,
-                0, 0, 0, 1, 0
-        };
-        return draw(context, imageResource, colorMatrix, true);
-    }
-
-    public static Bitmap draw(Context context, @DrawableRes int imageResource, RGBAColor color) {
-        float[] colorMatrix = new float[]{
-                0, 0, 0, 0, color.R,
-                0, 0, 0, 0, color.G,
-                0, 0, 0, 0, color.B,
-                0, 0, 0, 0, color.A
-        };
-        return draw(context, imageResource, colorMatrix, true);
-    }
-
     public static Bitmap draw(Context context, @DrawableRes int imageResource, float[] colorMatrix, boolean themeRender) {
         if (colorMatrix == null) colorMatrix = Global.mainColorMatrix;
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), imageResource);
@@ -86,30 +66,13 @@ public class DrawImage {
         return bitmap;
     }
 
-    public static Bitmap render(Bitmap bitmap, RGBColor color) {
-        float[] colorMatrix = new float[]{
-                0, 0, 0, 0, color.R,
-                0, 0, 0, 0, color.G,
-                0, 0, 0, 0, color.B,
-                0, 0, 0, 1, 0
-        };
-        return render(bitmap, colorMatrix);
-    }
-
-    public static Bitmap render(Bitmap bitmap, RGBAColor color) {
-        float[] colorMatrix = new float[]{
-                0, 0, 0, 0, color.R,
-                0, 0, 0, 0, color.G,
-                0, 0, 0, 0, color.B,
-                0, 0, 0, 0, color.A
-        };
-        return render(bitmap, colorMatrix);
-    }
-
     public static Bitmap render(Bitmap bitmap, float[] colorMatrix) {
         Bitmap afterBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
         Canvas canvas = new Canvas(afterBitmap);
         Paint paint = new Paint();
+        if (colorMatrix == null) {
+            colorMatrix = RGBAColor.getColorMatrix(0, 0, 0, 0, true);
+        }
         paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
         canvas.drawBitmap(bitmap, new Matrix(), paint);
         return afterBitmap;

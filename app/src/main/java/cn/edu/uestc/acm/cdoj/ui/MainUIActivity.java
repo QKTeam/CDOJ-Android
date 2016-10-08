@@ -34,6 +34,7 @@ import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.UserManager;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.tools.DrawImage;
+import cn.edu.uestc.acm.cdoj.tools.RGBAColor;
 import cn.edu.uestc.acm.cdoj.ui.contest.ContestListFragment;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.MainList;
@@ -272,11 +273,7 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
 
     private void configTwoPane() {
         ImageView bgImageView = (ImageView) findViewById(R.id.main_detail_bg);
-        float[] colorMatrix = new float[]{
-                1, 0, 0, 0, 0,
-                0, 1, 0, 0, 0,
-                0, 0, 1, 0, 0,
-                0, 0, 0, 0.7f, 0};
+        float[] colorMatrix = RGBAColor.getColorMatrixWithPercentAlpha(0, 0, 0, 0.7, true);
         bgImageView.setImageBitmap(DrawImage.draw(this, R.drawable.logo_orange, colorMatrix));
     }
 
