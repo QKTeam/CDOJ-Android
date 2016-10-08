@@ -34,7 +34,9 @@
                     <android.support.v7.widget.Toolbar
                         android:id="@+id/ui_main_toolbar"
                         android:layout_width="match_parent"
-                        android:layout_height="60dp" />
+                        android:layout_height="60dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"/>
 
                     <android.support.v4.view.ViewPager
                         android:id="@+id/ui_main_list_ViewPager"

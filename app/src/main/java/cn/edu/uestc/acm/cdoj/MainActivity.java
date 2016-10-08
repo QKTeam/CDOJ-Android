@@ -2,6 +2,7 @@ package cn.edu.uestc.acm.cdoj;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class MainActivity extends Activity {
                 0, 0, 0, 0, 255,
                 0, 0, 0, 0, 166,
                 0, 0, 0, 0, 0,
-                1, 0, 0, 0, 0};
+                0, 0, 0, 1, 0};
         finish();
     }
 }

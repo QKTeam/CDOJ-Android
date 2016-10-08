@@ -19,6 +19,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import cn.edu.uestc.acm.cdoj.R;
+import cn.edu.uestc.acm.cdoj.tools.DrawImage;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 
 
@@ -28,15 +29,11 @@ public class ListViewFooter extends LinearLayout {
     public static final int LOADCOMPLETE = 1;
     public static final int LOADPROBLEM = 2;
     public static final int BLANK = 3;
-    public static final int OTHER = 4;
+    public static final int NODATA = 4;
 
-    @IntDef({LOADING, LOADCOMPLETE, LOADPROBLEM, BLANK})
+    @IntDef({LOADING, LOADCOMPLETE, LOADPROBLEM, BLANK, NODATA})
     @Retention(RetentionPolicy.SOURCE)
     @interface pullUpLoadListViewFooterStatus {}
-
-    @IntDef({OTHER})
-    @Retention(RetentionPolicy.SOURCE)
-    @interface pullUpLoadListViewFooterOtherStatus {}
 
     private LinearLayout mLoadingLayout;
     private LinearLayout mLoadCompleteLayout;
@@ -70,40 +67,39 @@ public class ListViewFooter extends LinearLayout {
             case LOADCOMPLETE:
                 mLoadingLayout.setVisibility(View.INVISIBLE);
                 mLoadCompleteLayout.setVisibility(View.VISIBLE);
-                mImageView.setImageBitmap(drawIcon(R.drawable.ic_done_white));
+                mImageView.setImageBitmap(DrawImage.draw(getContext(), R.drawable.ic_done_white, true));
                 mTextView.setText(getContext().getString(R.string.loadComplete));
                 break;
             case BLANK:
                 mLoadingLayout.setVisibility(View.INVISIBLE);
-                mLoadCompleteLayout.setVisibility(View.VISIBLE);
+                mLoadCompleteLayout.setVisibility(View.INVISIBLE);
                 break;
             case LOADPROBLEM:
                 mLoadingLayout.setVisibility(View.INVISIBLE);
                 mLoadCompleteLayout.setVisibility(View.VISIBLE);
-                mImageView.setImageBitmap(drawIcon(R.drawable.ic_sync_problem_white));
+                mImageView.setImageBitmap(DrawImage.draw(getContext(), R.drawable.ic_sync_problem_white, true));
                 mTextView.setText(getContext().getString(R.string.loadProblem));
+                break;
+            case NODATA:
+                mLoadingLayout.setVisibility(View.INVISIBLE);
+                mLoadCompleteLayout.setVisibility(View.VISIBLE);
+                mImageView.setImageBitmap(DrawImage.draw(getContext(), R.drawable.ic_sync_problem_white, true));
+                mTextView.setText(getContext().getString(R.string.noData));
         }
     }
 
-    public void updateContent(@pullUpLoadListViewFooterOtherStatus int state, @DrawableRes int imageResource, String text) {
+    public void updateContent(@DrawableRes int imageResource, String text, boolean themeRenderImage ) {
+        mLoadingLayout.setVisibility(View.INVISIBLE);
         mLoadCompleteLayout.setVisibility(View.VISIBLE);
         mTextView.setText(text);
-        mImageView.setImageBitmap(drawIcon(imageResource));
+        mImageView.setImageBitmap(DrawImage.draw(getContext(), imageResource, themeRenderImage));
     }
 
-    public void updateContent(@pullUpLoadListViewFooterOtherStatus int state, Bitmap imageBitmap, String text) {
+    public void updateContent(Bitmap imageBitmap, String text, boolean themeRenderImage) {
+        mLoadingLayout.setVisibility(View.INVISIBLE);
         mLoadCompleteLayout.setVisibility(View.VISIBLE);
         mTextView.setText(text);
+        if (themeRenderImage) imageBitmap = DrawImage.render(imageBitmap, Global.mainColorMatrix);
         mImageView.setImageBitmap(imageBitmap);
-    }
-
-    private Bitmap drawIcon(@DrawableRes int icon) {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), icon);
-        Bitmap afterBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
-        Canvas canvas = new Canvas(afterBitmap);
-        Paint paint = new Paint();
-        paint.setColorFilter(new ColorMatrixColorFilter(Global.mainColorMatrix));
-        canvas.drawBitmap(bitmap, new Matrix(), paint);
-        return afterBitmap;
     }
 }
