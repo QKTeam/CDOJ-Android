@@ -18,7 +18,7 @@
             android:layout_height="0dp"
             android:layout_weight="2"
             android:orientation="horizontal">
-            <cn.edu.uestc.acm.cdoj.layout.detail.contest.text.SubmitResult
+            <cn.edu.uestc.acm.cdoj.ui.contest.textViewModules.ProblemSubmitResultTextView
                 android:id="@+id/contestStatus_result"
                 android:text="wronganfafdas"
                 android:textSize="18sp"

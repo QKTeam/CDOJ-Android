@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_background"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <cn.edu.uestc.acm.cdoj.ui.toolbar.ToolBarWithSearch
+                android:id="@+id/toolbar_list"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/ui_main_list_ViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/main_detail_bg"
+                    android:layout_width="300dp"
+                    android:layout_height="300dp"
+                    android:layout_centerInParent="true"
+                    android:contentDescription="@null" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/ui_main_detail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/landAndPadMark"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical" />
+
+    <LinearLayout
+        android:id="@+id/button_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/list_button_notice"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/main_background"
+            android:src="@drawable/ic_list_notice"/>
+        <ImageButton
+            android:id="@+id/list_button_problem"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/main_background"
+            android:src="@drawable/ic_list_problem"/>
+        <ImageButton
+            android:id="@+id/list_button_contest"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/main_background"
+            android:src="@drawable/ic_list_contest"/>
+        <ImageButton
+            android:id="@+id/list_button_user"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/main_background"
+            android:src="@drawable/ic_list_user"/>
+    </LinearLayout>
+
+</LinearLayout>
