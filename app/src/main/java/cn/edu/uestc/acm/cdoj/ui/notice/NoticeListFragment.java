@@ -13,8 +13,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 
+import java.io.BufferedOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +44,8 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
     private PageInfo mPageInfo;
     private Context context;
     private boolean refreshed;
-    private int progressContainerVisibility = -1;
+    private int progressContainerVisibility = View.VISIBLE;
+    private boolean hasSetProgressListener;
 
     @Override
     public void onAttach(Context context) {
@@ -59,15 +62,14 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
             @Override
             public void onPullUpLoading() {
                 if (mPageInfo != null && mPageInfo.currentPage < mPageInfo.totalPages) {
+                    Log.d("上拉加载", "onPullUpLoading: ");
                     NetData.getArticleList(mPageInfo.currentPage + 1, NoticeListFragment.this);
                 } else {
                     mListView.setPullUpLoadFinish();
                 }
             }
         });
-        if (progressContainerVisibility != -1) {
-            mListView.setProgressContainerVisibility(progressContainerVisibility);
-        }
+        mListView.setProgressContainerVisibility(progressContainerVisibility);
         configOnListItemClick();
         if (refreshed) refresh();
     }
@@ -110,21 +112,17 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
         context.startActivity(intent);
     }
 
-    private void createAdapter() {
-        mListAdapter = new SimpleAdapter(
-                Global.currentMainUIActivity, listItems, R.layout.article_item_list,
-                new String[]{"title", "content", "date", "author"},
-                new int[]{R.id.article_title, R.id.article_content,
-                        R.id.article_date, R.id.article_author});
-        mListView.setAdapter(mListAdapter);
-    }
-
     @Override
     public void show(int which, Object data, long time) {
-        Log.d("我在这里", "show: ");
+        Log.d("得到信息", "show: ");
         if (((InfoList) data).result) {
-            setPageInfo(((InfoList) data).pageInfo);
+            mPageInfo = ((InfoList) data).pageInfo;
             ArrayList<ArticleInfo> infoList_A = ((InfoList) data).getInfoList();
+            if (infoList_A.size() == 0) {
+                mListView.setDataIsNull();
+                notifyDataSetChanged();
+                return;
+            }
             Log.d("我在这里aaaaa", "show: "+infoList_A.size());
             for (ArticleInfo tem : infoList_A) {
                 Map<String, Object> listItem = new HashMap<>();
@@ -135,30 +133,23 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
                 listItem.put("id", tem.articleId);
                 addListItem(listItem);
             }
+            if (hasSetProgressListener && mPageInfo.currentPage == 1) {
+                progressListener.end();
+            }
         }else {
+            Log.d("获取列表失败", "show: ");
             mListView.setPullUpLoadFailure();
-        }
-        if (mPageInfo.currentPage == 1 && progressListener != null) {
-            progressListener.end();
         }
         notifyDataSetChanged();
     }
 
-    public NoticeListFragment refresh() {
-        refreshed = true;
-        if (mListView != null){
-            if (progressListener != null) progressListener.start();
-            mListView.resetPullUpLoad();
-            listItems.clear();
-            NetData.getArticleList(1, this);
-        }
-        return this;
-    }
-
     @Override
     public void notifyDataSetChanged() {
-        if (mListAdapter == null) createAdapter();
-        mListAdapter.notifyDataSetChanged();
+        if (mListAdapter == null) {
+            mListView.setAdapter(createAdapter());
+        }else {
+            mListAdapter.notifyDataSetChanged();
+        }
         if (mListView.isPullUpLoading()) {
             mListView.setPullUpLoading(false);
         }
@@ -167,24 +158,24 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
         }
     }
 
+    private ListAdapter createAdapter() {
+        mListAdapter =  new SimpleAdapter(
+                Global.currentMainUIActivity, listItems, R.layout.article_item_list,
+                new String[]{"title", "content", "date", "author"},
+                new int[]{R.id.article_title, R.id.article_content,
+                        R.id.article_date, R.id.article_author});
+        return mListAdapter;
+    }
+
     @Override
     public void setRefreshProgressListener(OnRefreshProgressListener listener) {
+        hasSetProgressListener = true;
         progressListener = listener;
     }
 
     @Override
     public void addListItem(Map<String, Object> listItem) {
         listItems.add(listItem);
-    }
-
-    @Override
-    public void setPageInfo(PageInfo pageInfo) {
-        mPageInfo = pageInfo;
-    }
-
-    @Override
-    public PageInfo getPageInfo() {
-        return mPageInfo;
     }
 
     @Override
@@ -198,5 +189,17 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
         if (mListView != null) {
             mListView.setProgressContainerVisibility(visibility);
         }
+    }
+
+    public NoticeListFragment refresh() {
+        refreshed = true;
+        if (mListView != null){
+            if (hasSetProgressListener) progressListener.start();
+            mListView.resetPullUpLoad();
+            listItems.clear();
+            Log.d("获取信息", "refresh: ");
+            NetData.getArticleList(1, this);
+        }
+        return this;
     }
 }

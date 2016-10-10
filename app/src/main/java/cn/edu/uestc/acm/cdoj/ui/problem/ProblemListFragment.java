@@ -41,7 +41,8 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
     private MainList.OnRefreshProgressListener progressListener;
     private PageInfo mPageInfo;
     private boolean refreshed;
-    private int progressContainerVisibility = -1;
+    private boolean hasSetProgressListener;
+    private int progressContainerVisibility = View.VISIBLE;
 
     @Override
     public void onAttach(Context context) {
@@ -63,9 +64,7 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
                 }
             }
         });
-        if (progressContainerVisibility != -1) {
-            mListView.setProgressContainerVisibility(progressContainerVisibility);
-        }
+        mListView.setProgressContainerVisibility(progressContainerVisibility);
         configOnListItemClick();
         if (refreshed) refresh();
     }
@@ -81,14 +80,6 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mListView.setLayoutParams(container.getLayoutParams());
         return mListView;
-    }
-
-    private void createAdapter() {
-        mListAdapter = new SimpleAdapter(
-                Global.currentMainUIActivity, listItems, R.layout.problem_item_list,
-                new String[]{"title", "source", "idString", "number"},
-                new int[]{R.id.problem_title, R.id.problem_source, R.id.problem_id, R.id.problem_number});
-        mListView.setAdapter(mListAdapter);
     }
 
     private void configOnListItemClick() {
@@ -120,8 +111,13 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
     @Override
     public void show(int which, Object data, long time) {
         if (((InfoList) data).result) {
-            setPageInfo(((InfoList) data).pageInfo);
+            mPageInfo = ((InfoList) data).pageInfo;
             ArrayList<ProblemInfo> infoList_P = ((InfoList) data).getInfoList();
+            if (infoList_P.size() == 0) {
+                mListView.setDataIsNull();
+                notifyDataSetChanged();
+                return;
+            }
             for (ProblemInfo tem : infoList_P) {
                 String number = "solved/tried:  " + tem.solved + "/" + tem.tried;
                 Map<String, Object> listItem = new HashMap<>();
@@ -132,13 +128,57 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
                 listItem.put("idString", "ID: " + tem.problemId);
                 addListItem(listItem);
             }
+            if (hasSetProgressListener && mPageInfo.currentPage == 1) {
+                progressListener.end();
+            }
         } else {
             mListView.setPullUpLoadFailure();
         }
-        if (progressListener != null && mPageInfo.currentPage == 1) {
-            progressListener.end();
-        }
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        if (mListAdapter == null) createAdapter();
+        mListAdapter.notifyDataSetChanged();
+        if (mListView.isPullUpLoading()) {
+            mListView.setPullUpLoading(false);
+        }
+        if (mListView.isRefreshing()) {
+            mListView.setRefreshing(false);
+        }
+    }
+
+    private void createAdapter() {
+        mListAdapter = new SimpleAdapter(
+                Global.currentMainUIActivity, listItems, R.layout.problem_item_list,
+                new String[]{"title", "source", "idString", "number"},
+                new int[]{R.id.problem_title, R.id.problem_source, R.id.problem_id, R.id.problem_number});
+        mListView.setAdapter(mListAdapter);
+    }
+
+    @Override
+    public void addListItem(Map<String, Object> listItem) {
+        listItems.add(listItem);
+    }
+
+    @Override
+    public ListViewWithGestureLoad getListView() {
+        return mListView;
+    }
+
+    @Override
+    public void setRefreshProgressListener(OnRefreshProgressListener listener) {
+        hasSetProgressListener = true;
+        progressListener = listener;
+    }
+
+    @Override
+    public void setProgressContainerVisibility(int visibility) {
+        progressContainerVisibility = visibility;
+        if (mListView != null) {
+            mListView.setProgressContainerVisibility(visibility);
+        }
     }
 
     public void setKey(String key) {
@@ -154,50 +194,5 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
             NetData.getProblemList(1, key, this);
         }
         return this;
-    }
-
-    @Override
-    public void setRefreshProgressListener(OnRefreshProgressListener listener) {
-        progressListener = listener;
-    }
-
-    @Override
-    public void addListItem(Map<String, Object> listItem) {
-        listItems.add(listItem);
-    }
-
-    @Override
-    public void notifyDataSetChanged() {
-        if (mListAdapter == null) createAdapter();
-        mListAdapter.notifyDataSetChanged();
-        if (mListView.isPullUpLoading()) {
-            mListView.setPullUpLoading(false);
-        }
-        if (mListView.isRefreshing()) {
-            mListView.setRefreshing(false);
-        }
-    }
-
-    @Override
-    public void setPageInfo(PageInfo pageInfo) {
-        mPageInfo = pageInfo;
-    }
-
-    @Override
-    public PageInfo getPageInfo() {
-        return mPageInfo;
-    }
-
-    @Override
-    public ListViewWithGestureLoad getListView() {
-        return mListView;
-    }
-
-    @Override
-    public void setProgressContainerVisibility(int visibility) {
-        progressContainerVisibility = visibility;
-        if (mListView != null) {
-            mListView.setProgressContainerVisibility(visibility);
-        }
     }
 }

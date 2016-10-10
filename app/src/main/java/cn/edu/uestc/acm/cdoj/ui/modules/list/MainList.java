@@ -19,10 +19,6 @@ public interface MainList {
 
     void addListItem(Map<String, Object> listItem);
 
-    void setPageInfo(PageInfo pageInfo);
-
-    PageInfo getPageInfo();
-
     ListViewWithGestureLoad getListView();
 
     void setProgressContainerVisibility(int visibility);

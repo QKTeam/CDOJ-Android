@@ -154,6 +154,11 @@ public class ContestRank extends Fragment implements ViewHandler {
                 Rank rankInfo = (Rank) data;
                 if (rankInfo.result) {
                     ArrayList<Rank.Performance> infoList_rank = rankInfo.getPerformanceList();
+                    if (infoList_rank.size() == 0) {
+                        mListView.setDataIsNull();
+                        notifyDataSetChanged();
+                        return;
+                    }
                     for (int i = 0; i != infoList_rank.size(); ++i) {
                         Rank.Performance competitorInfo = infoList_rank.get(i);
                         this.listItems.add(getListItem(competitorInfo));

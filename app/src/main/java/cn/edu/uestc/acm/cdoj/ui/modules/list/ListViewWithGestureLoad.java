@@ -22,13 +22,11 @@ public class ListViewWithGestureLoad extends LinearLayout {
     private boolean hasMoreData = true;
     private LinearLayout mProgressContainer;
     private ListView mListView;
-    private ListAdapter mListAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ListViewFooter mListViewFooter;
     private OnPullUpLoadListener onPullUpLoadListener;
     private SwipeRefreshLayout.OnRefreshListener onRefreshListener;
     private AdapterView.OnItemClickListener onItemClickListener;
-    private boolean mProgressContainerShown;
 
     public interface OnPullUpLoadListener {
         void onPullUpLoading();
@@ -51,7 +49,6 @@ public class ListViewWithGestureLoad extends LinearLayout {
 
     private void initViews() {
         inflate(getContext(), R.layout.list_view_with_gesture_load, this);
-        isPullUpLoading = false;
         mProgressContainer = (LinearLayout) findViewById(R.id.list_view_with_gesture_load_progressContainer);
         mListView = (ListView) findViewById(R.id.list_view_with_gesture_load_list);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.list_view_with_gesture_load_swipeRefresh);
@@ -97,7 +94,13 @@ public class ListViewWithGestureLoad extends LinearLayout {
         mListViewFooter.updateContent(ListViewFooter.LOADPROBLEM);
     }
 
+    public void setDataIsNull() {
+        hasMoreData = false;
+        mListViewFooter.updateContent(ListViewFooter.NODATA);
+    }
+
     public void resetPullUpLoad() {
+        isPullUpLoading = false;
         hasMoreData = true;
     }
 
@@ -124,7 +127,6 @@ public class ListViewWithGestureLoad extends LinearLayout {
     }
 
     public void setAdapter(ListAdapter adapter) {
-        mListAdapter = adapter;
         setProgressContainerVisibility(View.GONE);
         mListView.setAdapter(adapter);
     }
@@ -141,13 +143,10 @@ public class ListViewWithGestureLoad extends LinearLayout {
     }
 
     public void setProgressContainerVisibility(int visibility) {
-        if (visibility != View.INVISIBLE && visibility != View.VISIBLE) {
+        if (visibility != View.INVISIBLE && visibility != View.VISIBLE && visibility != View.GONE) {
             return;
         }
-        mProgressContainerShown = visibility == View.VISIBLE;
-        if (mProgressContainer != null) {
-            mProgressContainer.setVisibility(visibility);
-        }
+        mProgressContainer.setVisibility(visibility);
     }
 
     public ListView getListView() {

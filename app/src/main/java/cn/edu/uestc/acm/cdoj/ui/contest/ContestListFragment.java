@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
@@ -50,7 +51,8 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
     private PageInfo mPageInfo;
     private Context context;
     private boolean refreshed;
-    private int progressContainerVisibility = -1;
+    private boolean hasSetProgressListener;
+    private int progressContainerVisibility = View.VISIBLE;
 
     @Override
     public void onAttach(Context context) {
@@ -73,9 +75,7 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
                 }
             }
         });
-        if (progressContainerVisibility != -1) {
-            mListView.setProgressContainerVisibility(progressContainerVisibility);
-        }
+        mListView.setProgressContainerVisibility(progressContainerVisibility);
         configOnListItemClick();
         if (refreshed) refresh();
     }
@@ -93,37 +93,12 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
         return mListView;
     }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    @Override
-    public void notifyDataSetChanged() {
-        if (mListAdapter == null) createAdapter();
-        mListAdapter.notifyDataSetChanged();
-        if (mListView.isPullUpLoading()) {
-            mListView.setPullUpLoading(false);
-        }
-        if (mListView.isRefreshing()) {
-            mListView.setRefreshing(false);
-        }
-    }
-
-    private void createAdapter() {
-        mListAdapter = new SimpleAdapter(
-                Global.currentMainUIActivity, listItems, R.layout.contest_item_list,
-                new String[]{"title", "date", "timeLimit", "id", "status", "permission"},
-                new int[]{R.id.contest_title, R.id.contest_date, R.id.contest_timeLimit,
-                        R.id.contest_id, R.id.contest_status, R.id.contest_permission});
-        mListView.setAdapter(mListAdapter);
-    }
-
     private void configOnListItemClick() {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int contestId = (int) listItems.get(position).get("id");
-                addClickInfo(position, contestId);
+                addInfoOfCurrentClick(position, contestId);
                 if (!Global.userManager.isLogin()){
                     reminderUnLogin();
                     return;
@@ -138,7 +113,7 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
         });
     }
 
-    private void addClickInfo(int position, int id) {
+    private void addInfoOfCurrentClick(int position, int id) {
         clickPosition = position;
         clickContestID = id;
     }
@@ -204,13 +179,28 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
         switch (which) {
             case ViewHandler.CONTEST_LIST:
                 if (((InfoList) data).result) {
-                    setPageInfo(((InfoList) data).pageInfo);
-                    addDataToList(((InfoList) data).getInfoList());
+                    mPageInfo = ((InfoList) data).pageInfo;
+                    ArrayList<ContestInfo> infoList_C = ((InfoList) data).getInfoList();
+                    if (infoList_C.size() == 0){
+                        mListView.setDataIsNull();
+                        notifyDataSetChanged();
+                        return;
+                    }
+                    for (ContestInfo tem : infoList_C) {
+                        Map<String, Object> listItem = new HashMap<>();
+                        listItem.put("title", tem.title);
+                        listItem.put("date", tem.timeString);
+                        listItem.put("timeLimit", tem.lengthString);
+                        listItem.put("id", tem.contestId);
+                        listItem.put("status", tem.status);
+                        listItem.put("permission", tem.typeName);
+                        addListItem(listItem);
+                    }
+                    if (hasSetProgressListener && mPageInfo.currentPage == 1) {
+                        progressListener.end();
+                    }
                 } else {
                     mListView.setPullUpLoadFailure();
-                }
-                if (progressListener != null) {
-                    progressListener.end();
                 }
                 notifyDataSetChanged();
                 break;
@@ -226,17 +216,25 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
         }
     }
 
-    private void addDataToList(ArrayList<ContestInfo> infoList_C) {
-        for (ContestInfo tem : infoList_C) {
-            Map<String, Object> listItem = new HashMap<>();
-            listItem.put("title", tem.title);
-            listItem.put("date", tem.timeString);
-            listItem.put("timeLimit", tem.lengthString);
-            listItem.put("id", tem.contestId);
-            listItem.put("status", tem.status);
-            listItem.put("permission", tem.typeName);
-            addListItem(listItem);
+    @Override
+    public void notifyDataSetChanged() {
+        if (mListAdapter == null) mListView.setAdapter(createAdapter());
+        else mListAdapter.notifyDataSetChanged();
+        if (mListView.isPullUpLoading()) {
+            mListView.setPullUpLoading(false);
         }
+        if (mListView.isRefreshing()) {
+            mListView.setRefreshing(false);
+        }
+    }
+
+    private ListAdapter createAdapter() {
+        mListAdapter =  new SimpleAdapter(
+                Global.currentMainUIActivity, listItems, R.layout.contest_item_list,
+                new String[]{"title", "date", "timeLimit", "id", "status", "permission"},
+                new int[]{R.id.contest_title, R.id.contest_date, R.id.contest_timeLimit,
+                        R.id.contest_id, R.id.contest_status, R.id.contest_permission});
+        return mListAdapter;
     }
 
     private void showDetail() {
@@ -275,35 +273,15 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
         alert.show();
     }
 
-    public ContestListFragment refresh() {
-        refreshed = true;
-        if (mListView != null) {
-            if (progressListener != null) progressListener.start();
-            mListView.resetPullUpLoad();
-            listItems.clear();
-            NetData.getContestList(1, key, this);
-        }
-        return this;
-    }
-
     @Override
     public void setRefreshProgressListener(OnRefreshProgressListener listener) {
+        hasSetProgressListener = true;
         progressListener = listener;
     }
 
     @Override
     public void addListItem(Map<String ,Object> listItem) {
         listItems.add(listItem);
-    }
-
-    @Override
-    public void setPageInfo(PageInfo pageInfo) {
-        mPageInfo = pageInfo;
-    }
-
-    @Override
-    public PageInfo getPageInfo() {
-        return mPageInfo;
     }
 
     @Override
@@ -317,5 +295,20 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
         if (mListView != null) {
             mListView.setProgressContainerVisibility(visibility);
         }
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public ContestListFragment refresh() {
+        refreshed = true;
+        if (mListView != null) {
+            if (progressListener != null) progressListener.start();
+            mListView.resetPullUpLoad();
+            listItems.clear();
+            NetData.getContestList(1, key, this);
+        }
+        return this;
     }
 }

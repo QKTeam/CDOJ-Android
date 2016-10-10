@@ -172,7 +172,7 @@ public class ContestFragment extends Fragment implements ViewHandler{
         this.contestID = contestID;
         if (clarification != null) clarification.refresh(contestID);
         if (status != null) status.refresh(contestID);
-        if (rank != null) rank.refresh(contestID);
+        if (rank != null) rank.refresh(contestID, problemIDs.length);
         return this;
     }
 
@@ -224,7 +224,7 @@ public class ContestFragment extends Fragment implements ViewHandler{
         if (contestID != -1) {
             clarification.refresh(contestID);
             status.refresh(contestID);
-            rank.refresh(contestID);
+            rank.refresh(contestID, problemIDs.length);
         }
     }
 }

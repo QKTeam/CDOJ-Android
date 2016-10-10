@@ -152,6 +152,11 @@ public class ContestClarification extends Fragment implements ViewHandler{
                 if (((InfoList) data).result){
                     mPageInfo = ((InfoList) data).pageInfo;
                     ArrayList<ArticleInfo> infoList_clarification = ((InfoList) data).getInfoList();
+                    if (infoList_clarification.size() == 0) {
+                        mListView.setDataIsNull();
+                        notifyDataSetChanged();
+                        return;
+                    }
                     for (int i = 0; i != infoList_clarification.size(); ++i) {
                         ArticleInfo tem = infoList_clarification.get(i);
                         Map<String, Object> listItem = new HashMap<>();

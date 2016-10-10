@@ -83,7 +83,6 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
     private MainList searchResult;
 
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ui_main);

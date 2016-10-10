@@ -27,7 +27,7 @@
     <string name="user">用户</string>
     <string name="gettingContest">正在获取该比赛</string>
     <string name="getting">正在获取......</string>
-    <string name="noData">没有数据</string>
+    <string name="noData">数据为空！</string>
     <string name="yes">是</string>
     <string name="no">否</string>
 </resources>

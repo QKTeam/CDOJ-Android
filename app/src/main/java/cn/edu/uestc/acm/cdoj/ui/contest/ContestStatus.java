@@ -90,6 +90,11 @@ public class ContestStatus extends Fragment implements ViewHandler{
         if (((InfoList) data).result) {
             mPageInfo = ((InfoList) data).pageInfo;
             ArrayList<Status> infoList_status = ((InfoList) data).getInfoList();
+            if (infoList_status.size() == 0) {
+                mListView.setDataIsNull();
+                notifyDataSetChanged();
+                return;
+            }
             for (Status tem : infoList_status) {
                 Map<String, Object> listItem = new HashMap<>();
                 listItem.put("result", tem.returnType);
@@ -99,12 +104,11 @@ public class ContestStatus extends Fragment implements ViewHandler{
                 listItem.put("user", tem.nickName);
                 if (problemIDs != null) {
                     int i = 0;
-                    char charTem = 'A';
                     while (i != problemIDs.length && tem.problemId != problemIDs[i]) ++i;
                     if (i == problemIDs.length) {
                         listItem.put("probOrder", "?");
                     } else {
-                        listItem.put("probOrder", String.valueOf((char)(charTem + i)));
+                        listItem.put("probOrder", String.valueOf((char)('A' + i)));
                     }
                 }
                 addListItem(listItem);
