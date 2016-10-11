@@ -18,27 +18,25 @@
             android:layout_height="0dp"
             android:layout_weight="2"
             android:orientation="horizontal">
-            <cn.edu.uestc.acm.cdoj.layout.detail.text.SubmitResult
+            <cn.edu.uestc.acm.cdoj.ui.contest.textViewModules.ProblemSubmitResultTextView
                 android:id="@+id/contestStatus_result"
-                android:text="wronganfafdas"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
                 android:textSize="18sp"
-                android:textAlignment="center"
                 android:gravity="center_vertical"
                 android:lines="1"
-                android:layout_weight="3"
-                android:layout_width="0dp"
-                android:layout_height="match_parent" />
+                android:text="wronganfafdas" />
             <TextView
                 android:id="@+id/contestStatus_language"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:paddingTop="10dp"
-                android:text="c++ 3420mb"
                 android:textSize="15sp"
                 android:lines="1"
                 android:gravity="end"
-                android:textStyle="bold"/>
+                android:text="c++ 3420mb" />
         </LinearLayout>
 
         <LinearLayout
@@ -48,17 +46,16 @@
             <TextView
                 android:id="@+id/contestStatus_user"
                 android:layout_width="0dp"
-                android:text="fdsfsafdsa"
-                android:gravity="center"
                 android:layout_height="match_parent"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:text="fdsfsafdsa" />
             <TextView
                 android:id="@+id/contestStatus_cost"
                 android:layout_width="0dp"
-                android:text="fasfdsafdsa"
-                android:gravity="center"
                 android:layout_height="match_parent"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text="fasfdsafdsa" />
         </LinearLayout>
 
         <LinearLayout
@@ -68,16 +65,16 @@
             <TextView
                 android:id="@+id/contestStatus_probOrder"
                 android:layout_width="0dp"
-                android:text="fdsafsda"
                 android:layout_height="match_parent"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:text="fdsafsda" />
             <TextView
                 android:id="@+id/contestStatus_submitDate"
                 android:layout_width="0dp"
-                android:text="fdsafsadfsad"
-                android:gravity="right"
                 android:layout_height="match_parent"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:text="fdsafsadfsad"
+                android:gravity="end" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

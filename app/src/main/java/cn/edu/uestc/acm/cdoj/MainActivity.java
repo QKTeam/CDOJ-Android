@@ -1,99 +1,68 @@
 package cn.edu.uestc.acm.cdoj;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.os.Build;
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
-import cn.edu.uestc.acm.cdoj.layout.DetailsContainer;
-import cn.edu.uestc.acm.cdoj.layout.ListContainer;
-import cn.edu.uestc.acm.cdoj.net.UserManager;
-import cn.edu.uestc.acm.cdoj.statusBar.FlyMeUtils;
-import cn.edu.uestc.acm.cdoj.statusBar.MIUIUtils;
-import cn.edu.uestc.acm.cdoj.statusBar.StatusBarUtil;
+import java.io.IOException;
+import java.io.InputStream;
 
-public class MainActivity extends AppCompatActivity implements GetInformation {
+import cn.edu.uestc.acm.cdoj.tools.DrawImage;
+import cn.edu.uestc.acm.cdoj.tools.RGBAColor;
+import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 
-    private DetailsContainer detailsContainer;
-    private ListContainer listContainer;
-    private FragmentManager fragmentManager;
-    private boolean isTwoPane;
-
-
+public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Global.currentMainActivity = this;
-        setContentView(R.layout.activity_main);
-        isTwoPane = findViewById(R.id.landAndPadMark) != null;
-        Global.isTwoPane = isTwoPane;
-        initStatusBar();
-        TabLayout bottomTab = (TabLayout) findViewById(R.id.tabLayout_bottom);
-        fragmentManager = getFragmentManager();
-        if (savedInstanceState == null) {
-            Global.userManager = new UserManager(this);
-            if (Global.userManager.isLogin()) Global.userManager.keepLogin();
-            Global.netContent = new NetContent();
-            initViews();
-        } else findBackContainerFragment();
-        listContainer.setupWithTabLayout(bottomTab);
-    }
-
-    @Override
-    protected void onRestart() {
-        Global.userManager.keepLogin();
-        super.onRestart();
-    }
-
-    private void initStatusBar() {
-        if (MIUIUtils.isMIUI() || FlyMeUtils.isFlyMe() || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)) {
-            StatusBarUtil.setStatusBarColor(this, R.color.statusBar_background_white);
-            StatusBarUtil.StatusBarLightMode(this);
-        } else {
-            StatusBarUtil.setStatusBarColor(this, R.color.statusBar_background_gray);
+        Intent launchActivityIntent = new Intent(this, LaunchCartoonActivity.class);
+        startActivity(launchActivityIntent);
+        try {
+            InputStream input;
+            byte[] in;
+            input = getResources().getAssets().open("articleRender.html");
+            in = new byte[input.available()];
+            input.read(in);
+            Global.HTMLDATA_ARTICLE = new String(in);
+            input = getResources().getAssets().open("problemRender.html");
+            in = new byte[input.available()];
+            input.read(in);
+            Global.HTMLDATA_PROBLEM = new String(in);
+            input = getResources().getAssets().open("contestOverviewRender.html");
+            in = new byte[input.available()];
+            input.read(in);
+            Global.HTMLDATA_CONTEST = new String(in);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        Global.mainColorMatrix = new float[]{
+                0, 0, 0, 0, 255,
+                0, 0, 0, 0, 166,
+                0, 0, 0, 0, 0,
+                0, 0, 0, 1, 0};
+        setupStatusIcons();
+        setupListFooterIcons();
+        finish();
     }
 
-    private void initViews(){
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        if (isTwoPane) {
-            detailsContainer = new DetailsContainer();
-            Global.detailsContainer = detailsContainer;
-            transaction.add(R.id.details_container, detailsContainer, "detailsContainer");
-        }
-        listContainer = new ListContainer();
-        Global.listContainer = listContainer;
-        transaction.add(R.id.list_container, listContainer, "listContainer");
-        transaction.commit();
+    private void setupStatusIcons() {
+        Global.didNothingIcon = DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
+                RGBAColor.getColorMatrix(this, R.color.rank_gray, false));
+        Global.triedIcon = DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
+                RGBAColor.getColorMatrix(this, R.color.rank_yellow, false));
+        Global.solvedIcon = DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
+                RGBAColor.getColorMatrix(this, R.color.rank_halfGreen, false));
+        Global.theFirstSolvedIcon = DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
+                RGBAColor.getColorMatrix(this, R.color.rank_green, false));
     }
 
-    private void findBackContainerFragment() {
-        listContainer = (ListContainer) fragmentManager.findFragmentByTag("listContainer");
-        detailsContainer = (DetailsContainer) fragmentManager.findFragmentByTag("detailsContainer");
-        if (detailsContainer == null && isTwoPane) {
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            detailsContainer = new DetailsContainer();
-            transaction.add(R.id.details_container, detailsContainer, "detailsContainer");
-            transaction.commit();
-        }
+    private void setupListFooterIcons() {
+        Global.listFootericon_noData = DrawImage.draw(this, R.drawable.ic_sync_disabled_white, true);
+        Global.listFootericon_problem = DrawImage.draw(this, R.drawable.ic_sync_problem_white, true);
+        Global.listFootericon_done = DrawImage.draw(this, R.drawable.ic_done_white, true);
     }
-
-    @Override
-    public boolean isTwoPane() {
-        return isTwoPane;
-    }
-
-    @Override
-    public DetailsContainer getDetailsContainer() {
-        return detailsContainer;
-    }
-
-    @Override
-    public ListContainer getListContainer() {
-        return listContainer;
-    }
-
 }

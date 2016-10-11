@@ -1,18 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="black">#000000</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimaryDark">#FFFFFF</color>
+    <color name="colorAccent">#38BDFF</color>
     <color name="colorBlue">#33CCFF</color>
     <color name="content_background">#e8e8e8</color>
     <color name="main_background">#ffffff</color>
-    <color name="statusBar_background_white">#ffffff</color>
-    <color name="statusBar_background_gray">#666666</color>
+    <color name="statusBar_background_white">#00000000</color>
+    <color name="statusBar_background_gray">#88888888</color>
     <color name="main_blue">#38BDFF</color>
+    <color name="main_yellow">#FFA600</color>
+
+    <color name="black">#000000</color>
     <color name="red">#FF0000</color>
     <color name="green">#00FF00</color>
     <color name="blue">#0000FF</color>
+    <color name="gray">#777777</color>
+    <color name="yellow">#FFE000</color>
+    <color name="halfGreen">#008800</color>
+
+    <color name="rank_green">#22B14C</color>
+    <color name="rank_halfGreen">#B5E61D</color>
+    <color name="rank_gray">#C3C3C3</color>
+    <color name="rank_yellow">#FFC90E</color>
+
     <color name="contestPermission_Invited">#FFE000</color>
     <color name="contestPermission_Diy">#FF9403</color>
     <color name="contestPermission_Onsite">#00A9FF</color>
@@ -20,4 +31,5 @@
     <color name="contestPermission_Public">#00FF00</color>
     <color name="contestStatus_Ended">#FF0000</color>
     <color name="contestStatus_Running">#00FF00</color>
+    <color name="transparent">#00000000</color>
 </resources>

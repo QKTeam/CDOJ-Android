@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_problem"
+    <TextView
+        android:id="@+id/title_problem"
+        android:paddingStart="20dp"
+        android:paddingEnd="10dp"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/main_background"
-        app:popupTheme="@style/AppTheme.PopupOverlay" />
+        android:textColor="@color/main_blue"
+        android:gravity="center_vertical"
+        android:lines="1"
+        android:ellipsize="end"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:background="@color/main_background"/>
 
     <LinearLayout
         android:id="@+id/webViewFragment_problem"
