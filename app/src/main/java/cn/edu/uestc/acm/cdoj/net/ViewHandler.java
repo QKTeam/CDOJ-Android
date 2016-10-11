@@ -22,7 +22,9 @@ public interface ViewHandler {
         STATUS_SUBMIT = 13,
         AVATAR = 14,
         REGISTER = 15,
-        USER = 16;
+        USER_PROFILE = 16,
+        USER_TYPE_AHEAD_ITEM = 17,
+        USER_CENTER_DATA = 18;
 
     //    void showProblemList(ProblemInfoList problemInfoList);
 //    void showContestList(ContestInfoList contestInfoList);

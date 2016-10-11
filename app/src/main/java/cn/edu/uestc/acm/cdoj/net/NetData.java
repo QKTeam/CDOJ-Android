@@ -1,12 +1,9 @@
 package cn.edu.uestc.acm.cdoj.net;
 
-import android.os.AsyncTask;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.concurrent.Executors;
 
 import cn.edu.uestc.acm.cdoj.net.data.Result;
 
@@ -35,7 +32,20 @@ public class NetData {
             statusInfoUrl = severAddress + "/status/info/",
             codeSubmitUrl = severAddress + "/status/submit",
             avatarUrl = "http://cdn.v2ex.com/gravatar/%@.jpg?s=%ld&&d=retro",
-            registerUrl = severAddress + "/user/register";
+            registerUrl = severAddress + "/user/register",
+            userProfileUrl = severAddress + "/user/profile/",
+            userTypeAheadItemUrl = severAddress + "/user/typeAheadItem/",
+            userCenterDataUrl = severAddress + "/user/userCenterData/";
+
+    public static void getUserCenterData(String userName, Object extra, ViewHandler viewHandler){
+        asyncWithAdd(ViewHandler.USER_CENTER_DATA, new String[]{ userCenterDataUrl + userName}, viewHandler, extra);
+    }
+    public static void getUserTypeAheadItem(String userName, Object extra, ViewHandler viewHandler){
+        asyncWithAdd(ViewHandler.USER_PROFILE, new String[]{ userTypeAheadItemUrl + userName}, viewHandler, extra);
+    }
+    public static void getUserProfile(String userName, Object extra, ViewHandler viewHandler){
+        asyncWithAdd(ViewHandler.USER_PROFILE, new String[]{ userProfileUrl + userName}, viewHandler, extra);
+    }
     public static void register(String userName, String password, String passwordRepeat, String nickName, String email, String motto, String name, int sex, int size, String phone, String school, int departmentId, int grade, String studentId, ViewHandler viewHandler, Object extra){
         String key[] = new String[]{"userName", "password", "passwordRepeat", "nickName", "email", "motto", "name", "sex", "size", "phone", "school", "departmentId", "grade", "studentId"};
         Object o[] = new Object[]{userName, password, passwordRepeat, nickName, email, motto, name, sex, size, phone, school, departmentId, grade, studentId};
@@ -149,7 +159,19 @@ public class NetData {
 
     static void asyncWithAdd(final int which, final String[] req, final ViewHandler viewHandler, final Object extra) {
         final long time = System.currentTimeMillis();
-        new AsyncTask<Void, Void, Result>(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final Result result = request(which, req);
+                ThreadTools.runOnMainThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        handleInMain(which, result, viewHandler, time, extra);
+                    }
+                });
+            }
+        }).start();
+/*        new AsyncTask<Void, Void, Result>(){
 
             @Override
             protected Result doInBackground(Void... voids) {
@@ -160,11 +182,12 @@ public class NetData {
             protected void onPostExecute(Result result) {
                 handleInMain(which, result, viewHandler, time, extra);
             }
-        }.executeOnExecutor(Executors.newFixedThreadPool(1));
+        }.executeOnExecutor(Executors.newFixedThreadPool(1));*/
 
     }
 
     static Result request(int which, String[] req){
+        Log.d(TAG, "request: " + req[0]);
         switch (which){
             case ViewHandler.AVATAR:
                 return new Result(NetWorkTool.getBytes(NetWorkTool._get(req[0])));
@@ -211,7 +234,7 @@ public class NetData {
         }*/
     }
     static void handleInMain(int which, Result result, ViewHandler viewHandler, long time, Object extra){
-        if (viewHandler != null){
+        if (viewHandler != null && result.resultType != Result.STATE_NETWORK_ERROR){
             result.setExtra(extra);
             viewHandler.show(which, result, time);
         }

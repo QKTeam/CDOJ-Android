@@ -5,6 +5,7 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import cn.edu.uestc.acm.cdoj.net.JsonUtils;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 
 
@@ -14,14 +15,17 @@ import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 public class Result {
     private final static String TAG = "ResultTag";
     public final static int STATE_OK = 0, STATE_NETWORK_ERROR = 1, STATE_CONTENT_ERROR = 2;
+    public boolean result = false;
     public int resultType = STATE_OK;
     public String resultString, errorMsg = "if you see this, it represents this response doesn't contain errorMsg!";
 
     Object content;
     Object extra = null;
     public Result( int which, String json) {
+        Log.d(TAG, "which:" + which + "  Result: " + json);
         if (json == null) {
             resultType = STATE_NETWORK_ERROR;
+            return;
         }
         try {
             JSONObject jsonObject = new JSONObject(json);
@@ -31,6 +35,7 @@ public class Result {
                 errorMsg = jsonObject.optString("error_msg", errorMsg);
             }
             else{
+                result = true;
                 switch (which){
                     case ViewHandler.PROBLEM_LIST:
                     case ViewHandler.ARTICLE_LIST:
@@ -49,10 +54,11 @@ public class Result {
                         content = new Article(jsonObject);
                         break;
                     case ViewHandler.CONTEST_RANK:
-                        content = new Rank(jsonObject);
-                        break;
                     case ViewHandler.STATUS_INFO:
-                        content =  Status.getCode(jsonObject);
+                    case ViewHandler.USER_PROFILE:
+                    case ViewHandler.USER_TYPE_AHEAD_ITEM:
+                    case ViewHandler.USER_CENTER_DATA:
+                        content = JsonUtils.getMapFromJson(jsonObject);
                         break;
                     default:;
                 }
@@ -65,11 +71,14 @@ public class Result {
         }
     }
     public Result(Object content, Object extra){
+        if (content == null){
+            resultType = STATE_NETWORK_ERROR;
+        }
         this.content = content;
         this.extra = extra;
     }
     public Result(Object content){
-        this.content = content;
+        this(content, null);
     }
     /*
     public Result(String json, Class cls){

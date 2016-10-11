@@ -19,9 +19,17 @@ public class JsonUtils {
         try {
             Iterator<String> keyIterator = jsonObject.keys();
             String key;
+            Object value;
             while (keyIterator.hasNext()){
                 key = keyIterator.next();
-                map.put(key, jsonObject.get(key));
+                value = jsonObject.get(key);
+                if (value instanceof JSONObject){
+                    value = getMapFromJson((JSONObject) value);
+                }
+                else if(value instanceof JSONArray){
+                    value = getMapListFromJson((JSONArray) value);
+                }
+                map.put(key, value);
             }
             return map;
         } catch (JSONException e) {
@@ -29,8 +37,8 @@ public class JsonUtils {
         }
         return null;
     }
-    public static ArrayList<Map> getMapListFromJson(JSONArray jsonArray){
-        ArrayList<Map> list = new ArrayList<>();
+    public static ArrayList<Map<String, Object>> getMapListFromJson(JSONArray jsonArray){
+        ArrayList<Map<String, Object>> list = new ArrayList<>();
         try {
             int len = jsonArray.length();
             for (int i = 0; i < len; i++) {
