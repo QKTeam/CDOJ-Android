@@ -21,11 +21,11 @@ public class InfoList <T>{
             JSONObject msg = new JSONObject(json);
             result = msg.getString("result").equals("success");
             pageInfo = new PageInfo(msg.getJSONObject("pageInfo"));
-            JSONArray list0 = msg.getJSONArray("MainList");
+            JSONArray list0 = msg.getJSONArray("list");
             Constructor c1 = cls.getDeclaredConstructor(new Class[]{JSONObject.class});
             for (int i = 0; i < list0.length(); i++) {
                 list.add((T)c1.newInstance(list0.getJSONObject(i)));
-//                MainList.add(T.toString());
+//                list.add(T.toString());
                         //Object(list0.getJSONObject(i)));
             }
         } catch (Exception e) {

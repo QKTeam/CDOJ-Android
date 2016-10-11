@@ -12,12 +12,13 @@
         android:orientation="vertical" />
 
     <FrameLayout
+        android:id="@+id/ui_main_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:background="@color/main_background">
 
         <LinearLayout
-            android:id="@+id/ui_main_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -63,7 +64,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@color/main_background"
-                    android:padding="6dp"
+                    android:padding="10dp"
                     android:scaleType="fitCenter" />
 
                 <ImageButton
@@ -72,7 +73,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@color/main_background"
-                    android:padding="6dp"
+                    android:padding="10dp"
                     android:scaleType="fitCenter" />
 
                 <ImageButton
@@ -81,7 +82,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@color/main_background"
-                    android:padding="6dp"
+                    android:padding="10dp"
                     android:scaleType="fitCenter" />
             </LinearLayout>
         </LinearLayout>

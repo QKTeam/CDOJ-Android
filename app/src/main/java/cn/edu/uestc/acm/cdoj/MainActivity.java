@@ -10,6 +10,8 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 
+import cn.edu.uestc.acm.cdoj.tools.DrawImage;
+import cn.edu.uestc.acm.cdoj.tools.RGBAColor;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 
 public class MainActivity extends Activity {
@@ -42,6 +44,25 @@ public class MainActivity extends Activity {
                 0, 0, 0, 0, 166,
                 0, 0, 0, 0, 0,
                 0, 0, 0, 1, 0};
+        setupStatusIcons();
+        setupListFooterIcons();
         finish();
+    }
+
+    private void setupStatusIcons() {
+        Global.didNothingIcon = DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
+                RGBAColor.getColorMatrix(this, R.color.rank_gray, false));
+        Global.triedIcon = DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
+                RGBAColor.getColorMatrix(this, R.color.rank_yellow, false));
+        Global.solvedIcon = DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
+                RGBAColor.getColorMatrix(this, R.color.rank_halfGreen, false));
+        Global.theFirstSolvedIcon = DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
+                RGBAColor.getColorMatrix(this, R.color.rank_green, false));
+    }
+
+    private void setupListFooterIcons() {
+        Global.listFootericon_noData = DrawImage.draw(this, R.drawable.ic_sync_disabled_white, true);
+        Global.listFootericon_problem = DrawImage.draw(this, R.drawable.ic_sync_problem_white, true);
+        Global.listFootericon_done = DrawImage.draw(this, R.drawable.ic_done_white, true);
     }
 }

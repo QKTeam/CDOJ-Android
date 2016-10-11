@@ -89,11 +89,11 @@
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:lines="1"
-                android:text="是否第一个AC："
+                android:text="AC比例："
                 android:textSize="14sp"
                 android:textStyle="bold" />
             <TextView
-                android:id="@+id/contestRankItem_isTheFirstSuccess"
+                android:id="@+id/contestRankItem_problemSolvedPercent"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"

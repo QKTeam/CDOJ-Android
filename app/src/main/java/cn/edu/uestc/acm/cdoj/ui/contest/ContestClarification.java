@@ -1,5 +1,6 @@
 package cn.edu.uestc.acm.cdoj.ui.contest;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
@@ -9,14 +10,13 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
@@ -52,11 +52,24 @@ public class ContestClarification extends Fragment implements ViewHandler{
     private ProgressDialog mProgressDialog;
     private ListViewWithGestureLoad mListView;
     private PageInfo mPageInfo;
+    private Context context;
     private boolean refreshed;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        context = activity;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mListView = new ListViewWithGestureLoad(context);
         mListView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -76,11 +89,6 @@ public class ContestClarification extends Fragment implements ViewHandler{
         });
         configOnListItemClick();
         if (refreshed) refresh();
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mListView.setLayoutParams(container.getLayoutParams());
         return mListView;
     }
@@ -90,7 +98,11 @@ public class ContestClarification extends Fragment implements ViewHandler{
     }
 
     public void notifyDataSetChanged() {
-        if (mListAdapter == null) createAdapter();
+        if (mListAdapter == null) {
+            mListView.setAdapter(setupAdapter());
+        }else {
+            mListAdapter.notifyDataSetChanged();
+        }
         mListAdapter.notifyDataSetChanged();
         if (mListView.isPullUpLoading()) {
             mListView.setPullUpLoading(false);
@@ -100,7 +112,7 @@ public class ContestClarification extends Fragment implements ViewHandler{
         }
     }
 
-    private void createAdapter() {
+    private ListAdapter setupAdapter() {
         mListAdapter = new SimpleAdapter(
                 Global.currentMainUIActivity, listItems, R.layout.contest_clarification_item_list,
                 new String[]{"header", "user", "submitDate", "content"},
@@ -108,8 +120,9 @@ public class ContestClarification extends Fragment implements ViewHandler{
                         R.id.contestClarification_submitDate, R.id.contestClarification_content}){
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                convertView.setTag(position);
-                return super.getView(position, convertView, parent);
+                View v = super.getView(position, convertView, parent);
+                v.setTag(position);
+                return v;
             }
         };
         mListAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
@@ -130,7 +143,7 @@ public class ContestClarification extends Fragment implements ViewHandler{
                 return false;
             }
         });
-        mListView.setAdapter(mListAdapter);
+        return mListAdapter;
     }
 
 
@@ -149,6 +162,11 @@ public class ContestClarification extends Fragment implements ViewHandler{
     public void show(int which, Object data, long time) {
         switch (which) {
             case ViewHandler.CONTEST_COMMENT:
+                if (refreshed) {
+                    listItems.clear();
+                    notifyDataSetChanged();
+                    refreshed = false;
+                }
                 if (((InfoList) data).result){
                     mPageInfo = ((InfoList) data).pageInfo;
                     ArrayList<ArticleInfo> infoList_clarification = ((InfoList) data).getInfoList();
@@ -170,6 +188,9 @@ public class ContestClarification extends Fragment implements ViewHandler{
                         addListItem(listItem);
                         userManager.getAvatar(tem.ownerEmail, listItems.size()-1, this);
                     }
+                    if (mPageInfo.currentPage == mPageInfo.totalItems) {
+                        mListView.setPullUpLoadFinish();
+                    }
                 }else {
                     mListView.setPullUpLoadFailure();
                 }
@@ -182,9 +203,8 @@ public class ContestClarification extends Fragment implements ViewHandler{
                     listItems.get(position).put("header", dataReceive[1]);
                 View view = mListView.findItemViewWithTag(position);
                 if (view != null) {
-                    Log.d("找到Image", "show: ");
-                    ImageView headerImage = (ImageView) view.findViewById(R.id.contestClarification_header);
-                    if (headerImage != null) headerImage.setImageBitmap((Bitmap) dataReceive[1]);
+                    ImageView imageView = (ImageView) view.findViewById(R.id.contestClarification_header);
+                    if (imageView != null) imageView.setImageBitmap((Bitmap) dataReceive[1]);
                 }
                 return;
             case ViewHandler.ARTICLE_DETAIL:
@@ -221,12 +241,14 @@ public class ContestClarification extends Fragment implements ViewHandler{
         if (contestID != -1) refresh(contestID);
     }
 
-    public void refresh(int contestID) {
+    public ContestClarification refresh(int contestID) {
+        if (contestID < 1) return this;
         refreshed = true;
         this.contestID = contestID;
-        if (mListView == null) return;
-        mListView.resetPullUpLoad();
-        listItems.clear();
-        NetData.getContestComment(contestID, 1, this);
+        if (mListView != null) {
+            mListView.resetPullUpLoad();
+            NetData.getContestComment(contestID, 1, this);
+        }
+        return this;
     }
 }

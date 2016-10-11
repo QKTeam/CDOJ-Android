@@ -75,9 +75,8 @@ public class ContestProblems extends Fragment implements ViewHandler{
             }
         });
         tabLayout.setupWithViewPager(viewPager);
-        char a = 'A';
         for (int i = 0; i != problemsCount; ++i) {
-            tabLayout.getTabAt(i).setText(String.valueOf((char)(a + i)));
+            tabLayout.getTabAt(i).setText(String.valueOf((char)('A' + i)));
         }
     }
 

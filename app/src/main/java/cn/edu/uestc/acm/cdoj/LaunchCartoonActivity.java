@@ -21,6 +21,7 @@ public class LaunchCartoonActivity extends Activity {
         ImageView mImageView = (ImageView) findViewById(R.id.launch_image);
         mImageView.setImageResource(R.drawable.launch);
         final TextView mTextView = (TextView) findViewById(R.id.launch_text);
+        mTextView.setText("3S");
         final CountDownTimer mCountDownTimer = new CountDownTimer(3000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {

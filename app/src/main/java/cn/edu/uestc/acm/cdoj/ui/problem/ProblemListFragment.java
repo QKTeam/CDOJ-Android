@@ -1,5 +1,6 @@
 package cn.edu.uestc.acm.cdoj.ui.problem;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -40,6 +41,7 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
     private ListViewWithGestureLoad mListView;
     private MainList.OnRefreshProgressListener progressListener;
     private PageInfo mPageInfo;
+    private Context context;
     private boolean refreshed;
     private boolean hasSetProgressListener;
     private int progressContainerVisibility = View.VISIBLE;
@@ -47,6 +49,25 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
+
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        context = activity;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mFragmentManager = getFragmentManager();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mListView = new ListViewWithGestureLoad(context);
         mListView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -67,17 +88,6 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
         mListView.setProgressContainerVisibility(progressContainerVisibility);
         configOnListItemClick();
         if (refreshed) refresh();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mFragmentManager = getFragmentManager();
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mListView.setLayoutParams(container.getLayoutParams());
         return mListView;
     }
@@ -110,6 +120,11 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
 
     @Override
     public void show(int which, Object data, long time) {
+        if (refreshed) {
+            listItems.clear();
+            notifyDataSetChanged();
+            refreshed = false;
+        }
         if (((InfoList) data).result) {
             mPageInfo = ((InfoList) data).pageInfo;
             ArrayList<ProblemInfo> infoList_P = ((InfoList) data).getInfoList();
@@ -130,6 +145,9 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
             }
             if (hasSetProgressListener && mPageInfo.currentPage == 1) {
                 progressListener.end();
+            }
+            if (mPageInfo.currentPage == mPageInfo.totalItems) {
+                mListView.setPullUpLoadFinish();
             }
         } else {
             mListView.setPullUpLoadFailure();

@@ -72,7 +72,7 @@
                         android:lines="1"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:text="@string/rank"/>
+                        android:text="Rank"/>
                     <TextView
                         android:id="@+id/contestRank_rank"
                         android:layout_width="0dp"

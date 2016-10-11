@@ -25,8 +25,6 @@ public class ListViewWithGestureLoad extends LinearLayout {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ListViewFooter mListViewFooter;
     private OnPullUpLoadListener onPullUpLoadListener;
-    private SwipeRefreshLayout.OnRefreshListener onRefreshListener;
-    private AdapterView.OnItemClickListener onItemClickListener;
 
     public interface OnPullUpLoadListener {
         void onPullUpLoading();
@@ -53,11 +51,11 @@ public class ListViewWithGestureLoad extends LinearLayout {
         mListView = (ListView) findViewById(R.id.list_view_with_gesture_load_list);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.list_view_with_gesture_load_swipeRefresh);
         mListViewFooter = new ListViewFooter(getContext());
-        configListView();
+        setupListView();
     }
 
-    private void configListView() {
-        mListView.addFooterView(mListViewFooter);
+    private void setupListView() {
+        mListView.addFooterView(mListViewFooter, null, false);
         mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -117,12 +115,10 @@ public class ListViewWithGestureLoad extends LinearLayout {
     }
 
     public void setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener listener) {
-        onRefreshListener = listener;
         mSwipeRefreshLayout.setOnRefreshListener(listener);
     }
 
     public void setOnItemClickListener(AdapterView.OnItemClickListener listener) {
-        onItemClickListener = listener;
         mListView.setOnItemClickListener(listener);
     }
 

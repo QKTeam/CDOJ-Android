@@ -54,6 +54,7 @@ public class ContestFragment extends Fragment implements ViewHandler{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         fragmentManager = getChildFragmentManager();
     }
 
@@ -120,40 +121,51 @@ public class ContestFragment extends Fragment implements ViewHandler{
     }
 
     public ContestFragment showPart(@contestPart int part) {
+        hideAllPart();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         switch (part) {
             case 0:
                 setButtonSelect(ContestFragment.OVERVIEW);
                 if (overview != null) {
-                    transaction.replace(R.id.contest_details, overview);
+                    transaction.show(overview);
                 }
                 break;
             case 1:
                 setButtonSelect(ContestFragment.PROBLEMS);
                 if (problems != null){
-                    transaction.replace(R.id.contest_details, problems);
+                    transaction.show(problems);
                 }
                 break;
             case 2:
                 setButtonSelect(ContestFragment.CLARIFICATION);
                 if (clarification != null) {
-                    transaction.replace(R.id.contest_details, clarification);
+                    transaction.show(clarification);
                 }
                 break;
             case 3:
                 setButtonSelect(ContestFragment.STATUS);
                 if (status != null){
-                    transaction.replace(R.id.contest_details, status);
+                    transaction.show(status);
                 }
                 break;
             case 4:
                 setButtonSelect(ContestFragment.RANK);
                 if (rank != null) {
-                    transaction.replace(R.id.contest_details, rank);
+                    transaction.show(rank);
                 }
         }
         transaction.commit();
         return this;
+    }
+
+    private void hideAllPart() {
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.hide(overview);
+        transaction.hide(problems);
+        transaction.hide(clarification);
+        transaction.hide(status);
+        transaction.hide(rank);
+        transaction.commit();
     }
 
     public void addProblems(ArrayList<Problem> problemList) {
@@ -172,7 +184,7 @@ public class ContestFragment extends Fragment implements ViewHandler{
         this.contestID = contestID;
         if (clarification != null) clarification.refresh(contestID);
         if (status != null) status.refresh(contestID);
-        if (rank != null) rank.refresh(contestID, problemIDs.length);
+        if (rank != null) rank.refresh(contestID);
         return this;
     }
 
@@ -207,24 +219,34 @@ public class ContestFragment extends Fragment implements ViewHandler{
     }
 
     public ContestFragment refresh(int contestID) {
+        if (contestID < 1) return this;
+        this.contestID = contestID;
         refreshed = true;
-        createFragmentParts();
-        rootView.findViewById(R.id.contest_button_container).setVisibility(View.VISIBLE);
-        showPart(ContestFragment.OVERVIEW);
-        NetData.getContestDetail(contestID, this);
+        if (rootView != null) {
+            createFragmentParts();
+            showPart(ContestFragment.OVERVIEW);
+            NetData.getContestDetail(contestID, this);
+            rootView.findViewById(R.id.contest_button_container).setVisibility(View.VISIBLE);
+        }
         return this;
     }
 
     private void createFragmentParts() {
         overview = new DetailWebViewFragment().switchHTMLData(ViewHandler.CONTEST_DETAIL);
         problems = new ContestProblems();
-        clarification = new ContestClarification();
-        status  = new ContestStatus();
-        rank = new ContestRank();
-        if (contestID != -1) {
-            clarification.refresh(contestID);
-            status.refresh(contestID);
-            rank.refresh(contestID, problemIDs.length);
-        }
+        clarification = new ContestClarification().refresh(contestID);
+        status  = new ContestStatus().refresh(contestID);
+        rank = new ContestRank().refresh(contestID);
+        addFragmentParts();
+    }
+
+    private void addFragmentParts() {
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.add(R.id.contest_details_container, overview);
+        transaction.add(R.id.contest_details_container, problems);
+        transaction.add(R.id.contest_details_container, clarification);
+        transaction.add(R.id.contest_details_container, status);
+        transaction.add(R.id.contest_details_container, rank);
+        transaction.commit();
     }
 }

@@ -32,8 +32,8 @@ public class RGBAColor {
         return A;
     }
 
-    public float[] getColorMatrix(boolean skew) {
-        if (skew) {
+    public float[] getColorMatrix(boolean asSkew) {
+        if (asSkew) {
             if (A == null) {
                 return new float[]{
                         1, 0, 0, 0, R,
@@ -61,8 +61,8 @@ public class RGBAColor {
                 0, 0, 0, 0, A};
     }
 
-    public static float[] getColorMatrix(int R, int G, int B, boolean skew) {
-        if (skew) {
+    public static float[] getColorMatrix(int R, int G, int B, boolean asSkew) {
+        if (asSkew) {
             return new float[]{
                     1, 0, 0, 0, R,
                     0, 1, 0, 0, G,
@@ -76,8 +76,8 @@ public class RGBAColor {
                 0, 0, 0, 1, 0};
     }
 
-    public static float[] getColorMatrix(int R, int G, int B, int A, boolean skew) {
-        if (skew) {
+    public static float[] getColorMatrix(int R, int G, int B, int A, boolean asSkew) {
+        if (asSkew) {
             return new float[]{
                     1, 0, 0, 0, R,
                     0, 1, 0, 0, G,
@@ -91,32 +91,47 @@ public class RGBAColor {
                 0, 0, 0, 0, A};
     }
 
-    public static float[] getColorMatrix(Context context, @ColorRes int colorResource) {
-        return getColorMatrix(context, colorResource, false);
+    public static float[] getColorMatrix(Context context, @ColorRes int colorResource, boolean includeAlpha) {
+        return getColorMatrix(context, colorResource, false, includeAlpha);
     }
 
-    public static float[] getColorMatrix(Context context, @ColorRes int colorResource, boolean skew) {
+    public static float[] getColorMatrix(Context context, @ColorRes int colorResource, boolean asSkew, boolean includeAlpha) {
         int color = ContextCompat.getColor(context, colorResource);
         int A = (color & 0xff000000) >>> 24;
         int R = (color & 0x00ff0000) >>> 16;
         int G = (color & 0x0000ff00) >>> 8;
         int B = (color & 0x000000ff);
-        if (skew) {
+        if (includeAlpha) {
+            if (asSkew) {
+                return new float[]{
+                        1, 0, 0, 0, R,
+                        0, 1, 0, 0, G,
+                        0, 0, 1, 0, B,
+                        0, 0, 0, 1, A};
+            }
             return new float[]{
-                    1, 0, 0, 0, R,
-                    0, 1, 0, 0, G,
-                    0, 0, 1, 0, B,
-                    0, 0, 0, 1, A};
+                    0, 0, 0, 0, R,
+                    0, 0, 0, 0, G,
+                    0, 0, 0, 0, B,
+                    0, 0, 0, 0, A};
+        } else {
+            if (asSkew) {
+                return new float[]{
+                        1, 0, 0, 0, R,
+                        0, 1, 0, 0, G,
+                        0, 0, 1, 0, B,
+                        0, 0, 0, 1, 0};
+            }
+            return new float[]{
+                    0, 0, 0, 0, R,
+                    0, 0, 0, 0, G,
+                    0, 0, 0, 0, B,
+                    0, 0, 0, 1, 0};
         }
-        return new float[]{
-                0, 0, 0, 0, R,
-                0, 0, 0, 0, G,
-                0, 0, 0, 0, B,
-                0, 0, 0, 0, A};
     }
 
-    public static float[] getColorMatrixWithPercentAlpha(int R, int G, int B, double A, boolean skew) {
-        if (skew) {
+    public static float[] getColorMatrixWithPercentAlpha(int R, int G, int B, double A, boolean asSkew) {
+        if (asSkew) {
             return new float[]{
                     1, 0, 0, 0, R,
                     0, 1, 0, 0, G,

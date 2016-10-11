@@ -1,8 +1,15 @@
 package cn.edu.uestc.acm.cdoj.ui.contest;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
@@ -28,11 +35,24 @@ public class ContestStatus extends Fragment implements ViewHandler{
     private int[] problemIDs;
     private ListViewWithGestureLoad mListView;
     private PageInfo mPageInfo;
+    private Context context;
     private boolean refreshed;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        context = activity;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mListView = new ListViewWithGestureLoad(context);
         mListView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -51,6 +71,8 @@ public class ContestStatus extends Fragment implements ViewHandler{
             }
         });
         if (refreshed) refresh();
+        mListView.setLayoutParams(container.getLayoutParams());
+        return mListView;
     }
 
     public void addListItem(Map<String, Object> listItem) {
@@ -59,9 +81,10 @@ public class ContestStatus extends Fragment implements ViewHandler{
 
     public void notifyDataSetChanged() {
         if (mListAdapter == null) {
-            createAdapter();
+            mListView.setAdapter(setupAdapter());
+        }else {
+            mListAdapter.notifyDataSetChanged();
         }
-        mListAdapter.notifyDataSetChanged();
         if (mListView.isPullUpLoading()) {
             mListView.setPullUpLoading(false);
         }
@@ -70,16 +93,15 @@ public class ContestStatus extends Fragment implements ViewHandler{
         }
     }
 
-    private void createAdapter() {
+    private ListAdapter setupAdapter() {
         mListAdapter = new SimpleAdapter(
                 Global.currentMainUIActivity, listItems, R.layout.contest_status_item_list,
                 new String[]{"result", "language", "user", "cost", "probOrder", "submitDate"},
                 new int[]{R.id.contestStatus_result, R.id.contestStatus_language,
                         R.id.contestStatus_user, R.id.contestStatus_cost,
                         R.id.contestStatus_probOrder, R.id.contestStatus_submitDate});
-        mListView.setAdapter(mListAdapter);
+        return mListAdapter;
     }
-
 
     public void setProblemIDs(int[] problemIDs) {
         this.problemIDs = problemIDs;
@@ -87,6 +109,11 @@ public class ContestStatus extends Fragment implements ViewHandler{
 
     @Override
     public void show(int which, Object data, long time) {
+        if (refreshed) {
+            listItems.clear();
+            notifyDataSetChanged();
+            refreshed = false;
+        }
         if (((InfoList) data).result) {
             mPageInfo = ((InfoList) data).pageInfo;
             ArrayList<Status> infoList_status = ((InfoList) data).getInfoList();
@@ -113,6 +140,9 @@ public class ContestStatus extends Fragment implements ViewHandler{
                 }
                 addListItem(listItem);
             }
+            if (mPageInfo.currentPage == mPageInfo.totalItems) {
+                mListView.setPullUpLoadFinish();
+            }
         } else {
             mListView.setPullUpLoadFailure();
         }
@@ -123,11 +153,14 @@ public class ContestStatus extends Fragment implements ViewHandler{
         if (contestID != -1) refresh(contestID);
     }
 
-    public void refresh(int contestID)  {
-        refreshed = true;
+    public ContestStatus refresh(int contestID)  {
+        if (contestID < 1) return this;
         this.contestID = contestID;
-        mListView.resetPullUpLoad();
-        listItems.clear();
-        NetData.getStatusList(-1, null, contestID, 1, this);
+        refreshed = true;
+        if (mListView != null) {
+            mListView.resetPullUpLoad();
+            NetData.getStatusList(-1, null, contestID, 1, this);
+        }
+        return this;
     }
 }

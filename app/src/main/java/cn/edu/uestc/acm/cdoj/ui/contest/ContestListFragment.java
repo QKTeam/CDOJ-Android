@@ -1,5 +1,6 @@
 package cn.edu.uestc.acm.cdoj.ui.contest;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -58,6 +59,24 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
+
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        context = activity;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mFragmentManager = getFragmentManager();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mListView = new ListViewWithGestureLoad(context);
         mListView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -78,17 +97,6 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
         mListView.setProgressContainerVisibility(progressContainerVisibility);
         configOnListItemClick();
         if (refreshed) refresh();
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mFragmentManager = getFragmentManager();
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mListView.setLayoutParams(container.getLayoutParams());
         return mListView;
     }
@@ -178,6 +186,11 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
     public void show(int which, Object data, long time) {
         switch (which) {
             case ViewHandler.CONTEST_LIST:
+                if (refreshed) {
+                    listItems.clear();
+                    notifyDataSetChanged();
+                    refreshed = false;
+                }
                 if (((InfoList) data).result) {
                     mPageInfo = ((InfoList) data).pageInfo;
                     ArrayList<ContestInfo> infoList_C = ((InfoList) data).getInfoList();
@@ -199,6 +212,9 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
                     if (hasSetProgressListener && mPageInfo.currentPage == 1) {
                         progressListener.end();
                     }
+                    if (mPageInfo.currentPage == mPageInfo.totalItems) {
+                        mListView.setPullUpLoadFinish();
+                    }
                 } else {
                     mListView.setPullUpLoadFailure();
                 }
@@ -218,8 +234,11 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
 
     @Override
     public void notifyDataSetChanged() {
-        if (mListAdapter == null) mListView.setAdapter(createAdapter());
-        else mListAdapter.notifyDataSetChanged();
+        if (mListAdapter == null) {
+            mListView.setAdapter(setupAdapter());
+        } else{
+            mListAdapter.notifyDataSetChanged();
+        }
         if (mListView.isPullUpLoading()) {
             mListView.setPullUpLoading(false);
         }
@@ -228,7 +247,7 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
         }
     }
 
-    private ListAdapter createAdapter() {
+    private ListAdapter setupAdapter() {
         mListAdapter =  new SimpleAdapter(
                 Global.currentMainUIActivity, listItems, R.layout.contest_item_list,
                 new String[]{"title", "date", "timeLimit", "id", "status", "permission"},
@@ -306,7 +325,6 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
         if (mListView != null) {
             if (progressListener != null) progressListener.start();
             mListView.resetPullUpLoad();
-            listItems.clear();
             NetData.getContestList(1, key, this);
         }
         return this;

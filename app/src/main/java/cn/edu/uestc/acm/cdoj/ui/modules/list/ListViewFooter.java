@@ -67,7 +67,7 @@ public class ListViewFooter extends LinearLayout {
             case LOADCOMPLETE:
                 mLoadingLayout.setVisibility(View.INVISIBLE);
                 mLoadCompleteLayout.setVisibility(View.VISIBLE);
-                mImageView.setImageBitmap(DrawImage.draw(getContext(), R.drawable.ic_done_white, true));
+                mImageView.setImageBitmap(Global.listFootericon_done);
                 mTextView.setText(getContext().getString(R.string.loadComplete));
                 break;
             case BLANK:
@@ -77,13 +77,13 @@ public class ListViewFooter extends LinearLayout {
             case LOADPROBLEM:
                 mLoadingLayout.setVisibility(View.INVISIBLE);
                 mLoadCompleteLayout.setVisibility(View.VISIBLE);
-                mImageView.setImageBitmap(DrawImage.draw(getContext(), R.drawable.ic_sync_problem_white, true));
+                mImageView.setImageBitmap(Global.listFootericon_problem);
                 mTextView.setText(getContext().getString(R.string.loadProblem));
                 break;
             case NODATA:
                 mLoadingLayout.setVisibility(View.INVISIBLE);
                 mLoadCompleteLayout.setVisibility(View.VISIBLE);
-                mImageView.setImageBitmap(DrawImage.draw(getContext(), R.drawable.ic_sync_problem_white, true));
+                mImageView.setImageBitmap(Global.listFootericon_noData);
                 mTextView.setText(getContext().getString(R.string.noData));
         }
     }

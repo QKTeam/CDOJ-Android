@@ -1,5 +1,6 @@
 package cn.edu.uestc.acm.cdoj.ui.notice;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -8,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,21 +16,20 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 
-import java.io.BufferedOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
-import cn.edu.uestc.acm.cdoj.ui.ItemDetailActivity;
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
-import cn.edu.uestc.acm.cdoj.ui.modules.list.MainList;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.ArticleInfo;
 import cn.edu.uestc.acm.cdoj.net.data.InfoList;
+import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
+import cn.edu.uestc.acm.cdoj.ui.ItemDetailActivity;
+import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
+import cn.edu.uestc.acm.cdoj.ui.modules.list.MainList;
 
 /**
  * Created by great on 2016/8/17.
@@ -51,27 +50,13 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-        mListView = new ListViewWithGestureLoad(context);
-        mListView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refresh();
-            }
-        });
-        mListView.setOnPullUpLoadListener(new ListViewWithGestureLoad.OnPullUpLoadListener() {
-            @Override
-            public void onPullUpLoading() {
-                if (mPageInfo != null && mPageInfo.currentPage < mPageInfo.totalPages) {
-                    Log.d("上拉加载", "onPullUpLoading: ");
-                    NetData.getArticleList(mPageInfo.currentPage + 1, NoticeListFragment.this);
-                } else {
-                    mListView.setPullUpLoadFinish();
-                }
-            }
-        });
-        mListView.setProgressContainerVisibility(progressContainerVisibility);
-        configOnListItemClick();
-        if (refreshed) refresh();
+
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        context = activity;
     }
 
     @Override
@@ -83,6 +68,26 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mListView = new ListViewWithGestureLoad(context);
+        mListView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refresh();
+            }
+        });
+        mListView.setOnPullUpLoadListener(new ListViewWithGestureLoad.OnPullUpLoadListener() {
+            @Override
+            public void onPullUpLoading() {
+                if (mPageInfo != null && mPageInfo.currentPage < mPageInfo.totalPages) {
+                    NetData.getArticleList(mPageInfo.currentPage + 1, NoticeListFragment.this);
+                } else {
+                    mListView.setPullUpLoadFinish();
+                }
+            }
+        });
+        mListView.setProgressContainerVisibility(progressContainerVisibility);
+        configOnListItemClick();
+        if (refreshed) refresh();
         mListView.setLayoutParams(container.getLayoutParams());
         return mListView;
     }
@@ -114,7 +119,11 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
 
     @Override
     public void show(int which, Object data, long time) {
-        Log.d("得到信息", "show: ");
+        if (refreshed) {
+            listItems.clear();
+            notifyDataSetChanged();
+            refreshed = false;
+        }
         if (((InfoList) data).result) {
             mPageInfo = ((InfoList) data).pageInfo;
             ArrayList<ArticleInfo> infoList_A = ((InfoList) data).getInfoList();
@@ -123,7 +132,6 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
                 notifyDataSetChanged();
                 return;
             }
-            Log.d("我在这里aaaaa", "show: "+infoList_A.size());
             for (ArticleInfo tem : infoList_A) {
                 Map<String, Object> listItem = new HashMap<>();
                 listItem.put("title", tem.title);
@@ -136,8 +144,10 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
             if (hasSetProgressListener && mPageInfo.currentPage == 1) {
                 progressListener.end();
             }
+            if (mPageInfo.currentPage == mPageInfo.totalItems) {
+                mListView.setPullUpLoadFinish();
+            }
         }else {
-            Log.d("获取列表失败", "show: ");
             mListView.setPullUpLoadFailure();
         }
         notifyDataSetChanged();
@@ -196,8 +206,6 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
         if (mListView != null){
             if (hasSetProgressListener) progressListener.start();
             mListView.resetPullUpLoad();
-            listItems.clear();
-            Log.d("获取信息", "refresh: ");
             NetData.getArticleList(1, this);
         }
         return this;

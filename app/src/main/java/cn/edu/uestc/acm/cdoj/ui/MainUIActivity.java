@@ -126,16 +126,22 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             StatusBarUtil.StatusBarLightMode(this);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            drawerLayout.setStatusBarBackground(R.color.statusBar_background_gray);
+            if (MIUIUtils.isMIUI() || FlyMeUtils.isFlyMe()) {
+                StatusBarUtil.StatusBarLightMode(this);
+                drawerLayout.setStatusBarBackground(R.color.statusBar_background_white);
+            }else {
+                drawerLayout.setStatusBarBackground(R.color.statusBar_background_gray);
+            }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             drawerLayout.setFitsSystemWindows(false);
-            LinearLayout linearLayout = (LinearLayout) findViewById(R.id.ui_main_content);
+            FrameLayout linearLayout = (FrameLayout) findViewById(R.id.ui_main_content);
             linearLayout.setFitsSystemWindows(true);
             if (MIUIUtils.isMIUI() || FlyMeUtils.isFlyMe()) {
                 StatusBarUtil.StatusBarLightMode(this);
             }
         }
+
     }
 
     private void configSearchView() {
