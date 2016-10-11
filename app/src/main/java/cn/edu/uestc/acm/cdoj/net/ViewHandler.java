@@ -1,5 +1,7 @@
 package cn.edu.uestc.acm.cdoj.net;
 
+import cn.edu.uestc.acm.cdoj.net.data.Result;
+
 /**
  * Created by lenovo on 2016/8/7.
  */
@@ -25,5 +27,5 @@ public interface ViewHandler {
     //    void showProblemList(ProblemInfoList problemInfoList);
 //    void showContestList(ContestInfoList contestInfoList);
 //    void showArticleList(ArticleInfoList articleInfoList);
-    void show(int which, Object data, long time);
+    void show(int which, Result result, long time);
 }

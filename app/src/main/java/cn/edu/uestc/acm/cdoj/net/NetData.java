@@ -8,15 +8,7 @@ import org.json.JSONObject;
 
 import java.util.concurrent.Executors;
 
-import cn.edu.uestc.acm.cdoj.net.data.Article;
-import cn.edu.uestc.acm.cdoj.net.data.ArticleInfo;
-import cn.edu.uestc.acm.cdoj.net.data.Contest;
-import cn.edu.uestc.acm.cdoj.net.data.ContestInfo;
-import cn.edu.uestc.acm.cdoj.net.data.InfoList;
-import cn.edu.uestc.acm.cdoj.net.data.Problem;
-import cn.edu.uestc.acm.cdoj.net.data.ProblemInfo;
-import cn.edu.uestc.acm.cdoj.net.data.Rank;
-import cn.edu.uestc.acm.cdoj.net.data.Status;
+import cn.edu.uestc.acm.cdoj.net.data.Result;
 
 /**
  * Created by qwe on 16-8-14.
@@ -108,11 +100,11 @@ public class NetData {
     public static void logout(ViewHandler viewHandler, Object extra){
         asyncWithAdd(ViewHandler.LOGOUT, new String[]{logoutUrl}, viewHandler, extra);
     }
-    public static void getProblemList(final int page, String keyword, final ViewHandler viewHandler){
+    public static void getProblemList(final int page, String keyword, int startId, final ViewHandler viewHandler){
         String p = "";
         try {
             p = new JSONObject().put("currentPage", page).put("orderAsc", "true")
-                    .put("orderFields", "id").put("keyword", keyword).toString();
+                    .put("orderFields", "id").put("keyword", keyword).put("startId", startId).toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -157,29 +149,29 @@ public class NetData {
 
     static void asyncWithAdd(final int which, final String[] req, final ViewHandler viewHandler, final Object extra) {
         final long time = System.currentTimeMillis();
-        new AsyncTask<Void, Void, Object>(){
+        new AsyncTask<Void, Void, Result>(){
 
             @Override
-            protected Object doInBackground(Void... voids) {
+            protected Result doInBackground(Void... voids) {
                 return request(which, req);
             }
 
             @Override
-            protected void onPostExecute(Object o) {
-                handleInMain(which, o, viewHandler, time, extra);
+            protected void onPostExecute(Result result) {
+                handleInMain(which, result, viewHandler, time, extra);
             }
         }.executeOnExecutor(Executors.newFixedThreadPool(1));
 
     }
 
-    static Object request(int which, String[] req){
+    static Result request(int which, String[] req){
         switch (which){
             case ViewHandler.AVATAR:
-                Log.d(TAG, "request: 获取头像");
-                return NetWorkTool.getBytes(NetWorkTool._get(req[0]));
+                return new Result(NetWorkTool.getBytes(NetWorkTool._get(req[0])));
         }
         String result = NetWorkTool.getOrPost(req);
-        switch (which){
+        return new Result(which, result);
+/*        switch (which){
             case ViewHandler.PROBLEM_LIST:
                 return new InfoList<ProblemInfo>(result, ProblemInfo.class);
             case ViewHandler.ARTICLE_LIST:
@@ -216,26 +208,13 @@ public class NetData {
                 Log.d(TAG, "request: " + result);
                 return checkResult(result);
             default: return null;
-        }
+        }*/
     }
-    static void handleInMain(int which, Object data, ViewHandler viewHandler, long time, Object extra){
+    static void handleInMain(int which, Result result, ViewHandler viewHandler, long time, Object extra){
         if (viewHandler != null){
-            if (extra != null){
-                viewHandler.show(which, new Object[]{extra, data}, time);
-            }else {
-                viewHandler.show(which, data, time);
-            }
+            result.setExtra(extra);
+            viewHandler.show(which, result, time);
         }
     }
-    static boolean checkResult(String json){
-        if (json == null) {
-            return false;
-        }
-        try {
-            return new JSONObject(json).getString("result").equals("success");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+
 }

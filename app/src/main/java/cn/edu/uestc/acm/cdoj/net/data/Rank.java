@@ -5,8 +5,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.net.DateTemp;
+import cn.edu.uestc.acm.cdoj.net.JsonUtils;
 
 /**
  * Created by qwe on 16-8-21.
@@ -14,24 +16,16 @@ import cn.edu.uestc.acm.cdoj.net.DateTemp;
 public class Rank {
     String TAG = "--------RankTag-------";
 
-    public boolean result = false;
-    public long lastFecthed;
-    ArrayList<ProblemInfo> problemInfoList = new ArrayList<>(15);
+    public long lastFetched;
+    ArrayList<Map> problemList;
     ArrayList<Performance> rankList = new ArrayList();
 
-    public Rank(String json) {
-        if (json == null) {
-            return;
-        }
+    public Rank(JSONObject jsonObject) {
         try {
-            JSONObject jsonObject = new JSONObject(json);
-            result = jsonObject.getString("result").equals("success");
             JSONObject rank = jsonObject.getJSONObject("rankList");
-            lastFecthed = rank.getLong("lastFetched");
+            lastFetched = rank.getLong("lastFetched");
             JSONArray plist = rank.getJSONArray("problemList");
-            for (int i = 0; i< plist.length(); i ++) {
-                problemInfoList.add(new ProblemInfo(plist.getJSONObject(i)));
-            }
+            problemList = JsonUtils.getMapListFromJson(plist);
             JSONArray rlist = rank.getJSONArray("rankList");
             for (int i = 0; i < rlist.length(); i++) {
                 rankList.add(new Performance(rlist.getJSONObject(i)));
@@ -40,8 +34,8 @@ public class Rank {
             e.printStackTrace();
         }
     }
-    public ArrayList<ProblemInfo> getProblemInfoList(){
-        return problemInfoList;
+    public ArrayList getProblemList(){
+        return problemList;
     }
     public ArrayList<Performance> getPerformanceList(){
         return rankList;

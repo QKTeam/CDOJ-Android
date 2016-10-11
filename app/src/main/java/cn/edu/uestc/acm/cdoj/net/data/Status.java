@@ -38,12 +38,7 @@ public class Status {
             e.printStackTrace();
         }
     }
-    public static String getCode(String json){
-        try {
-            return new JSONObject(json).optString("code", null);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public static String getCode(JSONObject jsonObject){
+        return jsonObject.optString("code", "something wrong!!");
     }
 }
