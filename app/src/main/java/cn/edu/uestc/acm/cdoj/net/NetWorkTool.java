@@ -66,18 +66,24 @@ public class NetWorkTool {
         listeners.add(listener);
     }
     public static String getOrPost(String req[]){
-        String re = req.length == 1?get(req[0]):post(req[0], req[1]);
-        int now;
-        if (re == null){
-            now = STATE_ERROR;
-        }
-        else {
-            now = STATE_OK;
-        }
-        for (NetStateListener listener:listeners) {
-            listener.onNetStateChange(state, now);
-        }
-        state = now;
+        final String re = req.length == 1?get(req[0]):post(req[0], req[1]);
+        ThreadTools.runOnMainThread(new Runnable() {
+            @Override
+            public void run() {
+                int now;
+                if (re == null){
+                    now = STATE_ERROR;
+                }
+                else {
+                    now = STATE_OK;
+                }
+                for (NetStateListener listener:listeners) {
+                    listener.onNetStateChange(state, now);
+                }
+                state = now;
+            }
+        });
+
         return re;
     }
     public static String post(String url, String params) {

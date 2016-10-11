@@ -7,15 +7,9 @@ import org.json.JSONObject;
  * Created by qwe on 16-8-15.
  */
 public class Article {
-    boolean result = false;
     String contentString = "";
-    public Article(String json){
-        if (json == null) {
-            return;
-        }
+    public Article(JSONObject jsonObject){
         try {
-            JSONObject jsonObject = new JSONObject(json);
-            result = jsonObject.optString("result", "fail").equals("success");
             contentString = jsonObject.getJSONObject("article").toString();
         } catch (JSONException e) {
             e.printStackTrace();

@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import cn.edu.uestc.acm.cdoj.net.data.Result;
+
 /**
  * Created by qwe on 16-8-21.
  */
@@ -74,16 +76,16 @@ public class UserManager implements ViewHandler, NetStateListener {
     }
     public void getAvatar(String email, Object extra, ViewHandler viewHandler){
         File file;
-        Object[] objects = null;
+        Object[] bytes = null;
         if ((file = new File(cacheDir + File.separator + email)).exists()){
             try {
-                objects = NetWorkTool.getBytes(new FileInputStream(file));
+                bytes = NetWorkTool.getBytes(new FileInputStream(file));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
         }
-        if (objects != null){
-            show(ViewHandler.AVATAR, new Object[]{new Object[]{viewHandler, extra, email}, objects}, 0);
+        if (bytes != null){
+            show(ViewHandler.AVATAR, new Result(bytes, new Object[]{viewHandler, extra, email}), 0);
             Log.d(TAG, "getAvatar: 本地有该头像缓存");
         }
         else{
@@ -94,18 +96,11 @@ public class UserManager implements ViewHandler, NetStateListener {
         //BitmapFactory.decodeByteArray((byte[])objects[0], 0, (int)objects[1]);
     }
     @Override
-    public void show(int which, Object data, long time) {
-        Object[] data1 = new Object[2];
-        data1[0] = null;
-        data1[1] = data;
-        if (data instanceof Object[]){
-            data1 = (Object[])data;
-        }
-        //0 add
-        //1 realData
+    public void show(int which, Result result, long time) {
+        Object extra = result.getExtra();
         switch (which){
             case ViewHandler.LOGIN:
-                if ((boolean)data1[1]) {
+                if (result.result) {
                     Log.d(TAG, "show: 登录成功");
                     setUser(userName, sha1password);
                 }
@@ -114,20 +109,21 @@ public class UserManager implements ViewHandler, NetStateListener {
                 }
                 break;
             case ViewHandler.REGISTER:
-                if ((boolean)data1[1]){
+                if (result.result){
                     setUser(userName, sha1password);
                 }
                 break;
             case ViewHandler.LOGOUT:
-                if ((boolean)data1[1]){
+                if (result.result){
                 }
                 break;
             case ViewHandler.AVATAR:
-                Object[] extra = (Object[]) data1[0], bytes = (Object[]) data1[1];
+                Object[] extra1 = (Object[]) extra;
+                Object[] bytes = (Object[]) result.getContent();
                 if (bytes != null){
                     File file;
                     try {
-                        if (!(file = new File(cacheDir+ File.separator  + extra[2])).exists()){
+                        if (!(file = new File(cacheDir+ File.separator  + extra1[2])).exists()){
                             file.createNewFile();
                         }
                         new FileOutputStream(file).write((byte[]) bytes[0], 0, (int) bytes[1]);
@@ -135,12 +131,13 @@ public class UserManager implements ViewHandler, NetStateListener {
                         e.printStackTrace();
                     }
                 }
-                data1[1] = new Object[]{extra[1], bytes == null?null:BitmapFactory.decodeByteArray((byte[]) bytes[0], 0, (Integer) bytes[1])};
-                data1[0] = extra[0];
+                result.setContent(BitmapFactory.decodeByteArray((byte[]) bytes[0], 0, (Integer) bytes[1]));
+                result.setExtra(extra1[1]);
+                extra = extra1[0];
         }
-        if (data1[0] != null){
-            Log.d(TAG, "show: " + data1[0]);
-            ((ViewHandler)(data1[0])).show(which, data1[1], time);
+        if (extra != null){
+            Log.d(TAG, "show: " + extra);
+            ((ViewHandler)(extra)).show(which, result, time);
         }
     }
 
