@@ -23,20 +23,17 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
-import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.Article;
-import cn.edu.uestc.acm.cdoj.net.data.ArticleInfo;
 import cn.edu.uestc.acm.cdoj.net.data.InfoList;
-
-import static cn.edu.uestc.acm.cdoj.ui.modules.Global.userManager;
+import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
+import cn.edu.uestc.acm.cdoj.net.data.Result;
+import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
 
 /**
  * Created by great on 2016/8/25.
@@ -159,7 +156,7 @@ public class ContestClarification extends Fragment implements ViewHandler{
     }
 
     @Override
-    public void show(int which, Object data, long time) {
+    public void show(int which, Result result, long time) {
         switch (which) {
             case ViewHandler.CONTEST_COMMENT:
                 if (refreshed) {
@@ -167,27 +164,15 @@ public class ContestClarification extends Fragment implements ViewHandler{
                     notifyDataSetChanged();
                     refreshed = false;
                 }
-                if (((InfoList) data).result){
-                    mPageInfo = ((InfoList) data).pageInfo;
-                    ArrayList<ArticleInfo> infoList_clarification = ((InfoList) data).getInfoList();
-                    if (infoList_clarification.size() == 0) {
+                if (result.result){
+                    mPageInfo = ((InfoList) result.getContent()).pageInfo;
+                    listItems.addAll(((InfoList) result.getContent()).getInfoList());
+                    if (listItems.size() == 0) {
                         mListView.setDataIsNull();
                         notifyDataSetChanged();
                         return;
                     }
-                    for (int i = 0; i != infoList_clarification.size(); ++i) {
-                        ArticleInfo tem = infoList_clarification.get(i);
-                        Map<String, Object> listItem = new HashMap<>();
-                        listItem.put("header", R.drawable.logo);
-                        listItem.put("content", tem.content.replaceAll("!\\[title].*\\)", "[图片]"));
-                        listItem.put("submitDate", tem.timeString);
-                        listItem.put("user", tem.ownerName);
-                        listItem.put("title", tem.title);
-                        listItem.put("id", tem.articleId);
-                        listItem.put("email", tem.ownerEmail);
-                        addListItem(listItem);
-                        userManager.getAvatar(tem.ownerEmail, listItems.size()-1, this);
-                    }
+                    listItem.put("content", tem.content.replaceAll("!\\[title].*\\)", "[图片]"));
                     if (mPageInfo.currentPage == mPageInfo.totalItems) {
                         mListView.setPullUpLoadFinish();
                     }
@@ -197,14 +182,13 @@ public class ContestClarification extends Fragment implements ViewHandler{
                 notifyDataSetChanged();
                 return;
             case ViewHandler.AVATAR:
-                Object[] dataReceive = (Object[]) data;
-                int position = (int) dataReceive[0];
+                int position = (int) result.getExtra();
                 if (position < listItems.size())
-                    listItems.get(position).put("header", dataReceive[1]);
+                    listItems.get(position).put("header", result.getContent());
                 View view = mListView.findItemViewWithTag(position);
                 if (view != null) {
                     ImageView imageView = (ImageView) view.findViewById(R.id.contestClarification_header);
-                    if (imageView != null) imageView.setImageBitmap((Bitmap) dataReceive[1]);
+                    if (imageView != null) imageView.setImageBitmap((Bitmap) result.getContent());
                 }
                 return;
             case ViewHandler.ARTICLE_DETAIL:
@@ -223,7 +207,7 @@ public class ContestClarification extends Fragment implements ViewHandler{
                         e.printStackTrace();
                     }
                 }
-                String webData = Global.HTMLDATA_ARTICLE.replace("{{{replace_data_here}}}", ((Article) data).getContentString());
+                String webData = Global.HTMLDATA_ARTICLE.replace("{{{replace_data_here}}}", ((Article) result.getContent()).getContentString());
                 webView.loadDataWithBaseURL(acmWebUrl, webData, mimeType, encoding, null);
                 new AlertDialog.Builder(mListView.getContext())
                         .setView(webView)

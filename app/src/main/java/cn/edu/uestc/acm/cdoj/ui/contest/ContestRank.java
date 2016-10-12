@@ -23,19 +23,14 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
-import cn.edu.uestc.acm.cdoj.net.data.ProblemInfo;
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
-import cn.edu.uestc.acm.cdoj.net.data.Rank;
+import cn.edu.uestc.acm.cdoj.net.data.Result;
+import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
-
-import static cn.edu.uestc.acm.cdoj.ui.modules.Global.userManager;
 
 /**
  * Created by great on 2016/8/25.
@@ -47,8 +42,8 @@ public class ContestRank extends Fragment implements ViewHandler {
     public static final int THEFIRSTSOLVED = 3;
 
     private SimpleAdapter mListAdapter;
-    private ArrayList<Map<String, Object>> RankListItems = new ArrayList<>();
-    private ArrayList<ProblemInfo> problemInfos;
+    private ArrayList<Map<String, Object>> rankListItems = new ArrayList<>();
+    private ArrayList<Map<String, Object>> problemsInfo = new ArrayList<>();
     private ListViewWithGestureLoad mListView;
     private Context context;
     private int contestID;
@@ -88,25 +83,18 @@ public class ContestRank extends Fragment implements ViewHandler {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Map<String, Object> listItem = RankListItems.get(position);
+                Map<String, Object> listItem = rankListItems.get(position);
                 ListView itemDetailListView = new ListView(context);
                 ArrayList<Map<String, Object>> itemProblemsStatusList = new ArrayList<>();
-                itemProblemsStatusList.addAll((ArrayList<Map<String, Object>>) RankListItems.get(position).get("problemsStatus"));
-                for (int i = 0; i < problemsCount; ++i) {
-                    Map<String, Object> temMap = itemProblemsStatusList.get(i);
-                    ProblemInfo temProb = problemInfos.get(i);
-                    float problemSolvedPercent = ((float) temProb.solved) / temProb.tried * 100.0f;
-                    String temString = String.format("%.2f%%(%d/%d)", problemSolvedPercent, temProb.solved, temProb.tried);
-                    temMap.put("problemSolvedPercent", temString);
-                }
-                itemDetailListView.addHeaderView(setupItemListHeader(listItem));
-                itemDetailListView.setAdapter(setupItemListAdapter(itemProblemsStatusList));
+                itemProblemsStatusList.addAll((ArrayList<Map<String, Object>>) rankListItems.get(position).get("itemList"));
+                itemDetailListView.addHeaderView(createItemListViewHeader(listItem));
+                itemDetailListView.setAdapter(createItemAdapter(itemProblemsStatusList));
                 showItemList(itemDetailListView);
             }
         });
     }
 
-    private View setupItemListHeader(Map<String, Object> listItem) {
+    private View createItemListViewHeader(Map<String, Object> listItem) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout headerView = (LinearLayout) inflater.inflate(R.layout.contest_rank_list_item_detail_header, null);
         ImageView headerImageView = (ImageView) headerView.findViewById(R.id.contestRankItemHeader_header);
@@ -124,7 +112,7 @@ public class ContestRank extends Fragment implements ViewHandler {
         return headerView;
     }
 
-    private ListAdapter setupItemListAdapter(final ArrayList<Map<String, Object>> problemsStatusMapList) {
+    private ListAdapter createItemAdapter(final ArrayList<Map<String, Object>> problemsStatusMapList) {
         SimpleAdapter adapter = new SimpleAdapter(
                 Global.currentMainUIActivity, problemsStatusMapList, R.layout.contest_rank_list_item_detail,
                 new String[]{"solvedStatus", "problemOrder", "solvedTime", "failureCount", "problemSolvedPercent"},
@@ -172,27 +160,22 @@ public class ContestRank extends Fragment implements ViewHandler {
     }
 
     @Override
-    public void show(int which, Object data, long time) {
+    public void show(int which, Result result, long time) {
         switch (which) {
             case ViewHandler.CONTEST_RANK:
                 if (refreshed) {
-                    RankListItems.clear();
+                    rankListItems.clear();
                     notifyDataSetChanged();
                     refreshed = false;
                 }
-                Rank rankInfo = (Rank) data;
-                if (rankInfo.result) {
-                    ArrayList<Rank.Performance> infoList_rank = rankInfo.getPerformanceList();
-                    problemInfos = rankInfo.getProblemInfoList();
-                    if (infoList_rank.size() == 0) {
+                if (result.result) {
+                    Map<String, Object> rankMap = (Map<String, Object>) result.getContent();
+                    rankListItems.addAll((ArrayList<Map<String, Object>>) rankMap.get("rankList"));
+                    problemsInfo.addAll((ArrayList<Map<String, Object>>) rankMap.get("problemList"));
+                    if (rankListItems.size() == 0) {
                         mListView.setDataIsNull();
                         notifyDataSetChanged();
                         return;
-                    }
-                    for (int i = 0; i != infoList_rank.size(); ++i) {
-                        Rank.Performance competitorInfo = infoList_rank.get(i);
-                        RankListItems.add(getRankListItem(competitorInfo));
-                        userManager.getAvatar(competitorInfo.email, i, this);
                     }
                     mListView.setPullUpLoadFinish();
                 }else {
@@ -201,57 +184,22 @@ public class ContestRank extends Fragment implements ViewHandler {
                 notifyDataSetChanged();
                 return;
             case ViewHandler.AVATAR:
-                Object[] dataReceive = (Object[]) data;
-                int position = (int) dataReceive[0];
-                if (position < RankListItems.size())
-                    RankListItems.get(position).put("header", dataReceive[1]);
+                int position = (int) result.getExtra();
+                if (position < rankListItems.size())
+                    rankListItems.get(position).put("header", result.getContent());
                 View view = mListView.findItemViewWithTag(position);
                 if (view != null) {
                     ImageView imageView = (ImageView) view.findViewById(R.id.contestRank_header);
                     if (imageView != null) {
-                        imageView.setImageBitmap((Bitmap) dataReceive[1]);
+                        imageView.setImageBitmap((Bitmap) result.getContent());
                     }
                 }
         }
     }
 
-    private Map<String, Object> getRankListItem(Rank.Performance competitorInfo) {
-        Map<String, Object> listItem = new HashMap<>();
-        listItem.put("header", R.drawable.logo);
-        listItem.put("rank", competitorInfo.rank);
-        listItem.put("account", competitorInfo.name);
-        listItem.put("nickName", competitorInfo.nickName);
-        listItem.put("solvedNum", competitorInfo.solved);
-        listItem.put("problemsStatus", getProblemsStatusMapList(competitorInfo.getProblemStatusList()));
-        return listItem;
-    }
-
-    private ArrayList<Map<String, Object>> getProblemsStatusMapList(ArrayList<Rank.Performance.ProblemStatus> problemStatusList) {
-        problemsCount = problemStatusList.size();
-        ArrayList<Map<String, Object>> problemsStatusMapList = new ArrayList<>();
-        for (int j = 0; j != problemsCount; ++j) {
-            Map<String, Object> problemStatusMap = new HashMap<>();
-            Rank.Performance.ProblemStatus temProbStatus = problemStatusList.get(j);
-            problemStatusMap.put("problemOrder", String.valueOf((char) ('A' + j)));
-            problemStatusMap.put("failureCount", temProbStatus.tried);
-            problemStatusMap.put("solvedTime", TimeFormat.getFormatTime(temProbStatus.solvedTime));
-            if (temProbStatus.firstBlood) {
-                problemStatusMap.put("solvedStatus", THEFIRSTSOLVED);
-            } else if (temProbStatus.solved) {
-                problemStatusMap.put("solvedStatus", SOLVED);
-            } else if (temProbStatus.tried > 0) {
-                problemStatusMap.put("solvedStatus", TRIED);
-            } else {
-                problemStatusMap.put("solvedStatus", DIDNOTHING);
-            }
-            problemsStatusMapList.add(problemStatusMap);
-        }
-        return problemsStatusMapList;
-    }
-
     public void notifyDataSetChanged() {
         if (mListAdapter == null) {
-            mListView.setAdapter(setupRankListAdapter());
+            mListView.setAdapter(createRankListAdapter());
         }else {
             mListAdapter.notifyDataSetChanged();
         }
@@ -261,9 +209,9 @@ public class ContestRank extends Fragment implements ViewHandler {
         }
     }
 
-    private ListAdapter setupRankListAdapter() {
+    private ListAdapter createRankListAdapter() {
         mListAdapter = new SimpleAdapter(
-                Global.currentMainUIActivity, RankListItems, R.layout.contest_rank_list_item,
+                Global.currentMainUIActivity, rankListItems, R.layout.contest_rank_list_item,
                 new String[]{"header", "rank", "nickName", "account", "problemsStatus"},
                 new int[]{R.id.contestRank_header, R.id.contestRank_rank, R.id.contestRank_nickName,
                         R.id.contestRank_account, R.id.contestRank_problemsStatus}) {

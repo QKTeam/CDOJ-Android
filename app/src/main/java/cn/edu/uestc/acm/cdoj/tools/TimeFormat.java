@@ -1,5 +1,10 @@
 package cn.edu.uestc.acm.cdoj.tools;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * Created by Grea on 2016/9/30.
  */
@@ -26,4 +31,12 @@ public class TimeFormat {
         }
         return formatTime;
     }
+
+    public static String getFormatDate(long dateLength) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(dateLength);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        return simpleDateFormat.format(calendar);
+    }
+
 }

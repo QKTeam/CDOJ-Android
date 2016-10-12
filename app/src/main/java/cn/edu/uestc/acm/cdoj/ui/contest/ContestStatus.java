@@ -13,17 +13,16 @@ import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
-import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.InfoList;
-import cn.edu.uestc.acm.cdoj.net.data.Status;
+import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
+import cn.edu.uestc.acm.cdoj.net.data.Result;
+import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
 
 /**
  * Created by great on 2016/8/25.
@@ -108,37 +107,19 @@ public class ContestStatus extends Fragment implements ViewHandler{
     }
 
     @Override
-    public void show(int which, Object data, long time) {
+    public void show(int which, Result result, long time) {
         if (refreshed) {
             listItems.clear();
             notifyDataSetChanged();
             refreshed = false;
         }
-        if (((InfoList) data).result) {
-            mPageInfo = ((InfoList) data).pageInfo;
-            ArrayList<Status> infoList_status = ((InfoList) data).getInfoList();
-            if (infoList_status.size() == 0) {
+        if (result.result) {
+            mPageInfo = ((InfoList) result.getContent()).pageInfo;
+            listItems.addAll(((InfoList) result.getContent()).getInfoList());
+            if (listItems.size() == 0) {
                 mListView.setDataIsNull();
                 notifyDataSetChanged();
                 return;
-            }
-            for (Status tem : infoList_status) {
-                Map<String, Object> listItem = new HashMap<>();
-                listItem.put("result", tem.returnType);
-                listItem.put("submitDate", tem.timeString);
-                listItem.put("language", tem.language+"/"+tem.length+"B");
-                listItem.put("cost", "cost:"+tem.timeCost+"ms/"+tem.memoryCost+"KB");
-                listItem.put("user", tem.nickName);
-                if (problemIDs != null) {
-                    int i = 0;
-                    while (i != problemIDs.length && tem.problemId != problemIDs[i]) ++i;
-                    if (i == problemIDs.length) {
-                        listItem.put("probOrder", "?");
-                    } else {
-                        listItem.put("probOrder", String.valueOf((char)('A' + i)));
-                    }
-                }
-                addListItem(listItem);
             }
             if (mPageInfo.currentPage == mPageInfo.totalItems) {
                 mListView.setPullUpLoadFinish();

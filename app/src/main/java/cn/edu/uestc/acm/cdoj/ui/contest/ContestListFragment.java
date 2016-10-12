@@ -19,22 +19,23 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
-import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
-import cn.edu.uestc.acm.cdoj.ui.ItemDetailActivity;
-import cn.edu.uestc.acm.cdoj.ui.LoginActivity;
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
-import cn.edu.uestc.acm.cdoj.ui.modules.list.MainList;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
-import cn.edu.uestc.acm.cdoj.net.data.ContestInfo;
 import cn.edu.uestc.acm.cdoj.net.data.InfoList;
+import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
+import cn.edu.uestc.acm.cdoj.net.data.Result;
+import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
+import cn.edu.uestc.acm.cdoj.ui.ItemDetailActivity;
+import cn.edu.uestc.acm.cdoj.ui.LoginActivity;
+import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
+import cn.edu.uestc.acm.cdoj.ui.modules.list.MainList;
 
 /**
  * Created by great on 2016/8/17.
@@ -183,7 +184,7 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
     }
 
     @Override
-    public void show(int which, Object data, long time) {
+    public void show(int which, Result result, long time) {
         switch (which) {
             case ViewHandler.CONTEST_LIST:
                 if (refreshed) {
@@ -191,23 +192,19 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
                     notifyDataSetChanged();
                     refreshed = false;
                 }
-                if (((InfoList) data).result) {
-                    mPageInfo = ((InfoList) data).pageInfo;
-                    ArrayList<ContestInfo> infoList_C = ((InfoList) data).getInfoList();
-                    if (infoList_C.size() == 0){
+                if (result.result) {
+                    mPageInfo = ((InfoList) result.getContent()).pageInfo;
+                    ArrayList<Map<String, Object>> temArrayList = ((InfoList) result.getContent()).getInfoList();
+                    for (Map<String, Object> temMap : temArrayList) {
+                        temMap.put("contestId", "ID:" + temMap.get("contestId"));
+                        temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
+                        temMap.put("length", TimeFormat.getFormatTime((long) temMap.get("length")));
+                    }
+                    listItems.addAll(temArrayList);
+                    if (listItems.size() == 0){
                         mListView.setDataIsNull();
                         notifyDataSetChanged();
                         return;
-                    }
-                    for (ContestInfo tem : infoList_C) {
-                        Map<String, Object> listItem = new HashMap<>();
-                        listItem.put("title", tem.title);
-                        listItem.put("date", tem.timeString);
-                        listItem.put("timeLimit", tem.lengthString);
-                        listItem.put("id", tem.contestId);
-                        listItem.put("status", tem.status);
-                        listItem.put("permission", tem.typeName);
-                        addListItem(listItem);
                     }
                     if (hasSetProgressListener && mPageInfo.currentPage == 1) {
                         progressListener.end();
@@ -224,18 +221,18 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
                 if (mPageInfo.currentPage == 1 && progressDialog != null){
                     progressDialog.cancel();
                 }
-                if ((boolean) data) {
+                if (result.result) {
                     showDetail();
-                    return;
+                }else {
+                    reminderLoginError();
                 }
-                reminderLoginError();
         }
     }
 
     @Override
     public void notifyDataSetChanged() {
         if (mListAdapter == null) {
-            mListView.setAdapter(setupAdapter());
+            mListView.setAdapter(createAdapter());
         } else{
             mListAdapter.notifyDataSetChanged();
         }
@@ -247,12 +244,32 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
         }
     }
 
-    private ListAdapter setupAdapter() {
+    private ListAdapter createAdapter() {
         mListAdapter =  new SimpleAdapter(
                 Global.currentMainUIActivity, listItems, R.layout.contest_item_list,
-                new String[]{"title", "date", "timeLimit", "id", "status", "permission"},
+                new String[]{"title", "time", "length", "contestId", "status", "typeName"},
                 new int[]{R.id.contest_title, R.id.contest_date, R.id.contest_timeLimit,
                         R.id.contest_id, R.id.contest_status, R.id.contest_permission});
+        /*mListAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
+            @Override
+            public boolean setViewValue(View view, Object data, String textRepresentation) {
+                if (view instanceof TextView) {
+                    if (!(data instanceof String)) {
+                        if (view.getId() == R.id.contest_date) {
+                            ((TextView) view).setText(TimeFormat.getFormatDate((long) data));
+                        } else if (view.getId() == R.id.contest_timeLimit) {
+                            ((TextView) view).setText(TimeFormat.getFormatTime((long) data));
+                        } else if (view.getId() == R.id.contest_id) {
+                            ((TextView) view).setText(String.valueOf((int) data));
+                        }
+                    } else {
+                        ((TextView) view).setText((String) data);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });*/
         return mListAdapter;
     }
 

@@ -17,6 +17,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 
 import cn.edu.uestc.acm.cdoj.R;
+import cn.edu.uestc.acm.cdoj.net.data.Result;
 import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebViewFragment;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
@@ -201,8 +202,8 @@ public class ContestFragment extends Fragment implements ViewHandler{
     }
 
     @Override
-    public void show(int which, Object data, long time) {
-        Contest contest_data = (Contest) data;
+    public void show(int which, Result result, long time) {
+        Contest contest_data = (Contest) result.getContent();
         addOverView(contest_data.getContentString());
         ArrayList<Problem> problemList = contest_data.getProblemList();
         addProblems(problemList);

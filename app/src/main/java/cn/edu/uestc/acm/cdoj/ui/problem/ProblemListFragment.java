@@ -13,21 +13,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
-import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
-import cn.edu.uestc.acm.cdoj.ui.ItemDetailActivity;
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.InfoList;
-import cn.edu.uestc.acm.cdoj.net.data.ProblemInfo;
+import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
+import cn.edu.uestc.acm.cdoj.net.data.Result;
+import cn.edu.uestc.acm.cdoj.ui.ItemDetailActivity;
+import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.MainList;
 
 /**
@@ -79,7 +80,7 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
             @Override
             public void onPullUpLoading() {
                 if (mPageInfo != null && mPageInfo.currentPage < mPageInfo.totalPages) {
-                    NetData.getProblemList(mPageInfo.currentPage + 1, key, ProblemListFragment.this);
+                    NetData.getProblemList(mPageInfo.currentPage + 1, key, 0, ProblemListFragment.this);
                 } else {
                     mListView.setPullUpLoadFinish();
                 }
@@ -114,34 +115,30 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
         Intent intent = new Intent(context, ItemDetailActivity.class);
         intent.putExtra("title", (String) listItems.get(position).get("title"));
         intent.putExtra("type", ViewHandler.PROBLEM_DETAIL);
-        intent.putExtra("id", (int) listItems.get(position).get("id"));
+        intent.putExtra("id", (int) listItems.get(position).get("problemId"));
         context.startActivity(intent);
     }
 
     @Override
-    public void show(int which, Object data, long time) {
+    public void show(int which, Result result, long time) {
         if (refreshed) {
             listItems.clear();
             notifyDataSetChanged();
             refreshed = false;
         }
-        if (((InfoList) data).result) {
-            mPageInfo = ((InfoList) data).pageInfo;
-            ArrayList<ProblemInfo> infoList_P = ((InfoList) data).getInfoList();
-            if (infoList_P.size() == 0) {
+        if (result.result) {
+            mPageInfo = ((InfoList) result.getContent()).pageInfo;
+            ArrayList<Map<String, Object>> temArrayList = ((InfoList) result.getContent()).getInfoList();
+            for (Map<String, Object> temMap : temArrayList) {
+                temMap.put("problemId", "ID:" + temMap.get("problemId"));
+                temMap.put("solved", "Solved:" + temMap.get("solved"));
+                temMap.put("tried", "Tried:" + temMap.get("tried"));
+            }
+            listItems.addAll(temArrayList);
+            if (listItems.size() == 0) {
                 mListView.setDataIsNull();
                 notifyDataSetChanged();
                 return;
-            }
-            for (ProblemInfo tem : infoList_P) {
-                String number = "solved/tried:  " + tem.solved + "/" + tem.tried;
-                Map<String, Object> listItem = new HashMap<>();
-                listItem.put("title", tem.title);
-                listItem.put("source", tem.source);
-                listItem.put("id", tem.problemId);
-                listItem.put("number", number);
-                listItem.put("idString", "ID: " + tem.problemId);
-                addListItem(listItem);
             }
             if (hasSetProgressListener && mPageInfo.currentPage == 1) {
                 progressListener.end();
@@ -157,8 +154,11 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
 
     @Override
     public void notifyDataSetChanged() {
-        if (mListAdapter == null) createAdapter();
-        mListAdapter.notifyDataSetChanged();
+        if (mListAdapter == null){
+            mListView.setAdapter(createAdapter());
+        }else {
+            mListAdapter.notifyDataSetChanged();
+        }
         if (mListView.isPullUpLoading()) {
             mListView.setPullUpLoading(false);
         }
@@ -167,12 +167,32 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
         }
     }
 
-    private void createAdapter() {
+    private ListAdapter createAdapter() {
         mListAdapter = new SimpleAdapter(
                 Global.currentMainUIActivity, listItems, R.layout.problem_item_list,
-                new String[]{"title", "source", "idString", "number"},
-                new int[]{R.id.problem_title, R.id.problem_source, R.id.problem_id, R.id.problem_number});
-        mListView.setAdapter(mListAdapter);
+                new String[]{"title", "source", "problemId", "solved", "tried"},
+                new int[]{R.id.problem_title, R.id.problem_source, R.id.problem_id, R.id.problem_solved, R.id.problem_tried});
+        /*mListAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
+            @Override
+            public boolean setViewValue(View view, Object data, String textRepresentation) {
+                if (view instanceof TextView) {
+                    if (!(data instanceof String)) {
+                        if (view.getId() == R.id.problem_id) {
+                            ((TextView) view).setText("ID:" + String.valueOf((int) data));
+                        } else if (view.getId() == R.id.problem_solved) {
+                            ((TextView) view).setText("Solved:" + String.valueOf((int) data));
+                        } else if (view.getId() == R.id.problem_tried) {
+                            ((TextView) view).setText("Tried:" + String.valueOf((int) data));
+                        }
+                    } else {
+                        ((TextView) view).setText((String) data);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });*/
+        return mListAdapter;
     }
 
     @Override
@@ -209,7 +229,7 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
             if (progressListener != null) progressListener.start();
             mListView.resetPullUpLoad();
             listItems.clear();
-            NetData.getProblemList(1, key, this);
+            NetData.getProblemList(1, key, 0, this);
         }
         return this;
     }

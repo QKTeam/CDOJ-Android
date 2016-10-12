@@ -15,17 +15,18 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
-import cn.edu.uestc.acm.cdoj.net.data.ArticleInfo;
 import cn.edu.uestc.acm.cdoj.net.data.InfoList;
 import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
+import cn.edu.uestc.acm.cdoj.net.data.Result;
+import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
 import cn.edu.uestc.acm.cdoj.ui.ItemDetailActivity;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
@@ -113,33 +114,28 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
         Intent intent = new Intent(context, ItemDetailActivity.class);
         intent.putExtra("title", (String) listItems.get(position).get("title"));
         intent.putExtra("type", ViewHandler.ARTICLE_DETAIL);
-        intent.putExtra("id", (int) listItems.get(position).get("id"));
+        intent.putExtra("id", (int) listItems.get(position).get("articleId"));
         context.startActivity(intent);
     }
 
     @Override
-    public void show(int which, Object data, long time) {
+    public void show(int which, Result result, long time) {
         if (refreshed) {
             listItems.clear();
             notifyDataSetChanged();
             refreshed = false;
         }
-        if (((InfoList) data).result) {
-            mPageInfo = ((InfoList) data).pageInfo;
-            ArrayList<ArticleInfo> infoList_A = ((InfoList) data).getInfoList();
-            if (infoList_A.size() == 0) {
+        if (result.result) {
+            mPageInfo = ((InfoList) result.getContent()).pageInfo;
+            ArrayList<Map<String, Object>> temArrayList = ((InfoList) result.getContent()).getInfoList();
+            for (Map<String, Object> temMap : temArrayList) {
+                temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
+            }
+            listItems.addAll(temArrayList);
+            if (listItems.size() == 0) {
                 mListView.setDataIsNull();
                 notifyDataSetChanged();
                 return;
-            }
-            for (ArticleInfo tem : infoList_A) {
-                Map<String, Object> listItem = new HashMap<>();
-                listItem.put("title", tem.title);
-                listItem.put("content", tem.content);
-                listItem.put("date", tem.timeString);
-                listItem.put("author", tem.ownerName);
-                listItem.put("id", tem.articleId);
-                addListItem(listItem);
             }
             if (hasSetProgressListener && mPageInfo.currentPage == 1) {
                 progressListener.end();
@@ -171,9 +167,23 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
     private ListAdapter createAdapter() {
         mListAdapter =  new SimpleAdapter(
                 Global.currentMainUIActivity, listItems, R.layout.article_item_list,
-                new String[]{"title", "content", "date", "author"},
+                new String[]{"title", "content", "time", "ownerName"},
                 new int[]{R.id.article_title, R.id.article_content,
                         R.id.article_date, R.id.article_author});
+        /*mListAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
+            @Override
+            public boolean setViewValue(View view, Object data, String textRepresentation) {
+                 if (view instanceof TextView) {
+                     if (!(data instanceof String)) {
+                         ((TextView) view).setText(TimeFormat.getFormatDate((long) data));
+                     }else {
+                         ((TextView) view).setText((String) data);
+                     }
+                     return true;
+                }
+                return false;
+            }
+        });*/
         return mListAdapter;
     }
 
@@ -210,4 +220,5 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
         }
         return this;
     }
+
 }

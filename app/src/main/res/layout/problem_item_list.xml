@@ -34,21 +34,37 @@
 
         <TextView
             android:id="@+id/problem_id"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="2"
             android:ellipsize="end"
             android:textSize="12sp"
             android:maxLines="1" />
 
-        <TextView
-            android:id="@+id/problem_number"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="4"
-            android:ellipsize="end"
-            android:gravity="right"
-            android:textSize="12sp"
-            android:maxLines="1" />
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/problem_solved"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:textSize="12sp"
+                android:maxLines="1" />
+
+            <TextView
+                android:id="@+id/problem_tried"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:gravity="end"
+                android:textSize="12sp"
+                android:maxLines="1" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

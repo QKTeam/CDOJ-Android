@@ -31,8 +31,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import cn.edu.uestc.acm.cdoj.R;
+import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.UserManager;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
+import cn.edu.uestc.acm.cdoj.net.data.Result;
+import cn.edu.uestc.acm.cdoj.net.data.Status;
 import cn.edu.uestc.acm.cdoj.tools.DrawImage;
 import cn.edu.uestc.acm.cdoj.tools.RGBAColor;
 import cn.edu.uestc.acm.cdoj.ui.contest.ContestListFragment;
@@ -61,14 +64,15 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
     @IntDef({NOTICELIST, PROBLEMLIST, CONTESTLIST})
     @Retention(RetentionPolicy.SOURCE)
     @interface list {
-    }
 
+    }
     @IntDef({SELECT, NOTSELECT})
     @Retention(RetentionPolicy.SOURCE)
     @interface selectStatus {
-    }
 
+    }
     private int[] listInts = new int[]{NOTICELIST, PROBLEMLIST, CONTESTLIST};
+
     private NoticeListFragment noticeList;
     private ProblemListFragment problemList;
     private ContestListFragment contestList;
@@ -81,7 +85,6 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
     private NavigationView mNavigationView;
     private FrameLayout mSearchFrameLayout;
     private MainList searchResult;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -358,11 +361,7 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
     }
 
     @Override
-    public void show(int which, Object data, long time) {
-        Object[] dataReceive = (Object[]) data;
-        switch (which) {
-            case ViewHandler.AVATAR:
-                ((ImageView) findViewById(R.id.main_ui_nav_view_image)).setImageBitmap((Bitmap) dataReceive[1]);
-        }
+    public void show(int which, Result result, long time) {
+        result.getContent();
     }
 }
