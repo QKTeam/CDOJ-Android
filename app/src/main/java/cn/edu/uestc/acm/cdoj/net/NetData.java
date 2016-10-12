@@ -1,22 +1,11 @@
 package cn.edu.uestc.acm.cdoj.net;
 
-import android.os.AsyncTask;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.concurrent.Executors;
-
-import cn.edu.uestc.acm.cdoj.net.data.Article;
-import cn.edu.uestc.acm.cdoj.net.data.ArticleInfo;
-import cn.edu.uestc.acm.cdoj.net.data.Contest;
-import cn.edu.uestc.acm.cdoj.net.data.ContestInfo;
-import cn.edu.uestc.acm.cdoj.net.data.InfoList;
-import cn.edu.uestc.acm.cdoj.net.data.Problem;
-import cn.edu.uestc.acm.cdoj.net.data.ProblemInfo;
-import cn.edu.uestc.acm.cdoj.net.data.Rank;
-import cn.edu.uestc.acm.cdoj.net.data.Status;
+import cn.edu.uestc.acm.cdoj.net.data.Result;
 
 /**
  * Created by qwe on 16-8-14.
@@ -43,7 +32,20 @@ public class NetData {
             statusInfoUrl = severAddress + "/status/info/",
             codeSubmitUrl = severAddress + "/status/submit",
             avatarUrl = "http://cdn.v2ex.com/gravatar/%@.jpg?s=%ld&&d=retro",
-            registerUrl = severAddress + "/user/register";
+            registerUrl = severAddress + "/user/register",
+            userProfileUrl = severAddress + "/user/profile/",
+            userTypeAheadItemUrl = severAddress + "/user/typeAheadItem/",
+            userCenterDataUrl = severAddress + "/user/userCenterData/";
+
+    public static void getUserCenterData(String userName, Object extra, ViewHandler viewHandler){
+        asyncWithAdd(ViewHandler.USER_CENTER_DATA, new String[]{ userCenterDataUrl + userName}, viewHandler, extra);
+    }
+    public static void getUserTypeAheadItem(String userName, Object extra, ViewHandler viewHandler){
+        asyncWithAdd(ViewHandler.USER_PROFILE, new String[]{ userTypeAheadItemUrl + userName}, viewHandler, extra);
+    }
+    public static void getUserProfile(String userName, Object extra, ViewHandler viewHandler){
+        asyncWithAdd(ViewHandler.USER_PROFILE, new String[]{ userProfileUrl + userName}, viewHandler, extra);
+    }
     public static void register(String userName, String password, String passwordRepeat, String nickName, String email, String motto, String name, int sex, int size, String phone, String school, int departmentId, int grade, String studentId, ViewHandler viewHandler, Object extra){
         String key[] = new String[]{"userName", "password", "passwordRepeat", "nickName", "email", "motto", "name", "sex", "size", "phone", "school", "departmentId", "grade", "studentId"};
         Object o[] = new Object[]{userName, password, passwordRepeat, nickName, email, motto, name, sex, size, phone, school, departmentId, grade, studentId};
@@ -108,11 +110,11 @@ public class NetData {
     public static void logout(ViewHandler viewHandler, Object extra){
         asyncWithAdd(ViewHandler.LOGOUT, new String[]{logoutUrl}, viewHandler, extra);
     }
-    public static void getProblemList(final int page, String keyword, final ViewHandler viewHandler){
+    public static void getProblemList(final int page, String keyword, int startId, final ViewHandler viewHandler){
         String p = "";
         try {
             p = new JSONObject().put("currentPage", page).put("orderAsc", "true")
-                    .put("orderFields", "id").put("keyword", keyword).toString();
+                    .put("orderFields", "id").put("keyword", keyword).put("startId", startId).toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -157,29 +159,42 @@ public class NetData {
 
     static void asyncWithAdd(final int which, final String[] req, final ViewHandler viewHandler, final Object extra) {
         final long time = System.currentTimeMillis();
-        new AsyncTask<Void, Void, Object>(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final Result result = request(which, req);
+                ThreadTools.runOnMainThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        handleInMain(which, result, viewHandler, time, extra);
+                    }
+                });
+            }
+        }).start();
+/*        new AsyncTask<Void, Void, Result>(){
 
             @Override
-            protected Object doInBackground(Void... voids) {
+            protected Result doInBackground(Void... voids) {
                 return request(which, req);
             }
 
             @Override
-            protected void onPostExecute(Object o) {
-                handleInMain(which, o, viewHandler, time, extra);
+            protected void onPostExecute(Result result) {
+                handleInMain(which, result, viewHandler, time, extra);
             }
-        }.executeOnExecutor(Executors.newFixedThreadPool(1));
+        }.executeOnExecutor(Executors.newFixedThreadPool(1));*/
 
     }
 
-    static Object request(int which, String[] req){
+    static Result request(int which, String[] req){
+        Log.d(TAG, "request: " + req[0]);
         switch (which){
             case ViewHandler.AVATAR:
-                Log.d(TAG, "request: 获取头像");
-                return NetWorkTool.getBytes(NetWorkTool._get(req[0]));
+                return new Result(NetWorkTool.getBytes(NetWorkTool._get(req[0])));
         }
         String result = NetWorkTool.getOrPost(req);
-        switch (which){
+        return new Result(which, result);
+/*        switch (which){
             case ViewHandler.PROBLEM_LIST:
                 return new InfoList<ProblemInfo>(result, ProblemInfo.class);
             case ViewHandler.ARTICLE_LIST:
@@ -216,26 +231,13 @@ public class NetData {
                 Log.d(TAG, "request: " + result);
                 return checkResult(result);
             default: return null;
+        }*/
+    }
+    static void handleInMain(int which, Result result, ViewHandler viewHandler, long time, Object extra){
+        if (viewHandler != null && result.resultType != Result.STATE_NETWORK_ERROR){
+            result.setExtra(extra);
+            viewHandler.show(which, result, time);
         }
     }
-    static void handleInMain(int which, Object data, ViewHandler viewHandler, long time, Object extra){
-        if (viewHandler != null){
-            if (extra != null){
-                viewHandler.show(which, new Object[]{extra, data}, time);
-            }else {
-                viewHandler.show(which, data, time);
-            }
-        }
-    }
-    static boolean checkResult(String json){
-        if (json == null) {
-            return false;
-        }
-        try {
-            return new JSONObject(json).getString("result").equals("success");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+
 }

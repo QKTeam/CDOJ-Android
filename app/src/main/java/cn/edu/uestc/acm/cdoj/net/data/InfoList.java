@@ -1,39 +1,28 @@
 package cn.edu.uestc.acm.cdoj.net.data;
 
-import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Map;
+
+import cn.edu.uestc.acm.cdoj.net.JsonUtils;
 
 /**
  * Created by qwe on 16-8-10.
  */
-public class InfoList <T>{
-    public ArrayList<T> list = new ArrayList<>(20);
-    public boolean result = false;
+public class InfoList{
+    public ArrayList<Map<String, Object>> list;
     public PageInfo pageInfo;
-    public InfoList(String json, Class<T> cls){
-        if (json == null) {
-            return;
-        }
+    public InfoList(JSONObject msg) {
         try {
-            JSONObject msg = new JSONObject(json);
-            result = msg.getString("result").equals("success");
             pageInfo = new PageInfo(msg.getJSONObject("pageInfo"));
-            JSONArray list0 = msg.getJSONArray("list");
-            Constructor c1 = cls.getDeclaredConstructor(new Class[]{JSONObject.class});
-            for (int i = 0; i < list0.length(); i++) {
-                list.add((T)c1.newInstance(list0.getJSONObject(i)));
-//                list.add(T.toString());
-                        //Object(list0.getJSONObject(i)));
-            }
-        } catch (Exception e) {
+            list = JsonUtils.getMapListFromJson(msg.getJSONArray("list"));
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
-    public ArrayList getInfoList() {
+    public ArrayList<Map<String, Object>> getInfoList() {
         return list;
     }
 }

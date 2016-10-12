@@ -8,18 +8,11 @@ import org.json.JSONObject;
  */
 public class Problem {
     public int problemId;
-    boolean result;
     String contentString = "";
     public Problem(){
-
     }
-    public Problem(String json){
-        if (json == null) {
-            return;
-        }
+    public Problem(JSONObject jsonObject){
         try {
-            JSONObject jsonObject = new JSONObject(json);
-            result = jsonObject.optString("result", "fail").equals("success");
             contentString = jsonObject.getJSONObject("problem").toString();
             problemId = jsonObject.optInt("problemId");
         } catch (JSONException e) {
@@ -31,7 +24,6 @@ public class Problem {
     }
     public static Problem newInstance(JSONObject jsonObject) {
         Problem p = new Problem();
-        p.result = true;
         p.contentString = jsonObject.toString();
         p.problemId = jsonObject.optInt("problemId");
         return p;
