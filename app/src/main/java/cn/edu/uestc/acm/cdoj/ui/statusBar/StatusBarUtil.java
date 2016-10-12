@@ -46,7 +46,7 @@ public class StatusBarUtil {
     /**
      * 修改状态栏颜色，支持4.4以上版本
      */
-    public static View setStatusBarColor(Activity activity, int colorM, int colorOther) {
+    public static View setStatusBarColor(Activity activity, int colorM_MIUI_FLYME, int colorOther) {
         mSystemBarConfig = new SystemBarConfig(activity, true, false);
         Window window = activity.getWindow();
         View statusBarBackgroundView = new View(activity);
@@ -54,13 +54,17 @@ public class StatusBarUtil {
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, statusBarHeight);
         statusBarBackgroundView.setLayoutParams(params);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            window.setStatusBarColor(ContextCompat.getColor(activity, colorM));
+            window.setStatusBarColor(ContextCompat.getColor(activity, colorM_MIUI_FLYME));
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.setStatusBarColor(ContextCompat.getColor(activity, colorOther));
+            if (MIUIUtils.isMIUI() || FlyMeUtils.isFlyMe()) {
+                window.setStatusBarColor(ContextCompat.getColor(activity, colorM_MIUI_FLYME));
+            }else {
+                window.setStatusBarColor(ContextCompat.getColor(activity, colorOther));
+            }
         }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             if (MIUIUtils.isMIUI() || FlyMeUtils.isFlyMe()) {
-                statusBarBackgroundView.setBackgroundResource(colorM);
+                statusBarBackgroundView.setBackgroundResource(colorM_MIUI_FLYME);
             } else {
                 statusBarBackgroundView.setBackgroundResource(colorOther);
             }

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import cn.edu.uestc.acm.cdoj.R;
+import cn.edu.uestc.acm.cdoj.net.data.Result;
 import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebViewFragment;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
@@ -61,7 +62,7 @@ public class ProblemFragment extends Fragment implements ViewHandler{
     }
 
     @Override
-    public void show(int which, Object data, long time) {
-        addJSData(((Problem) data).getContentString());
+    public void show(int which, Result result, long time) {
+        addJSData(((Problem) result.getContent()).getContentString());
     }
 }

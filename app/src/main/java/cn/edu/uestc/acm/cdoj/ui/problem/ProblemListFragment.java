@@ -130,7 +130,7 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
             mPageInfo = ((InfoList) result.getContent()).pageInfo;
             ArrayList<Map<String, Object>> temArrayList = ((InfoList) result.getContent()).getInfoList();
             for (Map<String, Object> temMap : temArrayList) {
-                temMap.put("problemId", "ID:" + temMap.get("problemId"));
+                temMap.put("problemIdString", "ID:" + temMap.get("problemId"));
                 temMap.put("solved", "Solved:" + temMap.get("solved"));
                 temMap.put("tried", "Tried:" + temMap.get("tried"));
             }
@@ -170,7 +170,7 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
     private ListAdapter createAdapter() {
         mListAdapter = new SimpleAdapter(
                 Global.currentMainUIActivity, listItems, R.layout.problem_item_list,
-                new String[]{"title", "source", "problemId", "solved", "tried"},
+                new String[]{"title", "source", "problemIdString", "solved", "tried"},
                 new int[]{R.id.problem_title, R.id.problem_source, R.id.problem_id, R.id.problem_solved, R.id.problem_tried});
         /*mListAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
             @Override

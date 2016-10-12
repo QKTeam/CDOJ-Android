@@ -106,13 +106,13 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int contestId = (int) listItems.get(position).get("id");
+                int contestId = (int) listItems.get(position).get("contestId");
                 addInfoOfCurrentClick(position, contestId);
                 if (!Global.userManager.isLogin()){
                     reminderUnLogin();
                     return;
                 }
-                if (listItems.get(position).get("permission").equals("Private")){
+                if (listItems.get(position).get("typeName").equals("Private")){
                     reminderEnterPassword();
                     return;
                 }
@@ -151,7 +151,7 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
 
                     }
                 });
-        if (listItems.get(clickPosition).get("permission").equals("Public")) {
+        if (listItems.get(clickPosition).get("typeName").equals("Public")) {
             alert.setNeutralButton("直接进入", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -196,9 +196,9 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
                     mPageInfo = ((InfoList) result.getContent()).pageInfo;
                     ArrayList<Map<String, Object>> temArrayList = ((InfoList) result.getContent()).getInfoList();
                     for (Map<String, Object> temMap : temArrayList) {
-                        temMap.put("contestId", "ID:" + temMap.get("contestId"));
+                        temMap.put("contestIdString", "ID:" + temMap.get("contestId"));
                         temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
-                        temMap.put("length", TimeFormat.getFormatTime((long) temMap.get("length")));
+                        temMap.put("length", TimeFormat.getFormatTime((int) temMap.get("length")));
                     }
                     listItems.addAll(temArrayList);
                     if (listItems.size() == 0){
@@ -247,7 +247,7 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
     private ListAdapter createAdapter() {
         mListAdapter =  new SimpleAdapter(
                 Global.currentMainUIActivity, listItems, R.layout.contest_item_list,
-                new String[]{"title", "time", "length", "contestId", "status", "typeName"},
+                new String[]{"title", "time", "length", "contestIdString", "status", "typeName"},
                 new int[]{R.id.contest_title, R.id.contest_date, R.id.contest_timeLimit,
                         R.id.contest_id, R.id.contest_status, R.id.contest_permission});
         /*mListAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
@@ -301,7 +301,7 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
-        if (listItems.get(clickPosition).get("permission").equals("Private")) {
+        if (listItems.get(clickPosition).get("typeName").equals("Private")) {
             alert.setMessage("密码错误，请重新输入！");
         } else {
             alert.setMessage("您无查看该比赛的相关权限！");

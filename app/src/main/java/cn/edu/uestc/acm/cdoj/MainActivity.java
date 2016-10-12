@@ -2,10 +2,7 @@ package cn.edu.uestc.acm.cdoj;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,13 +48,13 @@ public class MainActivity extends Activity {
 
     private void setupStatusIcons() {
         Global.didNothingIcon = DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
-                RGBAColor.getColorMatrix(this, R.color.rank_gray, false));
+                RGBAColor.getColorMatrix(this, R.color.rank_didNothing, false));
         Global.triedIcon = DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
-                RGBAColor.getColorMatrix(this, R.color.rank_yellow, false));
+                RGBAColor.getColorMatrix(this, R.color.rank_tried, false));
         Global.solvedIcon = DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
-                RGBAColor.getColorMatrix(this, R.color.rank_halfGreen, false));
+                RGBAColor.getColorMatrix(this, R.color.rank_solved, false));
         Global.theFirstSolvedIcon = DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
-                RGBAColor.getColorMatrix(this, R.color.rank_green, false));
+                RGBAColor.getColorMatrix(this, R.color.rank_theFirstSolved, false));
     }
 
     private void setupListFooterIcons() {

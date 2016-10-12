@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import cn.edu.uestc.acm.cdoj.R;
+import cn.edu.uestc.acm.cdoj.net.data.Result;
 import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebViewFragment;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.Problem;
@@ -20,7 +21,7 @@ import cn.edu.uestc.acm.cdoj.net.data.Problem;
 /**
  * Created by great on 2016/8/25.
  */
-public class ContestProblems extends Fragment implements ViewHandler{
+public class ContestProblems extends Fragment{
     private View rootView;
     private ViewPager viewPager;
     private TabLayout tabLayout;
@@ -78,10 +79,5 @@ public class ContestProblems extends Fragment implements ViewHandler{
         for (int i = 0; i != problemsCount; ++i) {
             tabLayout.getTabAt(i).setText(String.valueOf((char)('A' + i)));
         }
-    }
-
-    @Override
-    public void show(int which, Object data, long time) {
-
     }
 }

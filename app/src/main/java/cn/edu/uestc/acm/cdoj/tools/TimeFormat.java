@@ -21,13 +21,13 @@ public class TimeFormat {
         long minutes = (timeLength % (60 * 60)) / 60;
         long seconds = timeLength % 60;
         if (days > 0) {
-            formatTime = days + ":" + hours + ":" + minutes + ":" + seconds;
+            formatTime = days + "d" + hours + "h" + minutes + "m" + seconds + "s";
         } else if (hours > 0) {
-            formatTime = hours + ":" + minutes + ":" + seconds;
+            formatTime = hours + "h" + minutes + "m" + seconds+ "s";
         } else if (minutes > 0) {
-            formatTime = minutes + ":" + seconds;
+            formatTime = minutes + "m" + seconds+ "s";
         } else {
-            formatTime = seconds + "";
+            formatTime = seconds + "s";
         }
         return formatTime;
     }
@@ -36,7 +36,7 @@ public class TimeFormat {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(dateLength);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-        return simpleDateFormat.format(calendar);
+        return simpleDateFormat.format(calendar.getTime());
     }
 
 }

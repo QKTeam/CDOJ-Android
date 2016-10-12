@@ -22,21 +22,44 @@
                 android:id="@+id/contestStatus_result"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="3"
+                android:layout_weight="8"
                 android:textSize="18sp"
                 android:gravity="center_vertical"
                 android:lines="1"
-                android:text="wronganfafdas" />
-            <TextView
-                android:id="@+id/contestStatus_language"
+                android:text="wrongdfganfafdas" />
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:paddingTop="10dp"
-                android:textSize="15sp"
-                android:lines="1"
-                android:gravity="end"
-                android:text="c++ 3420mb" />
+                android:layout_weight="3"
+                android:layout_gravity="end">
+                <TextView
+                    android:id="@+id/contestStatus_language"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:paddingTop="10dp"
+                    android:textSize="15sp"
+                    android:lines="1"
+                    android:gravity="end"
+                    android:text="c++" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingTop="10dp"
+                    android:textSize="15sp"
+                    android:lines="1"
+                    android:gravity="end"
+                    android:text="/"/>
+                <TextView
+                    android:id="@+id/contestStatus_codeLength"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingTop="10dp"
+                    android:textSize="15sp"
+                    android:lines="1"
+                    android:gravity="start"
+                    android:text="3044mb" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -49,13 +72,31 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="fdsfsafdsa" />
-            <TextView
-                android:id="@+id/contestStatus_cost"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:gravity="end"
-                android:text="fasfdsafdsa" />
+                android:layout_gravity="end"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/contestStatus_timeCost"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="fasfdsafdsa" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="/" />
+                <TextView
+                    android:id="@+id/contestStatus_memoryCost"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:gravity="end"
+                    android:text="fasfdsafdsa" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout

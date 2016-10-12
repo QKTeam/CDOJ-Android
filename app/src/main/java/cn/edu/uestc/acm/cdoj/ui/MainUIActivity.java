@@ -144,7 +144,6 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
                 StatusBarUtil.StatusBarLightMode(this);
             }
         }
-
     }
 
     private void configSearchView() {

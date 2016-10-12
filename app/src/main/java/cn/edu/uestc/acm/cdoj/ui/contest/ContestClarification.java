@@ -32,6 +32,7 @@ import cn.edu.uestc.acm.cdoj.net.data.Article;
 import cn.edu.uestc.acm.cdoj.net.data.InfoList;
 import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
+import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
 
@@ -112,7 +113,7 @@ public class ContestClarification extends Fragment implements ViewHandler{
     private ListAdapter setupAdapter() {
         mListAdapter = new SimpleAdapter(
                 Global.currentMainUIActivity, listItems, R.layout.contest_clarification_item_list,
-                new String[]{"header", "user", "submitDate", "content"},
+                new String[]{"header", "ownerName", "time", "content"},
                 new int[]{R.id.contestClarification_header, R.id.contestClarification_user,
                         R.id.contestClarification_submitDate, R.id.contestClarification_content}){
             @Override
@@ -166,13 +167,20 @@ public class ContestClarification extends Fragment implements ViewHandler{
                 }
                 if (result.result){
                     mPageInfo = ((InfoList) result.getContent()).pageInfo;
-                    listItems.addAll(((InfoList) result.getContent()).getInfoList());
+                    ArrayList<Map<String, Object>> temArrayList = ((InfoList) result.getContent()).getInfoList();
+                    for (int i =0; i < temArrayList.size(); ++i) {
+                        Map<String, Object> temMap = temArrayList.get(i);
+                        temMap.put("content", ((String) temMap.get("content")).replaceAll("!\\[title].*\\)", "[图片]"));
+                        temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
+                        temMap.put("header", R.drawable.logo);
+                        Global.userManager.getAvatar((String) temMap.get("ownerEmail"), i, this);
+                    }
+                    listItems.addAll(temArrayList);
                     if (listItems.size() == 0) {
                         mListView.setDataIsNull();
                         notifyDataSetChanged();
                         return;
                     }
-                    listItem.put("content", tem.content.replaceAll("!\\[title].*\\)", "[图片]"));
                     if (mPageInfo.currentPage == mPageInfo.totalItems) {
                         mListView.setPullUpLoadFinish();
                     }

@@ -19,10 +19,10 @@
     <color name="yellow">#FFE000</color>
     <color name="halfGreen">#008800</color>
 
-    <color name="rank_green">#22B14C</color>
-    <color name="rank_halfGreen">#B5E61D</color>
-    <color name="rank_gray">#C3C3C3</color>
-    <color name="rank_yellow">#FFC90E</color>
+    <color name="rank_theFirstSolved">#22B14C</color>
+    <color name="rank_solved">#B5E61D</color>
+    <color name="rank_tried">#FFC90E</color>
+    <color name="rank_didNothing">#C3C3C3</color>
 
     <color name="contestPermission_Invited">#FFE000</color>
     <color name="contestPermission_Diy">#FF9403</color>
