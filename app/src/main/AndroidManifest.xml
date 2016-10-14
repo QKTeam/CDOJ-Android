@@ -38,6 +38,11 @@
             android:parentActivityName="cn.edu.uestc.acm.cdoj.ui.MainUIActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="cn.edu.uestc.acm.cdoj.ui.modules.list.SearchResult"
+            android:parentActivityName="cn.edu.uestc.acm.cdoj.ui.MainUIActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

@@ -99,7 +99,11 @@
                 app:floatingSearch_leftActionMode="showHamburger"
                 app:floatingSearch_searchBarMarginLeft="10dp"
                 app:floatingSearch_searchBarMarginRight="10dp"
-                app:floatingSearch_searchBarMarginTop="5dp" />
+                app:floatingSearch_searchBarMarginTop="5dp"
+                app:floatingSearch_close_search_on_keyboard_dismiss="false"
+                app:floatingSearch_dimBackground="false"
+                app:floatingSearch_dismissOnOutsideTouch="true"
+                app:floatingSearch_leftActionColor="@color/black" />
 
             <LinearLayout
                 android:id="@+id/ui_main_search_result"

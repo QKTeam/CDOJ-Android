@@ -10,8 +10,10 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -46,13 +48,10 @@ public class StatusBarUtil {
     /**
      * 修改状态栏颜色，支持4.4以上版本
      */
-    public static View setStatusBarColor(Activity activity, int colorM_MIUI_FLYME, int colorOther) {
+    public static View setStatusBarColor(Activity activity, int colorM_MIUI_FLYME, int colorOther, boolean showBGViewInKitkat) {
         mSystemBarConfig = new SystemBarConfig(activity, true, false);
+        View statusBarBackgroundView = setupStatusBarView(activity);
         Window window = activity.getWindow();
-        View statusBarBackgroundView = new View(activity);
-        int statusBarHeight = mSystemBarConfig.getStatusBarHeight();
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, statusBarHeight);
-        statusBarBackgroundView.setLayoutParams(params);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.setStatusBarColor(ContextCompat.getColor(activity, colorM_MIUI_FLYME));
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -68,24 +67,51 @@ public class StatusBarUtil {
             } else {
                 statusBarBackgroundView.setBackgroundResource(colorOther);
             }
+            if (showBGViewInKitkat) {
+                ViewGroup decorViewGroup = (ViewGroup) activity.getWindow().getDecorView();
+                decorViewGroup.addView(statusBarBackgroundView);
+            }
         }
         return statusBarBackgroundView;
     }
 
-    public static View setNavigationBarColor(Activity activity, int color) {
+    private static View setupStatusBarView(Activity activity) {
+        View statusBarBackgroundView = new View(activity);
+        int statusBarHeight = mSystemBarConfig.getStatusBarHeight();
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, statusBarHeight);
+        params.gravity = Gravity.TOP;
+        statusBarBackgroundView.setLayoutParams(params);
+        return statusBarBackgroundView;
+    }
+
+    /**
+     * 修改导航栏颜色，支持4.4以上版本
+     */
+
+    public static View setNavigationBarColor(Activity activity, int color, boolean showBGViewInKitkat) {
         mSystemBarConfig = new SystemBarConfig(activity, false, true);
         Window window = activity.getWindow();
-        View navigationBarBackgroundView = new View(activity);
-        int navigationBarHeight = mSystemBarConfig.getNavigationBarHeight(activity);
-        int navigationBarWidth = mSystemBarConfig.getNavigationBarWidth(activity);
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(navigationBarWidth, navigationBarHeight);
-        navigationBarBackgroundView.setLayoutParams(params);
+        View navigationBarBackgroundView = setupNavigationBarView(activity, color);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.setNavigationBarColor(ContextCompat.getColor(activity, color));
         }else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
             window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-            navigationBarBackgroundView.setBackgroundResource(color);
+            if (showBGViewInKitkat) {
+                ViewGroup decorViewGroup = (ViewGroup) activity.getWindow().getDecorView();
+                decorViewGroup.addView(navigationBarBackgroundView);
+            }
         }
+        return navigationBarBackgroundView;
+    }
+
+    private static View setupNavigationBarView(Activity activity, int color) {
+        View navigationBarBackgroundView = new View(activity);
+        navigationBarBackgroundView.setBackgroundResource(color);
+        int navigationBarHeight = mSystemBarConfig.getNavigationBarHeight(activity);
+        int navigationBarWidth = mSystemBarConfig.getNavigationBarWidth(activity);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(navigationBarWidth, navigationBarHeight);
+        params.gravity = Gravity.TOP;
+        navigationBarBackgroundView.setLayoutParams(params);
         return navigationBarBackgroundView;
     }
 

@@ -3,6 +3,9 @@ package cn.edu.uestc.acm.cdoj.ui.modules;
 import android.app.Activity;
 import android.graphics.Bitmap;
 
+import java.util.ArrayList;
+
+import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchHistory;
 import cn.edu.uestc.acm.cdoj.ui.user.User;
 import cn.edu.uestc.acm.cdoj.net.UserManager;
 
@@ -23,7 +26,9 @@ public class Global {
     public static Bitmap triedIcon;
     public static Bitmap solvedIcon;
     public static Bitmap theFirstSolvedIcon;
-    public static Bitmap listFootericon_done;
-    public static Bitmap listFootericon_noData;
-    public static Bitmap listFootericon_problem;
+    public static Bitmap listFooterIcon_done;
+    public static Bitmap listFooterIcon_noData;
+    public static Bitmap listFooterIcon_problem;
+    public static ArrayList<SearchHistory> problemSearchHistory;
+    public static ArrayList<SearchHistory> contestSearchHistory;
 }

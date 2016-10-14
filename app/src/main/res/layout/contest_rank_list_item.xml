@@ -96,11 +96,11 @@
         android:orientation="horizontal">
 
         <FrameLayout
-            android:layout_width="40dp"
+            android:layout_width="39dp"
             android:layout_height="match_parent"
             android:paddingStart="5dp"
-            android:paddingEnd="15dp"
-            android:visibility="gone">
+            android:paddingEnd="14dp"
+            android:visibility="invisible">
 
             <ImageView
                 android:id="@+id/contest_rank_mark_bg_0"
@@ -116,11 +116,11 @@
         </FrameLayout>
 
         <FrameLayout
-            android:layout_width="40dp"
+            android:layout_width="39dp"
             android:layout_height="20dp"
             android:paddingStart="5dp"
-            android:paddingEnd="15dp"
-            android:visibility="gone">
+            android:paddingEnd="14dp"
+            android:visibility="invisible">
 
             <ImageView
                 android:id="@+id/contest_rank_mark_bg_1"
@@ -136,11 +136,11 @@
         </FrameLayout>
 
         <FrameLayout
-            android:layout_width="40dp"
+            android:layout_width="39dp"
             android:layout_height="20dp"
             android:paddingStart="5dp"
-            android:paddingEnd="15dp"
-            android:visibility="gone">
+            android:paddingEnd="14dp"
+            android:visibility="invisible">
 
             <ImageView
                 android:id="@+id/contest_rank_mark_bg_2"
@@ -156,11 +156,11 @@
         </FrameLayout>
 
         <FrameLayout
-            android:layout_width="40dp"
+            android:layout_width="39dp"
             android:layout_height="20dp"
             android:paddingStart="5dp"
-            android:paddingEnd="15dp"
-            android:visibility="gone">
+            android:paddingEnd="14dp"
+            android:visibility="invisible">
 
             <ImageView
                 android:id="@+id/contest_rank_mark_bg_3"
@@ -176,11 +176,11 @@
         </FrameLayout>
 
         <FrameLayout
-            android:layout_width="40dp"
+            android:layout_width="39dp"
             android:layout_height="20dp"
             android:paddingStart="5dp"
-            android:paddingEnd="15dp"
-            android:visibility="gone">
+            android:paddingEnd="14dp"
+            android:visibility="invisible">
 
             <ImageView
                 android:id="@+id/contest_rank_mark_bg_4"
@@ -196,11 +196,11 @@
         </FrameLayout>
 
         <FrameLayout
-            android:layout_width="40dp"
+            android:layout_width="39dp"
             android:layout_height="20dp"
             android:paddingStart="5dp"
-            android:paddingEnd="15dp"
-            android:visibility="gone">
+            android:paddingEnd="14dp"
+            android:visibility="invisible">
 
             <ImageView
                 android:id="@+id/contest_rank_mark_bg_5"
@@ -216,11 +216,11 @@
         </FrameLayout>
 
         <FrameLayout
-            android:layout_width="40dp"
+            android:layout_width="39dp"
             android:layout_height="20dp"
             android:paddingStart="5dp"
-            android:paddingEnd="15dp"
-            android:visibility="gone">
+            android:paddingEnd="14dp"
+            android:visibility="invisible">
 
             <ImageView
                 android:id="@+id/contest_rank_mark_bg_6"
@@ -236,11 +236,11 @@
         </FrameLayout>
 
         <FrameLayout
-            android:layout_width="40dp"
+            android:layout_width="39dp"
             android:layout_height="20dp"
             android:paddingStart="5dp"
-            android:paddingEnd="15dp"
-            android:visibility="gone">
+            android:paddingEnd="14dp"
+            android:visibility="invisible">
 
             <ImageView
                 android:id="@+id/contest_rank_mark_bg_7"
@@ -256,11 +256,11 @@
         </FrameLayout>
 
         <FrameLayout
-            android:layout_width="40dp"
+            android:layout_width="39dp"
             android:layout_height="20dp"
             android:paddingStart="5dp"
-            android:paddingEnd="15dp"
-            android:visibility="gone">
+            android:paddingEnd="14dp"
+            android:visibility="invisible">
 
             <ImageView
                 android:id="@+id/contest_rank_mark_bg_8"
@@ -271,7 +271,7 @@
                 android:id="@+id/contest_rank_mark_tx_8"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:text="......"
+                android:text="I"
                 android:gravity="center" />
         </FrameLayout>
 
@@ -280,8 +280,10 @@
             android:id="@+id/contest_rank_mark_end"
             android:layout_width="30dp"
             android:layout_height="wrap_content"
-            android:layout_marginRight="15dp"
-            android:gravity="center" />
+            android:layout_marginEnd="15dp"
+            android:text="......"
+            android:gravity="center"
+            android:visibility="invisible"/>
     </LinearLayout>
 
 </LinearLayout>

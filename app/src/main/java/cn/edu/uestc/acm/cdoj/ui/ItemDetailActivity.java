@@ -45,9 +45,7 @@ public class ItemDetailActivity extends AppCompatActivity {
 
     private void initStatusBar() {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        View statusBarBackGroundView = StatusBarUtil
-                .setStatusBarColor(this, R.color.main_background, R.color.statusBar_background_gray);
-        ((ViewGroup) findViewById(R.id.activity_detail_status)).addView(statusBarBackGroundView);
+        StatusBarUtil.setStatusBarColor(this, R.color.main_background, R.color.statusBar_background_gray,true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M || MIUIUtils.isMIUI() || FlyMeUtils.isFlyMe()) {
             StatusBarUtil.StatusBarLightMode(this);
         }

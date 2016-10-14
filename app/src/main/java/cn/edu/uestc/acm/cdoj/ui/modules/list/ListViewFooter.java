@@ -2,11 +2,6 @@ package cn.edu.uestc.acm.cdoj.ui.modules.list;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.util.AttributeSet;
@@ -67,7 +62,7 @@ public class ListViewFooter extends LinearLayout {
             case LOADCOMPLETE:
                 mLoadingLayout.setVisibility(View.INVISIBLE);
                 mLoadCompleteLayout.setVisibility(View.VISIBLE);
-                mImageView.setImageBitmap(Global.listFootericon_done);
+                mImageView.setImageBitmap(Global.listFooterIcon_done);
                 mTextView.setText(getContext().getString(R.string.loadComplete));
                 break;
             case BLANK:
@@ -77,13 +72,13 @@ public class ListViewFooter extends LinearLayout {
             case LOADPROBLEM:
                 mLoadingLayout.setVisibility(View.INVISIBLE);
                 mLoadCompleteLayout.setVisibility(View.VISIBLE);
-                mImageView.setImageBitmap(Global.listFootericon_problem);
+                mImageView.setImageBitmap(Global.listFooterIcon_problem);
                 mTextView.setText(getContext().getString(R.string.loadProblem));
                 break;
             case NODATA:
                 mLoadingLayout.setVisibility(View.INVISIBLE);
                 mLoadCompleteLayout.setVisibility(View.VISIBLE);
-                mImageView.setImageBitmap(Global.listFootericon_noData);
+                mImageView.setImageBitmap(Global.listFooterIcon_noData);
                 mTextView.setText(getContext().getString(R.string.noData));
         }
     }

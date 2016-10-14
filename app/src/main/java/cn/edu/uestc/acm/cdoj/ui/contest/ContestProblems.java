@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.net.data.Result;
 import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebViewFragment;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.Problem;
@@ -23,7 +22,7 @@ import cn.edu.uestc.acm.cdoj.net.data.Problem;
  */
 public class ContestProblems extends Fragment{
     private View rootView;
-    private ViewPager viewPager;
+    private ViewPager mViewPager;
     private TabLayout tabLayout;
     private int problemsCount;
     private DetailWebViewFragment[] problems;
@@ -46,7 +45,8 @@ public class ContestProblems extends Fragment{
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (savedInstanceState == null) {
-            viewPager = (ViewPager) rootView.findViewById(R.id.contestProblems_viewPager);
+            mViewPager = (ViewPager) rootView.findViewById(R.id.contestProblems_viewPager);
+            mViewPager.setOffscreenPageLimit(4);
             tabLayout = (TabLayout) rootView.findViewById(R.id.contestProblems_tabLayout);
             tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
             if (problems != null) setViewPagerAdapter();
@@ -60,11 +60,11 @@ public class ContestProblems extends Fragment{
             problems[i] = (new DetailWebViewFragment()).switchHTMLData(ViewHandler.PROBLEM_DETAIL);
             problems[i].addJSData(problemList.get(i).getContentString());
         }
-        if (viewPager != null) setViewPagerAdapter();
+        if (mViewPager != null) setViewPagerAdapter();
     }
 
     private void setViewPagerAdapter() {
-        viewPager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
+        mViewPager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
                 return problems[position];
@@ -75,7 +75,7 @@ public class ContestProblems extends Fragment{
                 return problemsCount;
             }
         });
-        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setupWithViewPager(mViewPager);
         for (int i = 0; i != problemsCount; ++i) {
             tabLayout.getTabAt(i).setText(String.valueOf((char)('A' + i)));
         }

@@ -151,7 +151,7 @@ public class ContestClarification extends Fragment implements ViewHandler{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mProgressDialog = ProgressDialog
                         .show(parent.getContext(), getString(R.string.getting), getString(R.string.linking));
-                NetData.getArticleDetail((int) listItems.get(position).get("id"), ContestClarification.this);
+                NetData.getArticleDetail((int) listItems.get(position).get("articleId"), ContestClarification.this);
             }
         });
     }
@@ -173,9 +173,9 @@ public class ContestClarification extends Fragment implements ViewHandler{
                         temMap.put("content", ((String) temMap.get("content")).replaceAll("!\\[title].*\\)", "[图片]"));
                         temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
                         temMap.put("header", R.drawable.logo);
-                        Global.userManager.getAvatar((String) temMap.get("ownerEmail"), i, this);
+                        listItems.add(temMap);
+                        Global.userManager.getAvatar((String) temMap.get("ownerEmail"), listItems.size() - 1, this);
                     }
-                    listItems.addAll(temArrayList);
                     if (listItems.size() == 0) {
                         mListView.setDataIsNull();
                         notifyDataSetChanged();

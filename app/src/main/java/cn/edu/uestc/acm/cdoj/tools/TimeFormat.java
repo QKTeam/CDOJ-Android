@@ -21,11 +21,11 @@ public class TimeFormat {
         long minutes = (timeLength % (60 * 60)) / 60;
         long seconds = timeLength % 60;
         if (days > 0) {
-            formatTime = days + "d" + hours + "h" + minutes + "m" + seconds + "s";
+            formatTime = days + "d:" + hours + "h:" + minutes + "m:" + seconds + "s";
         } else if (hours > 0) {
-            formatTime = hours + "h" + minutes + "m" + seconds+ "s";
+            formatTime = hours + "h:" + minutes + "m:" + seconds+ "s";
         } else if (minutes > 0) {
-            formatTime = minutes + "m" + seconds+ "s";
+            formatTime = minutes + "m:" + seconds+ "s";
         } else {
             formatTime = seconds + "s";
         }

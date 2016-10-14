@@ -5,15 +5,17 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.view.ViewGroup;
+import android.util.Log;
 import android.view.WindowManager;
+import android.widget.TextView;
+
+import java.util.Locale;
 
 import cn.edu.uestc.acm.cdoj.R;
+import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
-import cn.edu.uestc.acm.cdoj.ui.contest.ContestFragment;
-import cn.edu.uestc.acm.cdoj.ui.notice.ArticleFragment;
-import cn.edu.uestc.acm.cdoj.ui.problem.ProblemFragment;
+import cn.edu.uestc.acm.cdoj.ui.contest.ContestListFragment;
+import cn.edu.uestc.acm.cdoj.ui.problem.ProblemListFragment;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.FlyMeUtils;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.MIUIUtils;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.StatusBarUtil;
@@ -28,18 +30,16 @@ public class SearchResult extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
-        initStatusBar();
+        setContentView(R.layout.activity_search_result);
+        setupSystemBar();
         if (savedInstanceState == null) {
             initViews();
         }
     }
 
-    private void initStatusBar() {
+    private void setupSystemBar() {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        View statusBarBackGroundView = StatusBarUtil
-                .setStatusBarColor(this, R.color.main_background, R.color.statusBar_background_gray);
-        ((ViewGroup) findViewById(R.id.activity_detail_status)).addView(statusBarBackGroundView);
+        StatusBarUtil.setStatusBarColor(this, R.color.statusBar_background_white, R.color.statusBar_background_gray, true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M || MIUIUtils.isMIUI() || FlyMeUtils.isFlyMe()) {
             StatusBarUtil.StatusBarLightMode(this);
         }
@@ -48,26 +48,24 @@ public class SearchResult extends AppCompatActivity {
     private void initViews() {
         intent = getIntent();
         int type = intent.getIntExtra("type", 0);
-        int id = intent.getIntExtra("id", 1);
-        Fragment detail = null;
+        String key = intent.getStringExtra("key");
+        TextView textView = (TextView) findViewById(R.id.searchResult_title);
+        textView.setText(String.format(Locale.CHINA, "\"%s\" search result:", key));
+        ViewHandler result = null;
         switch (type) {
-            case ViewHandler.ARTICLE_DETAIL:
-                detail = new ArticleFragment();
-                ((ArticleFragment) detail).setTitle(intent.getStringExtra("title"))
-                        .refresh(id);
+            case ViewHandler.PROBLEM_LIST:
+                result = new ProblemListFragment();
+                int problemId = intent.getIntExtra("problemId", 0);
+                if (problemId != 0) key = "";
+                NetData.getProblemList(1, key, problemId, result);
                 break;
-            case ViewHandler.PROBLEM_DETAIL:
-                detail = new ProblemFragment();
-                ((ProblemFragment) detail).setTitle(intent.getStringExtra("title"))
-                        .refresh(id);
-                break;
-            case ViewHandler.CONTEST_DETAIL:
-                detail = new ContestFragment();
-                ((ContestFragment) detail).refresh(id);
+            case ViewHandler.CONTEST_LIST:
+                result = new ContestListFragment();
+                NetData.getContestList(1, key, result);
                 break;
         }
         getFragmentManager().beginTransaction()
-                .replace(R.id.detail_activity, detail)
+                .replace(R.id.searchResult_container, (Fragment) result)
                 .commit();
     }
 }

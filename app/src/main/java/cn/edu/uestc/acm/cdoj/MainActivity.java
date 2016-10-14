@@ -7,17 +7,42 @@ import android.os.Bundle;
 import java.io.IOException;
 import java.io.InputStream;
 
+import cn.edu.uestc.acm.cdoj.net.NetData;
+import cn.edu.uestc.acm.cdoj.net.UserManager;
 import cn.edu.uestc.acm.cdoj.tools.DrawImage;
 import cn.edu.uestc.acm.cdoj.tools.RGBAColor;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchHistoryManager;
 
 public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        startLaunchActivity();
+        keepLogin();
+        readHTMLFile();
+        setupDefaultColorMatrix();
+        setupStatusIcons();
+        setupListFooterIcons();
+        readSearchHistoriesFile();
+        finish();
+    }
+
+    private void startLaunchActivity() {
         Intent launchActivityIntent = new Intent(this, LaunchCartoonActivity.class);
         startActivity(launchActivityIntent);
+    }
+
+    private void keepLogin() {
+        Global.userManager = new UserManager(this);
+        if (Global.userManager.isLogin()) {
+            Global.userManager.keepLogin();
+        }
+        NetData.getUser
+    }
+
+    private void readHTMLFile() {
         try {
             InputStream input;
             byte[] in;
@@ -36,14 +61,14 @@ public class MainActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void setupDefaultColorMatrix() {
         Global.mainColorMatrix = new float[]{
                 0, 0, 0, 0, 255,
                 0, 0, 0, 0, 166,
                 0, 0, 0, 0, 0,
                 0, 0, 0, 1, 0};
-        setupStatusIcons();
-        setupListFooterIcons();
-        finish();
     }
 
     private void setupStatusIcons() {
@@ -58,8 +83,13 @@ public class MainActivity extends Activity {
     }
 
     private void setupListFooterIcons() {
-        Global.listFootericon_noData = DrawImage.draw(this, R.drawable.ic_sync_disabled_white, true);
-        Global.listFootericon_problem = DrawImage.draw(this, R.drawable.ic_sync_problem_white, true);
-        Global.listFootericon_done = DrawImage.draw(this, R.drawable.ic_done_white, true);
+        Global.listFooterIcon_noData = DrawImage.draw(this, R.drawable.ic_sync_disabled_white, true);
+        Global.listFooterIcon_problem = DrawImage.draw(this, R.drawable.ic_sync_problem_white, true);
+        Global.listFooterIcon_done = DrawImage.draw(this, R.drawable.ic_done_white, true);
+    }
+
+    private void readSearchHistoriesFile() {
+        Global.problemSearchHistory = SearchHistoryManager.getAllHistories(this, "problem");
+        Global.contestSearchHistory = SearchHistoryManager.getAllHistories(this, "contest");
     }
 }

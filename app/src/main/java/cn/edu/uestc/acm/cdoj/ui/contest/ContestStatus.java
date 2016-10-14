@@ -96,7 +96,7 @@ public class ContestStatus extends Fragment implements ViewHandler{
     private ListAdapter setupAdapter() {
         mListAdapter = new SimpleAdapter(
                 Global.currentMainUIActivity, listItems, R.layout.contest_status_item_list,
-                new String[]{"returnType", "language", "length", "userName", "timeCost", "memoryCost", "probOrder", "time"},
+                new String[]{"returnType", "language", "length", "nickName", "timeCost", "memoryCost", "probOrder", "time"},
                 new int[]{R.id.contestStatus_result, R.id.contestStatus_language, R.id.contestStatus_codeLength,
                         R.id.contestStatus_user, R.id.contestStatus_timeCost, R.id.contestStatus_memoryCost,
                         R.id.contestStatus_probOrder, R.id.contestStatus_submitDate});
@@ -119,8 +119,8 @@ public class ContestStatus extends Fragment implements ViewHandler{
             ArrayList<Map<String, Object>> temArrayList = ((InfoList) result.getContent()).getInfoList();
             for (Map<String, Object> temMap : temArrayList) {
                 temMap.put("length", temMap.get("length") + "B");
-                temMap.put("timeCost", temMap.get("timeCost") + "ms");
-                temMap.put("memoryCost", temMap.get("memoryCost") + "B");
+                temMap.put("timeCost", temMap.get("timeCost") + " ms");
+                temMap.put("memoryCost", temMap.get("memoryCost") + " B");
                 if (problemIDs != null) {
                     int i = 0;
                     while (i < problemIDs.length && (int) temMap.get("problemId") != problemIDs[i])

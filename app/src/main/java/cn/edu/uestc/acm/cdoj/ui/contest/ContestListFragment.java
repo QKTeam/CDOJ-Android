@@ -19,7 +19,6 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -96,13 +95,13 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
             }
         });
         mListView.setProgressContainerVisibility(progressContainerVisibility);
-        configOnListItemClick();
+        setupOnListItemClick();
         if (refreshed) refresh();
         mListView.setLayoutParams(container.getLayoutParams());
         return mListView;
     }
 
-    private void configOnListItemClick() {
+    private void setupOnListItemClick() {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -136,23 +135,23 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
     private void reminderUnLogin() {
         final boolean[] enter = {false};
         AlertDialog.Builder alert = new AlertDialog.Builder(context)
-                .setTitle("未登录")
-                .setMessage("您还未登录，部分功能将无法使用")
-                .setPositiveButton("登录", new DialogInterface.OnClickListener() {
+                .setTitle(getString(R.string.notLogin))
+                .setMessage(getString(R.string.reminderNotLogin))
+                .setPositiveButton(getString(R.string.login), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(context, LoginActivity.class);
                         context.startActivity(intent);
                     }
                 })
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
                 });
         if (listItems.get(clickPosition).get("typeName").equals("Public")) {
-            alert.setNeutralButton("直接进入", new DialogInterface.OnClickListener() {
+            alert.setNeutralButton(getString(R.string.enterDirectly), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     showDetail();
@@ -165,9 +164,9 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
     private void reminderEnterPassword() {
         final EditText passwordET = new EditText(context);
         new AlertDialog.Builder(context)
-                .setTitle("请输入进入该比赛的密码：")
+                .setTitle(getString(R.string.pleaseEnterPassword))
                 .setView(passwordET)
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         showAlreadyClick();
@@ -175,7 +174,7 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
                                 passwordET.getText().toString(), ContestListFragment.this);
                     }
                 })
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                     }
@@ -218,7 +217,7 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
                 notifyDataSetChanged();
                 break;
             case ViewHandler.LOGIN_CONTEST:
-                if (mPageInfo.currentPage == 1 && progressDialog != null){
+                if (progressDialog != null){
                     progressDialog.cancel();
                 }
                 if (result.result) {
@@ -295,16 +294,16 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
 
     private void reminderLoginError() {
         AlertDialog.Builder alert = new AlertDialog.Builder(context)
-                .setMessage("密码错误或者您无权查看该比赛！")
-                .setNeutralButton("确定", new DialogInterface.OnClickListener() {
+                .setMessage(getString(R.string.reminderLoginError))
+                .setNeutralButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
         if (listItems.get(clickPosition).get("typeName").equals("Private")) {
-            alert.setMessage("密码错误，请重新输入！");
+            alert.setMessage(getString(R.string.passwordIsWrong));
         } else {
-            alert.setMessage("您无查看该比赛的相关权限！");
+            alert.setMessage(getString(R.string.noPermission));
         }
         alert.show();
     }
