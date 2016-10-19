@@ -203,18 +203,6 @@ public class ContestClarification extends Fragment implements ViewHandler{
                 mProgressDialog.cancel();
                 WebView webView = new WebView(mListView.getContext());
                 webView.getSettings().setJavaScriptEnabled(true);
-                if (Global.HTMLDATA_ARTICLE == null) {
-                    try {
-                        InputStream input;
-                        byte[] in;
-                        input = getResources().getAssets().open("articleRender.html");
-                        in = new byte[input.available()];
-                        input.read(in);
-                        Global.HTMLDATA_ARTICLE = new String(in);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
                 String webData = Global.HTMLDATA_ARTICLE.replace("{{{replace_data_here}}}", ((Article) result.getContent()).getContentString());
                 webView.loadDataWithBaseURL(acmWebUrl, webData, mimeType, encoding, null);
                 new AlertDialog.Builder(mListView.getContext())

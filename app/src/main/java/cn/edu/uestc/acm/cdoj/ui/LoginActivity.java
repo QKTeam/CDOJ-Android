@@ -11,9 +11,12 @@ import android.view.WindowManager;
 import android.widget.EditText;
 
 import cn.edu.uestc.acm.cdoj.R;
+import cn.edu.uestc.acm.cdoj.net.NetData;
+import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
-import cn.edu.uestc.acm.cdoj.net.ViewHandler;
+import cn.edu.uestc.acm.cdoj.ui.user.UserInfo;
+import cn.edu.uestc.acm.cdoj.ui.user.UserInfoManager;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.FlyMeUtils;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.MIUIUtils;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.StatusBarUtil;
@@ -63,6 +66,14 @@ public class LoginActivity extends AppCompatActivity implements ViewHandler{
                 });
         if (isSuccessful) {
             dialog.setMessage(R.string.loginSuccess);
+            UserInfo userTem;
+            if (!UserInfoManager.hasUserInfo()) {
+                userTem = new UserInfo();
+                UserInfoManager.addNewUser(this, userTem);
+            } else {
+                userTem = UserInfoManager.getUserInfo();
+            }
+            NetData.getUserProfile(username, null, userTem);
         }else {
             dialog.setMessage(R.string.loginFail);
         }

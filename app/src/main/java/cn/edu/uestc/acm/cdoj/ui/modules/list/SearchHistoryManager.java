@@ -18,14 +18,14 @@ import java.util.Scanner;
 public class SearchHistoryManager {
 
     public static void deleteSuggestionFile(Context context, String type) {
-        File file = new File(context.getFilesDir().getPath() + type + "Suggestion");
-        file.deleteOnExit();
+        File file = new File(context.getFilesDir().getPath() + "/" + type + "Suggestion");
+        file.delete();
     }
 
     public static void addSuggestion(Context context, String type, ArrayList<SearchHistory> searchHistoryList, boolean clearHistory) {
-        File file = new File(context.getFilesDir().getPath() + type + "Suggestion");
+        File file = new File(context.getFilesDir().getPath() + "/" + type + "Suggestion");
         if (clearHistory) {
-            file.deleteOnExit();
+            file.delete();
         }
         try {
             if (!file.exists()) {
@@ -42,7 +42,7 @@ public class SearchHistoryManager {
     }
 
     public static void addSuggestion(Context context, String type, String searchString) {
-        File file = new File(context.getFilesDir().getPath(), type + "Suggestion");
+        File file = new File(context.getFilesDir().getPath() + "/" + type + "Suggestion");
         try {
             if (!file.exists()) {
                 if (!file.createNewFile()) return;
@@ -63,7 +63,7 @@ public class SearchHistoryManager {
     public static ArrayList<SearchHistory> getHistories(Context context, String type, int count) {
         if (count > 10) count = 10;
         ArrayList<SearchHistory> suggestionList = new ArrayList<>();
-        File file = new File(context.getFilesDir().getPath() + type + "Suggestion");
+        File file = new File(context.getFilesDir().getPath() + "/" + type + "Suggestion");
         if (!file.exists()) return suggestionList;
         try {
             Scanner input = new Scanner(file);

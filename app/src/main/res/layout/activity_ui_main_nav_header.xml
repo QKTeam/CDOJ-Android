@@ -12,25 +12,39 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <ImageView
-        android:id="@+id/main_ui_nav_view_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        app:srcCompat="@android:drawable/sym_def_app_icon" />
+    <FrameLayout
+        android:layout_width="90dp"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:paddingTop="@dimen/nav_header_vertical_spacing">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="17sp"
+            android:textColor="@color/main_blue"
+            android:text="@string/login"/>
+        <ImageView
+            android:id="@+id/main_ui_nav_view_header"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:onClick="loginOrExit"
+            app:srcCompat="@drawable/logo_orange" />
+    </FrameLayout>
 
     <TextView
-        android:id="@+id/main_ui_nav_view_text1"
+        android:id="@+id/main_ui_nav_view_nickName"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Android Studio"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="bottom"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
-        android:id="@+id/main_ui_nav_view_text2"
+        android:id="@+id/main_ui_nav_view_userName"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="android.studio@android.com" />
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
 </LinearLayout>

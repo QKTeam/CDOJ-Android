@@ -1,6 +1,8 @@
 package cn.edu.uestc.acm.cdoj.ui;
 
+import android.app.Dialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -10,11 +12,14 @@ import android.support.annotation.IntDef;
 import android.support.design.widget.NavigationView;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -25,7 +30,6 @@ import android.widget.TextView;
 import com.arlib.floatingsearchview.FloatingSearchView;
 import com.arlib.floatingsearchview.suggestions.SearchSuggestionsAdapter;
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
-import com.arlib.floatingsearchview.util.Util;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -34,13 +38,15 @@ import java.util.Collections;
 import java.util.regex.Pattern;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.net.UserManager;
+import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
 import cn.edu.uestc.acm.cdoj.tools.DrawImage;
 import cn.edu.uestc.acm.cdoj.tools.RGBAColor;
 import cn.edu.uestc.acm.cdoj.ui.contest.ContestListFragment;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.ui.user.UserInfo;
+import cn.edu.uestc.acm.cdoj.ui.user.UserInfoManager;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.MainList;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchHistory;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchHistoryManager;
@@ -50,7 +56,6 @@ import cn.edu.uestc.acm.cdoj.ui.problem.ProblemListFragment;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.FlyMeUtils;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.MIUIUtils;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.StatusBarUtil;
-import cn.edu.uestc.acm.cdoj.ui.user.User;
 
 
 /**
@@ -65,11 +70,31 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
     public static final int SELECT = 0;
     public static final int NOTSELECT = 1;
 
+    public void loginOrExit(View view) {
+        if (Global.userManager.isLogin()) {
+            Global.userManager.logout(new UserInfoManager());
+            ((ImageView) view).setImageResource(R.drawable.logo_orange);
+            ((TextView) findViewById(R.id.main_ui_nav_view_nickName)).setText("");
+            ((TextView) findViewById(R.id.main_ui_nav_view_userName)).setText("");
+            new AlertDialog.Builder(this)
+                    .setTitle("已退出登录")
+                    .setNeutralButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .show();
+        }else{
+            Intent intent = new Intent(MainUIActivity.this, LoginActivity.class);
+            startActivity(intent);
+        }
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+    }
+
     @IntDef({NOTICELIST, PROBLEMLIST, CONTESTLIST})
     @Retention(RetentionPolicy.SOURCE)
-    @interface list {
-
-    }
+    @interface list {}
     @IntDef({SELECT, NOTSELECT})
     @Retention(RetentionPolicy.SOURCE)
     @interface selectStatus {
@@ -80,7 +105,7 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
     private NoticeListFragment noticeList;
     private ProblemListFragment problemList;
     private ContestListFragment contestList;
-    private User user;
+    private UserInfo userInfo;
     private Toolbar mToolbar;
     private ImageButton[] bottomButtons = new ImageButton[4];
     private FloatingSearchView mSearchView;
@@ -105,6 +130,12 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        setupNavigationView();
+    }
+
+    @Override
     protected void onRestart() {
         Global.userManager.keepLogin();
         super.onRestart();
@@ -117,13 +148,21 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
         super.onDestroy();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     private void initViews() {
         mSearchFrameLayout.setVisibility(View.INVISIBLE);
         mToolbar.setTitle(getString(R.string.notice));
         noticeList = new NoticeListFragment().refresh();
         problemList = new ProblemListFragment().refresh();
         contestList = new ContestListFragment().refresh();
-        user = new User();
         setupSystemBar();
         setupSearchView();
         setupViewPager((ViewPager) findViewById(R.id.ui_main_list_ViewPager));
@@ -152,6 +191,26 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
                 StatusBarUtil.StatusBarLightMode(this);
             }
         }
+    }
+
+    private void setupNavigationView() {
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                if (UserInfoManager.hasUserInfo()) {
+                    UserInfo userInfo = UserInfoManager.getUserInfo();
+                    ((TextView) findViewById(R.id.main_ui_nav_view_nickName)).setText(userInfo.getNickName());
+                    ((TextView) findViewById(R.id.main_ui_nav_view_userName)).setText(userInfo.getUserName());
+                    ((ImageView) findViewById(R.id.main_ui_nav_view_header)).setImageBitmap(userInfo.getHeader());
+                }
+            }
+        };
+        toggle.syncState();
+        mDrawerLayout.addDrawerListener(toggle);
+
+        NavigationView a;
     }
 
     private void setupSearchView() {
@@ -282,15 +341,13 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
                         return problemList;
                     case 2:
                         return contestList;
-                    case 3:
-                        return user;
                 }
                 return null;
             }
 
             @Override
             public int getCount() {
-                return 4;
+                return 3;
             }
         });
     }

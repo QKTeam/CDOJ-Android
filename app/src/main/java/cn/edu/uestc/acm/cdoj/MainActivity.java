@@ -3,29 +3,35 @@ package cn.edu.uestc.acm.cdoj;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.UserManager;
 import cn.edu.uestc.acm.cdoj.tools.DrawImage;
 import cn.edu.uestc.acm.cdoj.tools.RGBAColor;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.ui.user.UserInfoManager;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchHistoryManager;
 
 public class MainActivity extends Activity {
+
+    String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         startLaunchActivity();
-        keepLogin();
+        userInfoManage();
         readHTMLFile();
         setupDefaultColorMatrix();
         setupStatusIcons();
         setupListFooterIcons();
         readSearchHistoriesFile();
+        Global.filesDirPath = getFilesDir().getPath();
+        Log.d(TAG, "onCreate: " + Global.filesDirPath);
+        Log.d(TAG, "onCreate: " + getFilesDir().getAbsolutePath());
         finish();
     }
 
@@ -34,12 +40,12 @@ public class MainActivity extends Activity {
         startActivity(launchActivityIntent);
     }
 
-    private void keepLogin() {
+    private void userInfoManage() {
         Global.userManager = new UserManager(this);
         if (Global.userManager.isLogin()) {
             Global.userManager.keepLogin();
         }
-        NetData.getUser
+        UserInfoManager.readLocalUserInfo();
     }
 
     private void readHTMLFile() {

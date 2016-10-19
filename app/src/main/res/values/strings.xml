@@ -40,4 +40,8 @@
     <string name="notLogin">未登录</string>
     <string name="reminderNotLogin">您还未登录，部分功能将无法使用</string>
     <string name="enterDirectly">直接进入</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="me">我</string>
 </resources>

@@ -43,6 +43,10 @@
             android:parentActivityName="cn.edu.uestc.acm.cdoj.ui.MainUIActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="cn.edu.uestc.acm.cdoj.ui.user.UserInfoDetailActivity"
+            android:parentActivityName="cn.edu.uestc.acm.cdoj.ui.MainUIActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
-
 </manifest>
