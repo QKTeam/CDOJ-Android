@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -29,9 +30,7 @@ public class MainActivity extends Activity {
         setupStatusIcons();
         setupListFooterIcons();
         readSearchHistoriesFile();
-        Global.filesDirPath = getFilesDir().getPath();
-        Log.d(TAG, "onCreate: " + Global.filesDirPath);
-        Log.d(TAG, "onCreate: " + getFilesDir().getAbsolutePath());
+        Global.filesDirPath = getFilesDir().getPath() + File.separator;
         finish();
     }
 
@@ -95,7 +94,7 @@ public class MainActivity extends Activity {
     }
 
     private void readSearchHistoriesFile() {
-        Global.problemSearchHistory = SearchHistoryManager.getAllHistories(this, "problem");
-        Global.contestSearchHistory = SearchHistoryManager.getAllHistories(this, "contest");
+        Global.problemSearchHistory = SearchHistoryManager.getAllHistories("problem");
+        Global.contestSearchHistory = SearchHistoryManager.getAllHistories("contest");
     }
 }

@@ -143,8 +143,8 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
 
     @Override
     protected void onDestroy() {
-        SearchHistoryManager.addSuggestion(this, "problem", Global.problemSearchHistory, true);
-        SearchHistoryManager.addSuggestion(this, "contest", Global.contestSearchHistory, true);
+        SearchHistoryManager.addSuggestion("problem", Global.problemSearchHistory, true);
+        SearchHistoryManager.addSuggestion("contest", Global.contestSearchHistory, true);
         super.onDestroy();
     }
 

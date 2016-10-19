@@ -151,7 +151,7 @@ public class UserInfo implements ViewHandler{
 
     private void writeInfoToLocalFile() {
         try {
-            File file = new File(Global.filesDirPath + "/userInfo");
+            File file = new File(Global.filesDirPath + "userInfo");
             if (file.exists()) {
                 file.delete();
             }

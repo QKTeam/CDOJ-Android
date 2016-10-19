@@ -47,7 +47,7 @@ public class UserInfoManager implements ViewHandler {
     public static UserInfo readLocalUserInfo() {
         Map<String, Object> userInfoMap = new HashMap<>();
         try {
-            File file = new File(Global.filesDirPath + "/userInfo");
+            File file = new File(Global.filesDirPath + "userInfo");
             if (!file.exists()) {
                 Log.d("没有登录文件", "readLocalUserInfo: ");
                 return null;
@@ -89,7 +89,7 @@ public class UserInfoManager implements ViewHandler {
         switch (which) {
             case ViewHandler.LOGOUT:
                 userInfo = null;
-                File file = new File(Global.filesDirPath + "/userInfo");
+                File file = new File(Global.filesDirPath + "userInfo");
                 file.delete();
         }
     }

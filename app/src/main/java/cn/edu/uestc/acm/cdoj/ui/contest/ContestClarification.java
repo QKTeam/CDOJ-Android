@@ -1,11 +1,9 @@
 package cn.edu.uestc.acm.cdoj.ui.contest;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,22 +11,18 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
-import cn.edu.uestc.acm.cdoj.net.data.Article;
 import cn.edu.uestc.acm.cdoj.net.data.InfoList;
 import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
@@ -40,9 +34,6 @@ import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
  * Created by great on 2016/8/25.
  */
 public class ContestClarification extends Fragment implements ViewHandler{
-    private final String acmWebUrl = "http://acm.uestc.edu.cn/";
-    private final String mimeType = "text/html";
-    private final String encoding = "utf-8";
 
     private SimpleAdapter mListAdapter;
     private int contestID = -1;
@@ -85,29 +76,10 @@ public class ContestClarification extends Fragment implements ViewHandler{
                 }
             }
         });
-        configOnListItemClick();
+        setupOnListItemClick();
         if (refreshed) refresh();
         mListView.setLayoutParams(container.getLayoutParams());
         return mListView;
-    }
-
-    public void addListItem(Map<String, Object> listItem) {
-        listItems.add(listItem);
-    }
-
-    public void notifyDataSetChanged() {
-        if (mListAdapter == null) {
-            mListView.setAdapter(setupAdapter());
-        }else {
-            mListAdapter.notifyDataSetChanged();
-        }
-        mListAdapter.notifyDataSetChanged();
-        if (mListView.isPullUpLoading()) {
-            mListView.setPullUpLoading(false);
-        }
-        if (mListView.isRefreshing()) {
-            mListView.setRefreshing(false);
-        }
     }
 
     private ListAdapter setupAdapter() {
@@ -144,14 +116,13 @@ public class ContestClarification extends Fragment implements ViewHandler{
         return mListAdapter;
     }
 
-
-    private void configOnListItemClick() {
+    private void setupOnListItemClick() {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mProgressDialog = ProgressDialog
-                        .show(parent.getContext(), getString(R.string.getting), getString(R.string.linking));
-                NetData.getArticleDetail((int) listItems.get(position).get("articleId"), ContestClarification.this);
+                        .show(context, getString(R.string.getting), getString(R.string.linking));
+                NetData.getArticleDetail((int) listItems.get(position).get("articleId"), new ContestClarificationAlert(context, mProgressDialog));
             }
         });
     }
@@ -167,15 +138,8 @@ public class ContestClarification extends Fragment implements ViewHandler{
                 }
                 if (result.result){
                     mPageInfo = ((InfoList) result.getContent()).pageInfo;
-                    ArrayList<Map<String, Object>> temArrayList = ((InfoList) result.getContent()).getInfoList();
-                    for (int i =0; i < temArrayList.size(); ++i) {
-                        Map<String, Object> temMap = temArrayList.get(i);
-                        temMap.put("content", ((String) temMap.get("content")).replaceAll("!\\[title].*\\)", "[图片]"));
-                        temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
-                        temMap.put("header", R.drawable.logo);
-                        listItems.add(temMap);
-                        Global.userManager.getAvatar((String) temMap.get("ownerEmail"), listItems.size() - 1, this);
-                    }
+                    ArrayList<Map<String, Object>> listItemsReceived = ((InfoList) result.getContent()).getInfoList();
+                    setupReceivedData(listItemsReceived);
                     if (listItems.size() == 0) {
                         mListView.setDataIsNull();
                         notifyDataSetChanged();
@@ -198,22 +162,32 @@ public class ContestClarification extends Fragment implements ViewHandler{
                     ImageView imageView = (ImageView) view.findViewById(R.id.contestClarification_header);
                     if (imageView != null) imageView.setImageBitmap((Bitmap) result.getContent());
                 }
-                return;
-            case ViewHandler.ARTICLE_DETAIL:
-                mProgressDialog.cancel();
-                WebView webView = new WebView(mListView.getContext());
-                webView.getSettings().setJavaScriptEnabled(true);
-                String webData = Global.HTMLDATA_ARTICLE.replace("{{{replace_data_here}}}", ((Article) result.getContent()).getContentString());
-                webView.loadDataWithBaseURL(acmWebUrl, webData, mimeType, encoding, null);
-                new AlertDialog.Builder(mListView.getContext())
-                        .setView(webView)
-                        .setNegativeButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+        }
+    }
 
-                            }
-                        })
-                        .show();
+    private void setupReceivedData(ArrayList<Map<String, Object>> listItemsReceived) {
+        for (int i =0; i < listItemsReceived.size(); ++i) {
+            Map<String, Object> temMap = listItemsReceived.get(i);
+            temMap.put("content", ((String) temMap.get("content")).replaceAll("!\\[title].*\\)", "[图片]"));
+            temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
+            temMap.put("header", R.drawable.logo);
+            listItems.add(temMap);
+            Global.userManager.getAvatar((String) temMap.get("ownerEmail"), listItems.size() - 1, this);
+        }
+    }
+
+    public void notifyDataSetChanged() {
+        if (mListAdapter == null) {
+            mListView.setAdapter(setupAdapter());
+        }else {
+            mListAdapter.notifyDataSetChanged();
+        }
+        mListAdapter.notifyDataSetChanged();
+        if (mListView.isPullUpLoading()) {
+            mListView.setPullUpLoading(false);
+        }
+        if (mListView.isRefreshing()) {
+            mListView.setRefreshing(false);
         }
     }
 

@@ -8,9 +8,7 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +17,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
@@ -45,8 +42,8 @@ public class ContestRank extends Fragment implements ViewHandler {
     public static final int THEFIRSTSOLVED = 3;
 
     private SimpleAdapter mListAdapter;
-    private ArrayList<Map<String, Object>> rankListItems = new ArrayList<>();
-    ArrayList<String> problemsSolvedPercent = new ArrayList<>();
+    private ArrayList<Map<String, Object>> listItems = new ArrayList<>();
+    private ArrayList<String> problemsSolvedPercent = new ArrayList<>();
     private ListViewWithGestureLoad mListView;
     private Context context;
     private Integer contestID;
@@ -76,88 +73,21 @@ public class ContestRank extends Fragment implements ViewHandler {
                 refresh();
             }
         });
-        configOnListItemClick();
+        setupOnListItemClick();
         if (refreshed) refresh();
         mListView.setLayoutParams(container.getLayoutParams());
         return mListView;
     }
 
-    private void configOnListItemClick() {
+    private void setupOnListItemClick() {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Map<String, Object> RankListItem = rankListItems.get(position);
-                ListView itemDetailListView = new ListView(context);
-                itemDetailListView.addHeaderView(createItemListViewHeader(RankListItem));
-                itemDetailListView.setAdapter(createItemAdapter((ArrayList<Map<String, Object>>) RankListItem.get("itemList")));
-                showItemList(itemDetailListView);
+                Map<String, Object> item = listItems.get(position);
+                ArrayList<Map<String, Object>> problemsStatusList = (ArrayList<Map<String, Object>>) item.get("itemList");
+                new ContestRankAlert(context, item, problemsStatusList).show();
             }
         });
-    }
-
-    private View createItemListViewHeader(Map<String, Object> RankListItem) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LinearLayout headerView = (LinearLayout) inflater.inflate(R.layout.contest_rank_list_item_detail_header, null);
-        ImageView headerImageView = (ImageView) headerView.findViewById(R.id.contestRankItemHeader_header);
-        if (RankListItem.get("header") instanceof Bitmap) {
-            headerImageView.setImageBitmap((Bitmap) RankListItem.get("header"));
-        } else {
-            headerImageView.setImageResource((int) RankListItem.get("header"));
-        }
-        ((TextView) headerView.findViewById(R.id.contestRankItemHeader_nickName))
-                .setText((String) RankListItem.get("nickName"));
-        ((TextView) headerView.findViewById(R.id.contestRankItemHeader_rank))
-                .setText(String.valueOf(RankListItem.get("rank")));
-        ((TextView) headerView.findViewById(R.id.contestRankItemHeader_solvedNum))
-                .setText(String.valueOf(RankListItem.get("solved")));
-        return headerView;
-    }
-
-    private ListAdapter createItemAdapter(final ArrayList<Map<String, Object>> problemsStatusList) {
-        SimpleAdapter adapter = new SimpleAdapter(
-                Global.currentMainUIActivity, problemsStatusList, R.layout.contest_rank_list_item_detail,
-                new String[]{"solvedStatus", "problemOrder", "solvedTime", "tried", "problemSolvedPercent"},
-                new int[]{R.id.contestRankItem_container, R.id.contestRankItem_ProblemOrder, R.id.contestRankItem_solvedTime,
-                        R.id.contestRankItem_failureCount, R.id.contestRankItem_problemSolvedPercent});
-
-        adapter.setViewBinder(new SimpleAdapter.ViewBinder() {
-            @Override
-            public boolean setViewValue(View view, Object data, String textRepresentation) {
-                if (view instanceof TextView) {
-                    ((TextView) view).setText(String.valueOf(data));
-                    return true;
-                } else if (view instanceof LinearLayout) {
-                    switch ((int) data) {
-                        case THEFIRSTSOLVED:
-                            view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.rank_theFirstSolved));
-                            break;
-                        case SOLVED:
-                            view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.rank_solved));
-                            break;
-                        case TRIED:
-                            view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.rank_tried));
-                            break;
-                        default:
-                            view.setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.rank_didNothing));
-                    }
-                    return true;
-                }
-                return false;
-            }
-        });
-        return adapter;
-    }
-
-    private void showItemList(View itemDetailView) {
-        new AlertDialog.Builder(context)
-                .setView(itemDetailView)
-                .setNegativeButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                })
-                .show();
     }
 
     @Override
@@ -165,46 +95,13 @@ public class ContestRank extends Fragment implements ViewHandler {
         switch (which) {
             case ViewHandler.CONTEST_RANK:
                 problemsSolvedPercent.clear();
-                rankListItems.clear();
+                listItems.clear();
                 notifyDataSetChanged();
                 if (result.result) {
                     Map<String, Object> rankMap = (Map<String, Object>) ((Map<String, Object>) result.getContent()).get("rankList");
-                    ArrayList<Map<String, Object>> rankListItemsReceive = (ArrayList<Map<String, Object>>) rankMap.get("rankList");
-                    int compactorCount = rankListItemsReceive.size();
-                    for (Map<String, Object> temMap : (ArrayList<Map<String, Object>>) rankMap.get("problemList")) {
-                        int solved = (int) temMap.get("solved");
-                        int tried = (int) temMap.get("tried");
-                        float percent = 0;
-                        if (tried != 0) {
-                            percent = ((float) solved / (float) tried) * 100.0f;
-                        }
-                        problemsSolvedPercent.add(String.format(Locale.CHINA, "%.2f%%(%d/%d/%d)", percent, solved, tried, compactorCount));
-                    }
-                    problemsCount = problemsSolvedPercent.size();
-                    for (int i = 0; i < rankListItemsReceive.size(); i++) {
-                        Map<String, Object> temRankMap = rankListItemsReceive.get(i);
-                        temRankMap.put("header", R.drawable.logo);
-                        temRankMap.put("rank", String.valueOf((int) temRankMap.get("rank")));
-                        for (int j = 0; j < problemsCount; ++j) {
-                            Map<String, Object> itemListMap = ((ArrayList<Map<String, Object>>) temRankMap.get("itemList")).get(j);
-                            itemListMap.put("problemOrder", String.valueOf((char) ('A' + j)));
-                            itemListMap.put("problemSolvedPercent", problemsSolvedPercent.get(j));
-                            if ((boolean) itemListMap.get("firstBlood")) {
-                                itemListMap.put("solvedStatus", THEFIRSTSOLVED);
-                            } else if ((boolean) itemListMap.get("solved")) {
-                                itemListMap.put("solvedStatus", SOLVED);
-                            } else if ((int) itemListMap.get("tried") > 0) {
-                                itemListMap.put("solvedStatus", TRIED);
-                            }else {
-                                itemListMap.put("solvedStatus", DIDNOTHING);
-                            }
-                            itemListMap.put("solvedTime", TimeFormat.getFormatTime((int) itemListMap.get("solvedTime")));
-                            itemListMap.put("tried", String.valueOf(itemListMap.get("tried")));
-                        }
-                        rankListItems.add(temRankMap);
-                        Global.userManager.getAvatar(String.valueOf(temRankMap.get("email")), rankListItems.size() - 1, this);
-                    }
-                    if (rankListItems.size() == 0) {
+                    ArrayList<Map<String, Object>> listItemsReceived = (ArrayList<Map<String, Object>>) rankMap.get("rankList");
+                    setupReceivedData(rankMap, listItemsReceived);
+                    if (listItems.size() == 0) {
                         mListView.setDataIsNull();
                         notifyDataSetChanged();
                         return;
@@ -215,10 +112,11 @@ public class ContestRank extends Fragment implements ViewHandler {
                 }
                 notifyDataSetChanged();
                 return;
+
             case ViewHandler.AVATAR:
                 int position = (int) result.getExtra();
-                if (position < rankListItems.size()){
-                    rankListItems.get(position).put("header", result.getContent());
+                if (position < listItems.size()){
+                    listItems.get(position).put("header", result.getContent());
                 }
                 View view = mListView.findItemViewWithTag(position);
                 if (view != null) {
@@ -230,9 +128,52 @@ public class ContestRank extends Fragment implements ViewHandler {
         }
     }
 
+    private void setupReceivedData(Map<String, Object> rankMap, ArrayList<Map<String, Object>> listItemsReceived) {
+        int compactorCount = listItemsReceived.size();
+        for (Map<String, Object> temMap : (ArrayList<Map<String, Object>>) rankMap.get("problemList")) {
+            int solved = (int) temMap.get("solved");
+            int tried = (int) temMap.get("tried");
+            float percent = 0;
+            if (tried != 0) {
+                percent = ((float) solved / (float) tried) * 100.0f;
+            }
+            problemsSolvedPercent.add(String.format(Locale.CHINA, "%.2f%%(%d/%d/%d)", percent, solved, tried, compactorCount));
+        }
+        problemsCount = problemsSolvedPercent.size();
+        setupCompactorInfoDetail(compactorCount, listItemsReceived);
+    }
+
+    private void setupCompactorInfoDetail(int compactorCount, ArrayList<Map<String, Object>> listItemsReceived) {
+        for (int i = 0; i < compactorCount; i++) {
+            Map<String, Object> compactorInfoDetail = listItemsReceived.get(i);
+            compactorInfoDetail.put("header", R.drawable.logo);
+            compactorInfoDetail.put("rank", String.valueOf((int) compactorInfoDetail.get("rank")));
+
+            for (int j = 0; j < problemsCount; ++j) {
+                Map<String, Object> compactorProblemSolvedDetail = ((ArrayList<Map<String, Object>>) compactorInfoDetail.get("itemList")).get(j);
+                compactorProblemSolvedDetail.put("problemOrder", String.valueOf((char) ('A' + j)));
+                compactorProblemSolvedDetail.put("problemSolvedPercent", problemsSolvedPercent.get(j));
+                if ((boolean) compactorProblemSolvedDetail.get("firstBlood")) {
+                    compactorProblemSolvedDetail.put("solvedStatus", THEFIRSTSOLVED);
+                } else if ((boolean) compactorProblemSolvedDetail.get("solved")) {
+                    compactorProblemSolvedDetail.put("solvedStatus", SOLVED);
+                } else if ((int) compactorProblemSolvedDetail.get("tried") > 0) {
+                    compactorProblemSolvedDetail.put("solvedStatus", TRIED);
+                } else {
+                    compactorProblemSolvedDetail.put("solvedStatus", DIDNOTHING);
+                }
+                compactorProblemSolvedDetail.put("solvedTime", TimeFormat.getFormatTime((int) compactorProblemSolvedDetail.get("solvedTime")));
+                compactorProblemSolvedDetail.put("tried", String.valueOf(compactorProblemSolvedDetail.get("tried")));
+            }
+
+            listItems.add(compactorInfoDetail);
+            Global.userManager.getAvatar(String.valueOf(compactorInfoDetail.get("email")), listItems.size() - 1, this);
+        }
+    }
+
     public void notifyDataSetChanged() {
         if (mListAdapter == null) {
-            mListView.setAdapter(createRankListAdapter());
+            mListView.setAdapter(setupAdapter());
         }else {
             mListAdapter.notifyDataSetChanged();
         }
@@ -242,9 +183,9 @@ public class ContestRank extends Fragment implements ViewHandler {
         }
     }
 
-    private ListAdapter createRankListAdapter() {
+    private ListAdapter setupAdapter() {
         mListAdapter = new SimpleAdapter(
-                Global.currentMainUIActivity, rankListItems, R.layout.contest_rank_list_item,
+                Global.currentMainUIActivity, listItems, R.layout.contest_rank_list_item,
                 new String[]{"header", "rank", "nickName", "name", "itemList"},
                 new int[]{R.id.contestRank_header, R.id.contestRank_rank, R.id.contestRank_nickName,
                         R.id.contestRank_account, R.id.contestRank_problemsStatus}) {
@@ -255,11 +196,11 @@ public class ContestRank extends Fragment implements ViewHandler {
                 return v;
             }
         };
-        setupRankAdapterBinder();
+        setupAdapterBinder();
         return mListAdapter;
     }
 
-    private void setupRankAdapterBinder() {
+    private void setupAdapterBinder() {
         mListAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
             @Override
             public boolean setViewValue(View view, Object data, String textRepresentation) {
@@ -275,7 +216,7 @@ public class ContestRank extends Fragment implements ViewHandler {
                     ((TextView) view).setText(data.toString());
                     return true;
                 } else if (view instanceof LinearLayout) {
-                    setupRankProblemsStatusView(view, data);
+                    setupProblemsStatusView(view, data);
                     return true;
                 }
                 return false;
@@ -283,18 +224,13 @@ public class ContestRank extends Fragment implements ViewHandler {
         });
     }
 
-    public void setupRankProblemsStatusView(View view, Object data) {
+    public void setupProblemsStatusView(View view, Object data) {
         ArrayList<Map<String, Object>> problemsStatusList = (ArrayList<Map<String, Object>>) data;
         for (int i = 0; i < 9 && i < problemsCount; ++i) {
             Map<String, Object> problemStatus = problemsStatusList.get(i);
             FrameLayout markContainer = (FrameLayout) ((LinearLayout) view).getChildAt(i);
             markContainer.setVisibility(View.VISIBLE);
             ImageView bg = (ImageView) markContainer.getChildAt(0);
-            /*if ((boolean) problemStatus.get("firstBlood")) {
-            } else if ((boolean) problemStatus.get("solved")) {
-            } else if ((int) problemStatus.get("tried") > 0) {
-            }else {
-            }*/
             switch ((int) problemStatus.get("solvedStatus")) {
                 case THEFIRSTSOLVED:
                     bg.setImageBitmap(Global.theFirstSolvedIcon);

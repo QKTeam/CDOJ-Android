@@ -1,6 +1,7 @@
 package cn.edu.uestc.acm.cdoj.ui.modules.list;
 
 import android.content.Context;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Filter;
 
@@ -11,19 +12,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+
 /**
  * Created by Grea on 2016/10/13.
  */
 
 public class SearchHistoryManager {
 
-    public static void deleteSuggestionFile(Context context, String type) {
-        File file = new File(context.getFilesDir().getPath() + "/" + type + "Suggestion");
+    public static void deleteSuggestionFile(String type) {
+        File file = new File(Global.filesDirPath + type + "Suggestion");
         file.delete();
     }
 
-    public static void addSuggestion(Context context, String type, ArrayList<SearchHistory> searchHistoryList, boolean clearHistory) {
-        File file = new File(context.getFilesDir().getPath() + "/" + type + "Suggestion");
+    public static void addSuggestion(String type, ArrayList<SearchHistory> searchHistoryList, boolean clearHistory) {
+        File file = new File(Global.filesDirPath + type + "Suggestion");
         if (clearHistory) {
             file.delete();
         }
@@ -41,8 +44,8 @@ public class SearchHistoryManager {
         }
     }
 
-    public static void addSuggestion(Context context, String type, String searchString) {
-        File file = new File(context.getFilesDir().getPath() + "/" + type + "Suggestion");
+    public static void addSuggestion(String type, String searchString) {
+        File file = new File(Global.filesDirPath + type + "Suggestion");
         try {
             if (!file.exists()) {
                 if (!file.createNewFile()) return;
@@ -56,14 +59,14 @@ public class SearchHistoryManager {
 
     }
 
-    public static ArrayList<SearchHistory> getAllHistories(Context context, String type) {
-        return getHistories(context, type, 10);
+    public static ArrayList<SearchHistory> getAllHistories(String type) {
+        return getHistories(type, 10);
     }
 
-    public static ArrayList<SearchHistory> getHistories(Context context, String type, int count) {
+    public static ArrayList<SearchHistory> getHistories(String type, int count) {
         if (count > 10) count = 10;
         ArrayList<SearchHistory> suggestionList = new ArrayList<>();
-        File file = new File(context.getFilesDir().getPath() + "/" + type + "Suggestion");
+        File file = new File(Global.filesDirPath + type + "Suggestion");
         if (!file.exists()) return suggestionList;
         try {
             Scanner input = new Scanner(file);
