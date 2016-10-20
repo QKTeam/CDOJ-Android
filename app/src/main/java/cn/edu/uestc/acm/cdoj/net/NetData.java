@@ -1,9 +1,17 @@
 package cn.edu.uestc.acm.cdoj.net;
 
+import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import cn.edu.uestc.acm.cdoj.net.data.Result;
 
@@ -37,46 +45,78 @@ public class NetData {
             userTypeAheadItemUrl = severAddress + "/user/typeAheadItem/",
             userCenterDataUrl = severAddress + "/user/userCenterData/";
 
-    public static void getUserCenterData(String userName, Object extra, ViewHandler viewHandler){
-        asyncWithAdd(ViewHandler.USER_CENTER_DATA, new String[]{ userCenterDataUrl + userName}, viewHandler, extra);
+    private static Context mContext;
+    private static String avatarCacheDir;
+    public static void init(Context context){
+        mContext = context;
+        NetWorkTool.init(mContext);
+        avatarCacheDir = context.getCacheDir().getAbsolutePath() + File.separator + "avatar" + File.separator;
     }
-    public static void getUserTypeAheadItem(String userName, Object extra, ViewHandler viewHandler){
-        asyncWithAdd(ViewHandler.USER_PROFILE, new String[]{ userTypeAheadItemUrl + userName}, viewHandler, extra);
+
+    private static Object mExtra;
+    private static boolean mInOrder = true;
+    public static void setExtra(Object extra){
+        NetData.mExtra = extra;
     }
-    public static void getUserProfile(String userName, Object extra, ViewHandler viewHandler){
-        asyncWithAdd(ViewHandler.USER_PROFILE, new String[]{ userProfileUrl + userName}, viewHandler, extra);
+    public static void setIfInOrder(boolean inOrder){
+        NetData.mInOrder = inOrder;
     }
-    public static void register(String userName, String password, String passwordRepeat, String nickName, String email, String motto, String name, int sex, int size, String phone, String school, int departmentId, int grade, String studentId, ViewHandler viewHandler, Object extra){
+    public static void getUserCenterData(String userName, ViewHandler viewHandler){
+        async(ViewHandler.USER_CENTER_DATA,  userCenterDataUrl + userName, null, viewHandler);
+    }
+    public static void getUserTypeAheadItem(String userName, ViewHandler viewHandler){
+        async(ViewHandler.USER_PROFILE,  userTypeAheadItemUrl + userName, null, viewHandler);
+    }
+    public static void getUserProfile(String userName, ViewHandler viewHandler){
+        async(ViewHandler.USER_PROFILE,  userProfileUrl + userName, null, viewHandler);
+    }
+    public static void register(String userName, String password, String passwordRepeat, String nickName, String email, String motto, String name, int sex, int size, String phone, String school, int departmentId, int grade, String studentId, ViewHandler viewHandler){
         String key[] = new String[]{"userName", "password", "passwordRepeat", "nickName", "email", "motto", "name", "sex", "size", "phone", "school", "departmentId", "grade", "studentId"};
         Object o[] = new Object[]{userName, password, passwordRepeat, nickName, email, motto, name, sex, size, phone, school, departmentId, grade, studentId};
-        asyncWithAdd(ViewHandler.REGISTER, new String[]{registerUrl ,constructJson(key, o)}, viewHandler, extra);
+        async(ViewHandler.REGISTER, registerUrl ,constructJson(key, o), viewHandler);
     }
-    public static void getAvatar(String email, Object extra, ViewHandler viewHandler){
+    public static void getAvatar(String email, ViewHandler viewHandler){
         Log.d(TAG, "getAvatar: 获取头像");
-        asyncWithAdd(ViewHandler.AVATAR, new String[]{avatarUrl.replace("%@", NetWorkTool.md(email, "md5")).replace("%ld", "200")}, viewHandler, extra);
+        File file;
+        Object[] bytes = null;
+        if ((file = new File(avatarCacheDir + email)).exists()){
+            try {
+                bytes = NetWorkTool.getBytes(new FileInputStream(file));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        if (bytes != null){
+            sync(ViewHandler.AVATAR, new Result(BitmapFactory.decodeByteArray((byte[]) bytes[0], 0, (int)bytes[1]), mExtra), viewHandler);
+            Log.d(TAG, "getAvatar: 本地有该头像缓存");
+        }
+        else{
+            async(ViewHandler.AVATAR, avatarUrl.replace("%@", NetWorkTool.md(email, "md5")).replace("%ld", "200"), email, viewHandler);
+            Log.d(TAG, "getAvatar: 本地没有该头像缓存");
+        }
     }
 
     public static void submitCode(String codeContent, int languageId, int contestId, int problemId, ViewHandler viewHandler){
         String key[] = new String[]{"codeContent", "languageId", "contestId", "problemId"};
         Object o[] = new Object[]{codeContent, languageId, contestId == -1?"":contestId, problemId};
-        async(ViewHandler.STATUS_SUBMIT, new String[]{codeSubmitUrl, constructJson(key, o)}, viewHandler);
+        async(ViewHandler.STATUS_SUBMIT, codeSubmitUrl, constructJson(key, o), viewHandler);
     }
     public static void getStatusInfo(int statusId, ViewHandler viewHandler){
-        async(ViewHandler.STATUS_INFO, new String[]{statusInfoUrl + statusId}, viewHandler);
+        async(ViewHandler.STATUS_INFO, statusInfoUrl + statusId, null, viewHandler);
     }
     public static void getStatusList(int problemId, String userName, int contestId, int page, ViewHandler viewHandler){
         Log.d(TAG, "getStatusList: 获取记录");
         String key[] = new String[]{"problemId","userName","contestId", "currentPage", "orderAsc", "orderFields", "result"};
         Object[] o = new Object[]{problemId == -1?"":problemId, userName, contestId, page, false, "statusId", 0};
-        async(ViewHandler.STATUS_LIST, new String[]{statusListUrl, constructJson(key, o)}, viewHandler);
+        async(ViewHandler.STATUS_LIST, statusListUrl, constructJson(key, o), viewHandler);
     }
     public static void getContestComment(int contestId, int page, ViewHandler viewHandler){
         String key[] = new String[]{"contestId", "currentPage", "orderAsc", "orderFields"};
         Object[] o = new Object[]{contestId, page, false, "id"};
-        async(ViewHandler.CONTEST_COMMENT, new String[]{contestCommentUrl, constructJson(key, o)}, viewHandler);
+        async(ViewHandler.CONTEST_COMMENT, contestCommentUrl, constructJson(key, o), viewHandler);
     }
     public static void getContestRank(int contestId, ViewHandler viewHandler){
-        async(ViewHandler.CONTEST_RANK, new String[]{contestRankListUrl + contestId}, viewHandler);
+        async(ViewHandler.CONTEST_RANK, contestRankListUrl + contestId, null, viewHandler);
     }
     static String constructJson(String key[], Object o[]){
         JSONObject temp = new JSONObject();
@@ -96,19 +136,19 @@ public class NetData {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        async(ViewHandler.LOGIN_CONTEST, new String[]{loginContestUrl, p}, viewHandler);
+        async(ViewHandler.LOGIN_CONTEST, loginContestUrl, p, viewHandler);
     }
-    public static void login(String userName, String sha1password, ViewHandler viewHandler, Object extra){
+    public static void login(String userName, String sha1password, ViewHandler viewHandler){
         String p = "";
         try {
             p = new JSONObject().put("userName", userName).put("password", sha1password).toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        asyncWithAdd(ViewHandler.LOGIN, new String[]{loginUrl, p}, viewHandler, extra);
+        async(ViewHandler.LOGIN, loginUrl, p, viewHandler);
     }
-    public static void logout(ViewHandler viewHandler, Object extra){
-        asyncWithAdd(ViewHandler.LOGOUT, new String[]{logoutUrl}, viewHandler, extra);
+    public static void logout(ViewHandler viewHandler){
+        async(ViewHandler.LOGOUT, logoutUrl, null, viewHandler);
     }
     public static void getProblemList(final int page, String keyword, int startId, final ViewHandler viewHandler){
         String p = "";
@@ -118,7 +158,7 @@ public class NetData {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        async(ViewHandler.PROBLEM_LIST, new String[]{problemListUrl, p}, viewHandler);
+        async(ViewHandler.PROBLEM_LIST, problemListUrl, p, viewHandler);
     }
     public static void getContestList(int page, String keyword, ViewHandler viewHandler) {
         String p = "";
@@ -128,7 +168,7 @@ public class NetData {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        async(ViewHandler.CONTEST_LIST, new String[]{contestListUrl, p}, viewHandler);
+        async(ViewHandler.CONTEST_LIST, contestListUrl, p, viewHandler);
 
     }
     public static void getArticleList(final int page, final ViewHandler viewHandler){
@@ -139,38 +179,44 @@ public class NetData {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        async(ViewHandler.ARTICLE_LIST, new String[]{articleListUrl, p}, viewHandler);
+        async(ViewHandler.ARTICLE_LIST, articleListUrl, p, viewHandler);
     }
 
     public static void getArticleDetail(final int id, final ViewHandler viewHandler){
-        async(ViewHandler.ARTICLE_DETAIL, new String[]{articleDetailUrl + id}, viewHandler);
+        async(ViewHandler.ARTICLE_DETAIL, articleDetailUrl + id, null, viewHandler);
     }
     public static void getContestDetail(final int id, final ViewHandler viewHandler){
-        async(ViewHandler.CONTEST_DETAIL, new String[]{contestDetailUrl + id}, viewHandler);
+        async(ViewHandler.CONTEST_DETAIL, contestDetailUrl + id, null, viewHandler);
     }
     public static void getProblemDetail(final int id, final ViewHandler viewHandler){
-        async(ViewHandler.PROBLEM_DETAIL, new String[]{problemDetailUrl + id}, viewHandler);
+        async(ViewHandler.PROBLEM_DETAIL, problemDetailUrl + id, null, viewHandler);
     }
 
-
-    static void async(final int which, final String[] req, final ViewHandler viewHandler){
-        asyncWithAdd(which, req,  viewHandler, null);
-    }
-
-    static void asyncWithAdd(final int which, final String[] req, final ViewHandler viewHandler, final Object extra) {
+    private static void sync(int which, Result result, ViewHandler viewHandler){
+        final Object extra = NetData.mExtra;
+        boolean inQueue = NetData.mInOrder;
+        NetData.mExtra = null;
+        NetData.mInOrder = true;
         final long time = System.currentTimeMillis();
-        new Thread(new Runnable() {
+        handleInMain(which, result, viewHandler, time, extra);
+    }
+    private static void async(final int which, final String url, final String params, final ViewHandler viewHandler) {
+        final Object extra = NetData.mExtra;
+        boolean inQueue = NetData.mInOrder;
+        NetData.mExtra = null;
+        NetData.mInOrder = true;
+        final long time = System.currentTimeMillis();
+        new ThreadTools.Task<Void, Result>() {
             @Override
-            public void run() {
-                final Result result = request(which, req);
-                ThreadTools.runOnMainThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        handleInMain(which, result, viewHandler, time, extra);
-                    }
-                });
+            Result doInBackGround(Void aVoid) {
+                return request(which, new String[]{url, params});
             }
-        }).start();
+
+            @Override
+            void onPostExecute(Result result) {
+                handleInMain(which, result, viewHandler, time, extra);
+            }
+        }.execute(inQueue);
 /*        new AsyncTask<Void, Void, Result>(){
 
             @Override
@@ -187,54 +233,36 @@ public class NetData {
     }
 
     static Result request(int which, String[] req){
-        Log.d(TAG, "request: " + req[0]);
+        Log.d(TAG, "request: 开始http请求" + req[0]);
         switch (which){
             case ViewHandler.AVATAR:
-                return new Result(NetWorkTool.getBytes(NetWorkTool._get(req[0])));
+                Object[] bytes = NetWorkTool.getBytes(NetWorkTool._get(req[0]));
+                if (bytes != null){
+                    File file;
+                    try {
+                        Log.d(TAG, "request: http请求完成" + avatarCacheDir + req[1]);;
+                        if (!(file = new File(avatarCacheDir + req[1])).exists()){
+                            File pf;
+                            if(!(pf = file.getParentFile()).exists() || true){
+                                Log.d(TAG, "request: " + pf);
+                                pf.mkdirs();
+                            }
+                            file.createNewFile();
+                        }
+                        new FileOutputStream(file).write((byte[]) bytes[0], 0, (int) bytes[1]);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return new Result(BitmapFactory.decodeByteArray((byte[]) bytes[0], 0, (int)bytes[1]));
+
         }
         String result = NetWorkTool.getOrPost(req);
+        Log.d(TAG, "request: http请求完成");
         return new Result(which, result);
-/*        switch (which){
-            case ViewHandler.PROBLEM_LIST:
-                return new InfoList<ProblemInfo>(result, ProblemInfo.class);
-            case ViewHandler.ARTICLE_LIST:
-                return new InfoList<ArticleInfo>(result, ArticleInfo.class);
-            case ViewHandler.CONTEST_LIST:
-                return new InfoList<ContestInfo>(result, ContestInfo.class);
-            case ViewHandler.PROBLEM_DETAIL:
-                return new Problem(result);
-            case ViewHandler.CONTEST_DETAIL:
-                return new Contest(result);
-            case ViewHandler.ARTICLE_DETAIL:
-                return new Article(result);
-            case ViewHandler.LOGIN:
-//                String s;
-                Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + result);
-                return checkResult(result);
-            case ViewHandler.LOGOUT:
-                return checkResult(result);
-            case ViewHandler.LOGIN_CONTEST:
-                Log.d(TAG, "request: name:" + req[0] + "||pwd:" + req[1] + "|||||" + result);;
-                return checkResult(result);
-            case ViewHandler.CONTEST_COMMENT:
-                return new InfoList<ArticleInfo>(result, ArticleInfo.class);
-            case ViewHandler.CONTEST_RANK:
-                return new Rank(result);
-            case ViewHandler.STATUS_LIST:
-                Log.d(TAG, "request: 获取记录");
-                return new InfoList<Status>(result, Status.class);
-            case ViewHandler.STATUS_INFO:
-                return Status.getCode(result);
-            case ViewHandler.STATUS_SUBMIT:
-                return checkResult(result);
-            case ViewHandler.REGISTER:
-                Log.d(TAG, "request: " + result);
-                return checkResult(result);
-            default: return null;
-        }*/
     }
     static void handleInMain(int which, Result result, ViewHandler viewHandler, long time, Object extra){
-        if (viewHandler != null && result.resultType != Result.STATE_NETWORK_ERROR){
+        if (viewHandler != null){
             result.setExtra(extra);
             viewHandler.show(which, result, time);
         }

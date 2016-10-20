@@ -1,5 +1,8 @@
 package cn.edu.uestc.acm.cdoj.net;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import org.apache.http.HttpResponse;
@@ -43,7 +46,8 @@ public class NetWorkTool {
     private static int state = STATE_ERROR;
     final static String TAG = "------NetWorkTool------";
     static HttpClient httpClient;
-
+    private static Context mContext;
+    private static ConnectivityManager mConnectivityManager;
     static {
         HttpParams params = new BasicHttpParams();
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
@@ -62,16 +66,24 @@ public class NetWorkTool {
 
         httpClient = new DefaultHttpClient(conMgr, params);
     }
+    static void init(Context context){
+        mContext = context;
+        mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    }
     public static void addNetStateListener(NetStateListener listener){
         listeners.add(listener);
     }
     public static String getOrPost(String req[]){
-        final String re = req.length == 1?get(req[0]):post(req[0], req[1]);
+        String re = null;
+        if (isNetworkConnected()){
+            re = req.length < 2||req[1] == null?get(req[0]):post(req[0], req[1]);
+        }
+        final String finalRe = re;
         ThreadTools.runOnMainThread(new Runnable() {
             @Override
             public void run() {
                 int now;
-                if (re == null){
+                if (finalRe == null){
                     now = STATE_ERROR;
                 }
                 else {
@@ -83,7 +95,6 @@ public class NetWorkTool {
                 state = now;
             }
         });
-
         return re;
     }
     public static String post(String url, String params) {
@@ -148,6 +159,9 @@ public class NetWorkTool {
 
     }
     public static InputStream _get(String url) {
+        if (!isNetworkConnected()){
+            return null;
+        }
         try {
             URLConnection connection = new URL(url).openConnection();
             return connection.getInputStream();
@@ -202,5 +216,12 @@ public class NetWorkTool {
     }
     public static String sha1(String s){
         return md(s, "SHA-1");
+    }
+    private static boolean isNetworkConnected() {
+        if (mConnectivityManager == null){
+            return false;
+        }
+        NetworkInfo ni = mConnectivityManager.getActiveNetworkInfo();
+        return ni != null && ni.isConnectedOrConnecting();
     }
 }
