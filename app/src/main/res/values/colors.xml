@@ -17,7 +17,10 @@
     <color name="blue">#0000FF</color>
     <color name="gray">#777777</color>
     <color name="yellow">#FFE000</color>
+    <color name="white">#FFFFFF</color>
     <color name="halfGreen">#008800</color>
+
+    <color name="black_semi_transparent">#B2000000</color>
 
     <color name="rank_theFirstSolved">#22B14C</color>
     <color name="rank_solved">#B5E61D</color>

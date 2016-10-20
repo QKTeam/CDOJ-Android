@@ -44,4 +44,6 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="me">我</string>
+    <string name="addCode">提交代码</string>
+    <string name="checkResult">查看提交结果</string>
 </resources>

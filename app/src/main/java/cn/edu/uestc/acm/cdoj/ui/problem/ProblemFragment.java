@@ -1,12 +1,16 @@
 package cn.edu.uestc.acm.cdoj.ui.problem;
 
 import android.app.Fragment;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
@@ -23,6 +27,8 @@ public class ProblemFragment extends Fragment implements ViewHandler{
     private DetailWebViewFragment webViewFragment;
     private TextView titleView;
     private String title;
+    private FloatingActionButton button_addCode;
+    private FloatingActionButton button_checkResult;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +49,11 @@ public class ProblemFragment extends Fragment implements ViewHandler{
             if (title != null) titleView.setText(title);
         }
         return rootView;
+    }
+
+    public void setupFloatingButton() {
+        button_addCode = (FloatingActionButton) rootView.findViewById(R.id.problem_button_addCede);
+        button_checkResult = (FloatingActionButton) rootView.findViewById(R.id.problem_button_checkResult);
     }
 
     public void addJSData(String jsData) {
