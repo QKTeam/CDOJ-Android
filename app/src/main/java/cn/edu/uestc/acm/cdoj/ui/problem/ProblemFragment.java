@@ -3,7 +3,6 @@ package cn.edu.uestc.acm.cdoj.ui.problem;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,9 +37,9 @@ public class ProblemFragment extends Fragment implements ViewHandler{
             webViewFragment = new DetailWebViewFragment();
             webViewFragment.switchHTMLData(ViewHandler.PROBLEM_DETAIL);
             getChildFragmentManager().beginTransaction()
-                    .add(R.id.webViewFragment_problem, webViewFragment)
+                    .add(R.id.problem_webViewFragment, webViewFragment)
                     .commit();
-            titleView = (TextView) rootView.findViewById(R.id.title_problem);
+            titleView = (TextView) rootView.findViewById(R.id.problem_title);
             if (title != null) titleView.setText(title);
         }
         return rootView;

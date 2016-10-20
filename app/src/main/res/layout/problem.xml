@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/main_background">
     <TextView
-        android:id="@+id/title_problem"
+        android:id="@+id/problem_title"
         android:paddingStart="20dp"
         android:paddingEnd="10dp"
         android:layout_width="match_parent"
@@ -18,9 +20,16 @@
         android:background="@color/main_background"/>
 
     <LinearLayout
-        android:id="@+id/webViewFragment_problem"
+        android:id="@+id/problem_webViewFragment"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-</LinearLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_gravity="bottom|end"
+        app:srcCompat="@android:drawable/ic_dialog_dialer"/>
+
+</android.support.design.widget.CoordinatorLayout>
