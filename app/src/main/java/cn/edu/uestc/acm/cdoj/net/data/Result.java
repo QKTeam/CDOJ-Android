@@ -37,13 +37,6 @@ public class Result {
             else{
                 result = true;
                 switch (which){
-                    case ViewHandler.PROBLEM_LIST:
-                    case ViewHandler.ARTICLE_LIST:
-                    case ViewHandler.CONTEST_LIST:
-                    case ViewHandler.STATUS_LIST:
-                    case ViewHandler.CONTEST_COMMENT:
-                        content = new InfoList(jsonObject);
-                        break;
                     case ViewHandler.PROBLEM_DETAIL:
                         content = new Problem(jsonObject);
                         break;
@@ -53,14 +46,15 @@ public class Result {
                     case ViewHandler.ARTICLE_DETAIL:
                         content = new Article(jsonObject);
                         break;
-                    case ViewHandler.CONTEST_RANK:
-                    case ViewHandler.STATUS_INFO:
-                    case ViewHandler.USER_PROFILE:
-                    case ViewHandler.USER_TYPE_AHEAD_ITEM:
-                    case ViewHandler.USER_CENTER_DATA:
-                        content = JsonUtils.getMapFromJson(jsonObject);
-                        break;
+/*                    case ViewHandler.PROBLEM_LIST:
+                    case ViewHandler.ARTICLE_LIST:
+                    case ViewHandler.CONTEST_LIST:
+                    case ViewHandler.STATUS_LIST:
+                    case ViewHandler.CONTEST_COMMENT:
+                        content = new InfoList(jsonObject);
+                        break;*/
                     default:;
+                        content = JsonUtils.getMapFromJson(jsonObject);
                 }
             }
 
