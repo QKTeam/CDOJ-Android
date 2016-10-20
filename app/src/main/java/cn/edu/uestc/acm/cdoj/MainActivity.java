@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.EditText;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +24,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        startLaunchActivity();
+//        startLaunchActivity();
         userInfoManage();
         readHTMLFile();
         setupDefaultColorMatrix();
@@ -31,7 +32,9 @@ public class MainActivity extends Activity {
         setupListFooterIcons();
         readSearchHistoriesFile();
         Global.filesDirPath = getFilesDir().getPath() + File.separator;
-        finish();
+        EditText editText = new EditText(this);
+
+//        finish();
     }
 
     private void startLaunchActivity() {
