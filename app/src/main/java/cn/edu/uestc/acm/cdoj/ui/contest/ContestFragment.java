@@ -1,8 +1,10 @@
 package cn.edu.uestc.acm.cdoj.ui.contest;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
@@ -18,8 +20,7 @@ import java.util.ArrayList;
 
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
-import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebViewFragment;
-import cn.edu.uestc.acm.cdoj.net.NetData;
+import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.Contest;
 import cn.edu.uestc.acm.cdoj.net.data.Problem;
@@ -40,7 +41,7 @@ public class ContestFragment extends Fragment implements ViewHandler{
     @interface contestPart {}
 
     private View rootView;
-    private DetailWebViewFragment overview;
+    private ContestOverview overview;
     private ContestProblems problems;
     private ContestClarification clarification;
     private ContestStatus status;
@@ -49,8 +50,22 @@ public class ContestFragment extends Fragment implements ViewHandler{
     private FragmentManager fragmentManager;
     private Button[] buttons = new Button[5];
     private int currentPage = ContestFragment.OVERVIEW;
-    private boolean refreshed = false;
+    private boolean requestRefresh;
+    private boolean refreshed;
     private int[] problemIDs;
+    private Context context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.context = activity;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,17 +78,17 @@ public class ContestFragment extends Fragment implements ViewHandler{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView =  inflater.inflate(R.layout.contest, container, false);
-        if (refreshed) refresh();
+        if (requestRefresh) refresh();
         return rootView;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        configButtons();
+        setupButtons();
     }
 
-    private void configButtons() {
+    private void setupButtons() {
         buttons[0] = (Button) rootView.findViewById(R.id.contest_button0);
         buttons[0].setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,14 +184,6 @@ public class ContestFragment extends Fragment implements ViewHandler{
         transaction.commit();
     }
 
-    public void addProblems(ArrayList<Problem> problemList) {
-        problems.addProblems(problemList);
-    }
-
-    public void addOverView(String jsData) {
-        overview.addJSData(jsData);
-    }
-
     public int getContestID() {
         return contestID;
     }
@@ -187,6 +194,14 @@ public class ContestFragment extends Fragment implements ViewHandler{
         if (status != null) status.refresh(contestID);
         if (rank != null) rank.refresh(contestID);
         return this;
+    }
+
+    public ContestOverview getOverview() {
+        return overview;
+    }
+
+    public ContestProblems getProblems() {
+        return problems;
     }
 
     public ContestClarification getClarification() {
@@ -203,14 +218,15 @@ public class ContestFragment extends Fragment implements ViewHandler{
 
     @Override
     public void show(int which, Result result, long time) {
+        if (!refreshed) return;
         Contest contest_data = (Contest) result.getContent();
-        addOverView(contest_data.getContentString());
+        overview.addJSData(contest_data.getContentString());
         ArrayList<Problem> problemList = contest_data.getProblemList();
-        addProblems(problemList);
+        problems.addProblems(problemList);
         problemIDs = new int[problemList.size()];
         for (int i = 0; i != problemList.size(); ++i) {
-            Problem tem = problemList.get(i);
-            problemIDs[i] = tem.problemId;
+            Problem problemTem = problemList.get(i);
+            problemIDs[i] = (int) problemTem.getMap().get("problemId");
         }
         if (status != null) status.setProblemIDs(problemIDs);
     }
@@ -222,18 +238,19 @@ public class ContestFragment extends Fragment implements ViewHandler{
     public ContestFragment refresh(int contestID) {
         if (contestID < 1) return this;
         this.contestID = contestID;
+        requestRefresh = true;
         refreshed = true;
         if (rootView != null) {
             createFragmentParts();
             showPart(ContestFragment.OVERVIEW);
-            NetData.getContestDetail(contestID, this);
+            NetDataPlus.getContestDetail(context, contestID, this);
             rootView.findViewById(R.id.contest_button_container).setVisibility(View.VISIBLE);
         }
         return this;
     }
 
     private void createFragmentParts() {
-        overview = new DetailWebViewFragment().switchHTMLData(ViewHandler.CONTEST_DETAIL);
+        overview = new ContestOverview();
         problems = new ContestProblems();
         clarification = new ContestClarification().refresh(contestID);
         status  = new ContestStatus().refresh(contestID);

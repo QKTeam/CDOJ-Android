@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.net.NetData;
+import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
 import cn.edu.uestc.acm.cdoj.ui.ItemDetailActivity;
@@ -35,7 +35,6 @@ import cn.edu.uestc.acm.cdoj.ui.modules.list.PageInfo;
 public class ProblemListFragment extends Fragment implements ViewHandler, MainList {
     private SimpleAdapter mListAdapter;
     private ArrayList<Map<String, Object>> listItems = new ArrayList<>();
-    private String key;
     private FragmentManager mFragmentManager;
     private ListViewWithGestureLoad mListView;
     private MainList.OnRefreshProgressListener progressListener;
@@ -78,7 +77,7 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
             @Override
             public void onPullUpLoading() {
                 if (mPageInfo != null && mPageInfo.currentPage < mPageInfo.totalPages) {
-                    NetData.getProblemList(mPageInfo.currentPage + 1, key, 0, ProblemListFragment.this);
+                    NetDataPlus.getProblemList(context, mPageInfo.currentPage + 1, ProblemListFragment.this);
                 } else {
                     mListView.setPullUpLoadFinish();
                 }
@@ -119,34 +118,42 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
 
     @Override
     public void show(int which, Result result, long time) {
-        if (refreshed) {
-            if (hasSetProgressListener) progressListener.end();
-            listItems.clear();
-            notifyDataSetChanged();
-            refreshed = false;
-        }
-        if (result.result) {
-            Map<String, Object> listMap = (Map<String, Object>) result.getContent();
-            mPageInfo = new PageInfo((Map<String, Object>) listMap.get("pageInfo"));
-            ArrayList<Map<String, Object>> temArrayList = (ArrayList<Map<String, Object>>) listMap.get("list");
-            for (Map<String, Object> temMap : temArrayList) {
-                temMap.put("problemIdString", "ID:" + temMap.get("problemId"));
-                temMap.put("solved", "Solved:" + temMap.get("solved"));
-                temMap.put("tried", "Tried:" + temMap.get("tried"));
-            }
-            listItems.addAll(temArrayList);
-            if (mPageInfo.totalItems == 0) {
-                mListView.setDataIsNull();
+        switch (which) {
+            case ViewHandler.PROBLEM_LIST:
+                if (refreshed) {
+                    if (hasSetProgressListener) progressListener.end();
+                    listItems.clear();
+                    notifyDataSetChanged();
+                    refreshed = false;
+                }
+                if (result.result) {
+                    Map<String, Object> listMap = (Map<String, Object>) result.getContent();
+                    mPageInfo = new PageInfo((Map<String, Object>) listMap.get("pageInfo"));
+
+                    listItems.addAll(convertNetData((ArrayList<Map<String, Object>>) listMap.get("list")));
+
+                    if (mPageInfo.totalItems == 0) {
+                        mListView.setDataIsNull();
+                        notifyDataSetChanged();
+                        return;
+                    }
+                    if (listItems.size() >= mPageInfo.totalItems) {
+                        mListView.setPullUpLoadFinish();
+                    }
+                } else {
+                    mListView.setPullUpLoadFailure();
+                }
                 notifyDataSetChanged();
-                return;
-            }
-            if (listItems.size() >= mPageInfo.totalItems) {
-                mListView.setPullUpLoadFinish();
-            }
-        } else {
-            mListView.setPullUpLoadFailure();
         }
-        notifyDataSetChanged();
+    }
+
+    private ArrayList<Map<String, Object>> convertNetData(ArrayList<Map<String, Object>> temArrayList) {
+        for (Map<String, Object> temMap : temArrayList) {
+            temMap.put("problemIdString", "ID:" + temMap.get("problemId"));
+            temMap.put("solved", "Solved:" + temMap.get("solved"));
+            temMap.put("tried", "Tried:" + temMap.get("tried"));
+        }
+        return temArrayList;
     }
 
     @Override
@@ -156,11 +163,13 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
         }else {
             mListAdapter.notifyDataSetChanged();
         }
-        if (mListView.isPullUpLoading()) {
-            mListView.setPullUpLoading(false);
-        }
-        if (mListView.isRefreshing()) {
-            mListView.setRefreshing(false);
+        if (mListView != null) {
+            if (mListView.isPullUpLoading()) {
+                mListView.setPullUpLoading(false);
+            }
+            if (mListView.isRefreshing()) {
+                mListView.setRefreshing(false);
+            }
         }
     }
 
@@ -169,26 +178,6 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
                 Global.currentMainUIActivity, listItems, R.layout.problem_item_list,
                 new String[]{"title", "source", "problemIdString", "solved", "tried"},
                 new int[]{R.id.problem_title, R.id.problem_source, R.id.problem_id, R.id.problem_solved, R.id.problem_tried});
-        /*mListAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
-            @Override
-            public boolean setViewValue(View view, Object data, String textRepresentation) {
-                if (view instanceof TextView) {
-                    if (!(data instanceof String)) {
-                        if (view.getId() == R.id.problem_id) {
-                            ((TextView) view).setText("ID:" + String.valueOf((int) data));
-                        } else if (view.getId() == R.id.problem_solved) {
-                            ((TextView) view).setText("Solved:" + String.valueOf((int) data));
-                        } else if (view.getId() == R.id.problem_tried) {
-                            ((TextView) view).setText("Tried:" + String.valueOf((int) data));
-                        }
-                    } else {
-                        ((TextView) view).setText((String) data);
-                    }
-                    return true;
-                }
-                return false;
-            }
-        });*/
         return mListAdapter;
     }
 
@@ -216,9 +205,6 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
         }
     }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
 
     public ProblemListFragment refresh() {
         refreshed = true;
@@ -226,7 +212,7 @@ public class ProblemListFragment extends Fragment implements ViewHandler, MainLi
             if (progressListener != null) progressListener.start();
             mListView.resetPullUpLoad();
             listItems.clear();
-            NetData.getProblemList(1, key, 0, this);
+            NetDataPlus.getProblemList(context, 1, this);
         }
         return this;
     }

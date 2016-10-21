@@ -11,7 +11,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.net.NetData;
+import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
@@ -66,14 +66,14 @@ public class LoginActivity extends AppCompatActivity implements ViewHandler{
                 });
         if (isSuccessful) {
             dialog.setMessage(R.string.loginSuccess);
-            UserInfo userTem;
+            UserInfo userInfoTem;
             if (!UserInfoManager.hasUserInfo()) {
-                userTem = new UserInfo();
-                UserInfoManager.addNewUser(this, userTem);
+                userInfoTem = new UserInfo(this);
+                UserInfoManager.addNewUser(this, userInfoTem);
             } else {
-                userTem = UserInfoManager.getUserInfo();
+                userInfoTem = UserInfoManager.getUserInfo();
             }
-            NetData.getUserProfile(username, null, userTem);
+            NetDataPlus.getUserProfile(this, username, userInfoTem);
         }else {
             dialog.setMessage(R.string.loginFail);
         }

@@ -5,14 +5,13 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 import java.util.Locale;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.net.NetData;
+import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.ui.contest.ContestListFragment;
 import cn.edu.uestc.acm.cdoj.ui.problem.ProblemListFragment;
@@ -57,11 +56,11 @@ public class SearchResult extends AppCompatActivity {
                 result = new ProblemListFragment();
                 int problemId = intent.getIntExtra("problemId", 0);
                 if (problemId != 0) key = "";
-                NetData.getProblemList(1, key, problemId, result);
+                NetDataPlus.getProblemList(this, 1, key, problemId, result);
                 break;
             case ViewHandler.CONTEST_LIST:
                 result = new ContestListFragment();
-                NetData.getContestList(1, key, result);
+                NetDataPlus.getContestList(this, 1, key, result);
                 break;
         }
         getFragmentManager().beginTransaction()

@@ -1,5 +1,6 @@
 package cn.edu.uestc.acm.cdoj.ui.user;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 
 import java.io.File;
@@ -7,10 +8,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 
-import cn.edu.uestc.acm.cdoj.net.NetData;
-import cn.edu.uestc.acm.cdoj.net.UserManager;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
+import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 
 /**
@@ -36,6 +36,7 @@ public class UserInfo implements ViewHandler{
     private Map<String, Object> userInfoMap;
     private SynListener listener;
     private boolean hasSetListener;
+    Context context;
 
     public interface SynListener{
         public void synInfo(UserInfo user);
@@ -44,7 +45,8 @@ public class UserInfo implements ViewHandler{
 
     }
 
-    public UserInfo() {
+    public UserInfo(Context context) {
+        this.context = context;
     }
 
     public UserInfo(Map<String, Object> userInfoMap) {
@@ -137,15 +139,15 @@ public class UserInfo implements ViewHandler{
                         listener.synInfo(this);
                     }
                     writeInfoToLocalFile();
-                    NetData.getAvatar(String.valueOf(userInfoMap.get("email")), null, this);
+                    NetDataPlus.getAvatar(context, String.valueOf(userInfoMap.get("email")), this);
                 }
                 break;
             case ViewHandler.AVATAR:
                 header = (Bitmap) result.getContent();
+                userInfoMap.put("header", header);
                 if (listener != null) {
                     listener.synHeaderImage(header);
                 }
-                userInfoMap.put("header", header);
                 break;
         }
     }

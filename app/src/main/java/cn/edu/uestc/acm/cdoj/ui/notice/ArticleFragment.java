@@ -1,6 +1,8 @@
 package cn.edu.uestc.acm.cdoj.ui.notice;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -10,8 +12,8 @@ import android.widget.TextView;
 
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
-import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebViewFragment;
-import cn.edu.uestc.acm.cdoj.net.NetData;
+import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebView;
+import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.Article;
 
@@ -20,10 +22,23 @@ import cn.edu.uestc.acm.cdoj.net.data.Article;
  */
 public class ArticleFragment extends Fragment implements ViewHandler{
     private View rootView;
-    private DetailWebViewFragment webViewFragment;
+    private DetailWebView mWebView;
     private TextView titleView;
     private String title;
     private String jsData;
+    private Context context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        context = activity;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,12 +50,9 @@ public class ArticleFragment extends Fragment implements ViewHandler{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             rootView = inflater.inflate(R.layout.article, container, false);
-            webViewFragment = new DetailWebViewFragment();
-            webViewFragment.switchHTMLData(ViewHandler.ARTICLE_DETAIL);
-            if (jsData != null) webViewFragment.addJSData(jsData);
-            getFragmentManager().beginTransaction()
-                    .add(R.id.webViewFragment_article,webViewFragment)
-                    .commit();
+            mWebView = (DetailWebView) rootView.findViewById(R.id.article_detailWebView);
+            mWebView.switchType(ViewHandler.ARTICLE_DETAIL);
+            if (jsData != null) mWebView.addJSData(jsData);
             titleView = (TextView) rootView.findViewById(R.id.title_article);
             if (title != null) titleView.setText(title);
         }
@@ -49,7 +61,7 @@ public class ArticleFragment extends Fragment implements ViewHandler{
 
     public void addJSData(String jsData) {
         this.jsData = jsData;
-        if (webViewFragment != null) webViewFragment.addJSData(this.jsData);
+        if (mWebView != null) mWebView.addJSData(this.jsData);
     }
 
     public ArticleFragment setTitle(String title) {
@@ -59,7 +71,7 @@ public class ArticleFragment extends Fragment implements ViewHandler{
     }
 
     public ArticleFragment refresh(int id) {
-        NetData.getArticleDetail(id, this);
+        NetDataPlus.getArticleDetail(context, id, this);
         return this;
     }
 

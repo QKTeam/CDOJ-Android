@@ -1,6 +1,5 @@
 package cn.edu.uestc.acm.cdoj.ui;
 
-import android.app.Dialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,7 +18,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -38,10 +36,10 @@ import java.util.Collections;
 import java.util.regex.Pattern;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
 import cn.edu.uestc.acm.cdoj.tools.DrawImage;
+import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
 import cn.edu.uestc.acm.cdoj.tools.RGBAColor;
 import cn.edu.uestc.acm.cdoj.ui.contest.ContestListFragment;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
@@ -62,7 +60,7 @@ import cn.edu.uestc.acm.cdoj.ui.statusBar.StatusBarUtil;
  * Created by Grea on 2016/10/3.
  */
 
-public class MainUIActivity extends AppCompatActivity implements ViewHandler {
+public class MainUIActivity extends AppCompatActivity {
 
     public static final int NOTICELIST = 0;
     public static final int PROBLEMLIST = 1;
@@ -105,7 +103,6 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
     private NoticeListFragment noticeList;
     private ProblemListFragment problemList;
     private ContestListFragment contestList;
-    private UserInfo userInfo;
     private Toolbar mToolbar;
     private ImageButton[] bottomButtons = new ImageButton[4];
     private FloatingSearchView mSearchView;
@@ -113,7 +110,6 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private FrameLayout mSearchFrameLayout;
-    private MainList searchResult;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,15 +154,22 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
     }
 
     private void initViews() {
-        mSearchFrameLayout.setVisibility(View.INVISIBLE);
+        mSearchFrameLayout.setVisibility(View.GONE);
         mToolbar.setTitle(getString(R.string.notice));
-        noticeList = new NoticeListFragment().refresh();
-        problemList = new ProblemListFragment().refresh();
-        contestList = new ContestListFragment().refresh();
+        setupList();
         setupSystemBar();
         setupSearchView();
-        setupViewPager((ViewPager) findViewById(R.id.ui_main_list_ViewPager));
+        setupViewPager();
         if (Global.isTwoPane) setupTwoPane();
+    }
+
+    private void setupList() {
+        noticeList = new NoticeListFragment();
+        problemList = new ProblemListFragment();
+        contestList = new ContestListFragment();
+        NetDataPlus.getArticleList(this, 1, true, noticeList);
+        NetDataPlus.getProblemList(this, 1, true, problemList);
+        NetDataPlus.getContestList(this, 1, true, contestList);
     }
 
     private void setupSystemBar() {
@@ -323,14 +326,14 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
         return pattern.matcher(string).matches();
     }
 
-    private void setupViewPager(ViewPager mViewPager) {
+    private void setupViewPager() {
         mViewPager.setOffscreenPageLimit(2);
-        setViewPagerAdapter(mViewPager);
-        addViewPagerOnPageChangeListener(mViewPager);
-        setupBottomButton(mViewPager);
+        setViewPagerAdapter();
+        addViewPagerOnPageChangeListener();
+        setupBottomButton();
     }
 
-    private void setViewPagerAdapter(ViewPager mViewPager) {
+    private void setViewPagerAdapter() {
         mViewPager.setAdapter(new FragmentPagerAdapter(getFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
@@ -352,7 +355,7 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
         });
     }
 
-    private void addViewPagerOnPageChangeListener(final ViewPager mViewPager) {
+    private void addViewPagerOnPageChangeListener() {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -393,7 +396,7 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
         bgImageView.setImageBitmap(DrawImage.draw(this, R.drawable.logo_orange, colorMatrix));
     }
 
-    private void setupBottomButton(final ViewPager mViewPager) {
+    private void setupBottomButton() {
         ImageButton buttonNotice = (ImageButton) findViewById(R.id.ui_main_button_notice);
         bottomButtons[0] = buttonNotice;
         buttonNotice.setImageBitmap(getIcon(NOTICELIST, SELECT));
@@ -468,10 +471,5 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
                 break;
         }
         return null;
-    }
-
-    @Override
-    public void show(int which, Result result, long time) {
-        result.getContent();
     }
 }

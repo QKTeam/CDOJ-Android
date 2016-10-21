@@ -1,10 +1,8 @@
 package cn.edu.uestc.acm.cdoj.ui.contest;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,9 +23,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
+import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
 import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
@@ -48,7 +46,7 @@ public class ContestRank extends Fragment implements ViewHandler {
     private Context context;
     private Integer contestID;
     private int problemsCount = 0;
-    private boolean refreshed;
+    private boolean requestRefresh;
 
     @Override
     public void onAttach(Context context) {
@@ -73,7 +71,7 @@ public class ContestRank extends Fragment implements ViewHandler {
             }
         });
         setupOnListItemClick();
-        if (refreshed) refresh();
+        if (requestRefresh) refresh();
         mListView.setLayoutParams(container.getLayoutParams());
         return mListView;
     }
@@ -98,8 +96,9 @@ public class ContestRank extends Fragment implements ViewHandler {
                 notifyDataSetChanged();
                 if (result.result) {
                     Map<String, Object> rankMap = (Map<String, Object>) ((Map<String, Object>) result.getContent()).get("rankList");
-                    ArrayList<Map<String, Object>> listItemsReceived = (ArrayList<Map<String, Object>>) rankMap.get("rankList");
-                    setupReceivedData(rankMap, listItemsReceived);
+
+                    convertNetData(rankMap);
+
                     if (listItems.size() == 0) {
                         mListView.setDataIsNull();
                         notifyDataSetChanged();
@@ -114,40 +113,31 @@ public class ContestRank extends Fragment implements ViewHandler {
 
             case ViewHandler.AVATAR:
                 int position = (int) result.getExtra();
-                if (position < listItems.size()){
+                if (position < listItems.size()) {
                     listItems.get(position).put("header", result.getContent());
                 }
                 View view = mListView.findItemViewWithTag(position);
                 if (view != null) {
-                    ImageView imageView = (ImageView) view.findViewById(R.id.contestRank_header);
-                    if (imageView != null) {
-                        imageView.setImageBitmap((Bitmap) result.getContent());
-                    }
+                    ((ImageView) view.findViewById(R.id.contestRank_header))
+                            .setImageBitmap((Bitmap) result.getContent());
                 }
         }
     }
 
-    private void setupReceivedData(Map<String, Object> rankMap, ArrayList<Map<String, Object>> listItemsReceived) {
-        int compactorCount = listItemsReceived.size();
-        for (Map<String, Object> temMap : (ArrayList<Map<String, Object>>) rankMap.get("problemList")) {
-            int solved = (int) temMap.get("solved");
-            int tried = (int) temMap.get("tried");
-            float percent = 0;
-            if (tried != 0) {
-                percent = ((float) solved / (float) tried) * 100.0f;
-            }
-            problemsSolvedPercent.add(String.format(Locale.CHINA, "%.2f%%(%d/%d/%d)", percent, solved, tried, compactorCount));
-        }
-        problemsCount = problemsSolvedPercent.size();
-        setupCompactorInfoDetail(compactorCount, listItemsReceived);
+    public void clearItems() {
+        listItems.clear();
+        notifyDataSetChanged();
     }
 
-    private void setupCompactorInfoDetail(int compactorCount, ArrayList<Map<String, Object>> listItemsReceived) {
-        for (int i = 0; i < compactorCount; i++) {
-            Map<String, Object> compactorInfoDetail = listItemsReceived.get(i);
+    private void convertNetData(Map<String, Object> rankMap) {
+        convertCompactorsInfo((ArrayList<Map<String, Object>>) rankMap.get("rankList"));
+        convertProblemsInfo((ArrayList<Map<String, Object>>) rankMap.get("problemList"));
+    }
+
+    private void convertCompactorsInfo(ArrayList<Map<String, Object>> compactorsNetData) {
+        for (Map<String, Object> compactorInfoDetail : compactorsNetData) {
             compactorInfoDetail.put("header", R.drawable.logo);
             compactorInfoDetail.put("rank", String.valueOf((int) compactorInfoDetail.get("rank")));
-
             for (int j = 0; j < problemsCount; ++j) {
                 Map<String, Object> compactorProblemSolvedDetail = ((ArrayList<Map<String, Object>>) compactorInfoDetail.get("itemList")).get(j);
                 compactorProblemSolvedDetail.put("problemOrder", String.valueOf((char) ('A' + j)));
@@ -166,8 +156,21 @@ public class ContestRank extends Fragment implements ViewHandler {
             }
 
             listItems.add(compactorInfoDetail);
-            Global.userManager.getAvatar(String.valueOf(compactorInfoDetail.get("email")), listItems.size() - 1, this);
+            NetDataPlus.getAvatar(context, String.valueOf(compactorInfoDetail.get("email")), listItems.size() - 1, this);
         }
+    }
+
+    private void convertProblemsInfo(ArrayList<Map<String, Object>> problemsNetData) {
+        for (Map<String, Object> temMap : problemsNetData) {
+            int solved = (int) temMap.get("solved");
+            int tried = (int) temMap.get("tried");
+            float percent = 0;
+            if (tried != 0) {
+                percent = ((float) solved / (float) tried) * 100.0f;
+            }
+            problemsSolvedPercent.add(String.format(Locale.CHINA, "%.2f%%(%d/%d/%d)", percent, solved, tried, listItems.size()));
+        }
+        problemsCount = problemsSolvedPercent.size();
     }
 
     public void notifyDataSetChanged() {
@@ -176,9 +179,10 @@ public class ContestRank extends Fragment implements ViewHandler {
         }else {
             mListAdapter.notifyDataSetChanged();
         }
-        mListAdapter.notifyDataSetChanged();
-        if (mListView.isRefreshing()) {
-            mListView.setRefreshing(false);
+        if (mListView != null) {
+            if (mListView.isRefreshing()) {
+                mListView.setRefreshing(false);
+            }
         }
     }
 
@@ -256,9 +260,9 @@ public class ContestRank extends Fragment implements ViewHandler {
     public ContestRank refresh(Integer contestID) {
         if (contestID < 1) return this;
         this.contestID = contestID;
-        refreshed = true;
+        requestRefresh = true;
         if (mListView != null) {
-            NetData.getContestRank(contestID, this);
+            NetDataPlus.getContestRank(context, contestID, this);
         }
         return this;
     }

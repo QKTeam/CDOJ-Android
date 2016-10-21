@@ -10,8 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
+import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 
 /**
@@ -44,7 +46,7 @@ public class UserInfoManager implements ViewHandler {
         }
     }
 
-    public static UserInfo readLocalUserInfo() {
+    public static UserInfo readLocalUserInfo(Context context) {
         Map<String, Object> userInfoMap = new HashMap<>();
         try {
             File file = new File(Global.filesDirPath + "userInfo");
@@ -79,7 +81,7 @@ public class UserInfoManager implements ViewHandler {
         }
         userInfo = new UserInfo(userInfoMap);
         if (Global.userManager != null) {
-            Global.userManager.getAvatar(userInfo.getEmail(), null, userInfo);
+            NetDataPlus.getAvatar(context, userInfo.getEmail(), null, userInfo);
         }
         return userInfo;
     }

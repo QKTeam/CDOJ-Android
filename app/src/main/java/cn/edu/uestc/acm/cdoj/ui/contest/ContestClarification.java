@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.net.NetData;
+import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
 import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
@@ -41,7 +41,7 @@ public class ContestClarification extends Fragment implements ViewHandler{
     private ListViewWithGestureLoad mListView;
     private PageInfo mPageInfo;
     private Context context;
-    private boolean refreshed;
+    private boolean requestRefresh;
 
     @Override
     public void onAttach(Context context) {
@@ -69,14 +69,14 @@ public class ContestClarification extends Fragment implements ViewHandler{
             @Override
             public void onPullUpLoading() {
                 if (mPageInfo != null && mPageInfo.currentPage < mPageInfo.totalPages) {
-                    NetData.getContestComment(contestID, mPageInfo.currentPage + 1, ContestClarification.this);
+                    NetDataPlus.getContestComment(context, contestID, mPageInfo.currentPage + 1, ContestClarification.this);
                 } else {
                     mListView.setPullUpLoadFinish();
                 }
             }
         });
         setupOnListItemClick();
-        if (refreshed) refresh();
+        if (requestRefresh) refresh();
         mListView.setLayoutParams(container.getLayoutParams());
         return mListView;
     }
@@ -121,7 +121,7 @@ public class ContestClarification extends Fragment implements ViewHandler{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mProgressDialog = ProgressDialog
                         .show(context, getString(R.string.getting), getString(R.string.linking));
-                NetData.getArticleDetail((int) listItems.get(position).get("articleId"), new ContestClarificationAlert(context, mProgressDialog));
+                NetDataPlus.getArticleDetail(context, (int) listItems.get(position).get("articleId"), new ContestClarificationAlert(context, mProgressDialog));
             }
         });
     }
@@ -130,16 +130,16 @@ public class ContestClarification extends Fragment implements ViewHandler{
     public void show(int which, Result result, long time) {
         switch (which) {
             case ViewHandler.CONTEST_COMMENT:
-                if (refreshed) {
-                    listItems.clear();
-                    notifyDataSetChanged();
-                    refreshed = false;
+                if (requestRefresh) {
+                    clearItems();
+                    requestRefresh = false;
                 }
                 if (result.result){
                     Map<String, Object> listMap = (Map<String, Object>) result.getContent();
                     mPageInfo = new PageInfo((Map<String, Object>) listMap.get("pageInfo"));
-                    ArrayList<Map<String, Object>> listItemsReceived = (ArrayList<Map<String, Object>>) listMap.get("list");
-                    setupReceivedData(listItemsReceived);
+
+                    convertNetData((ArrayList<Map<String, Object>>) listMap.get("list"));
+
                     if (listItems.size() == 0) {
                         mListView.setDataIsNull();
                         notifyDataSetChanged();
@@ -160,20 +160,25 @@ public class ContestClarification extends Fragment implements ViewHandler{
                     listItems.get(position).put("header", result.getContent());
                 View view = mListView.findItemViewWithTag(position);
                 if (view != null) {
-                    ImageView imageView = (ImageView) view.findViewById(R.id.contestClarification_header);
-                    if (imageView != null) imageView.setImageBitmap((Bitmap) result.getContent());
+                    ((ImageView) view.findViewById(R.id.contestClarification_header))
+                            .setImageBitmap((Bitmap) result.getContent());
                 }
         }
     }
 
-    private void setupReceivedData(ArrayList<Map<String, Object>> listItemsReceived) {
+    public void clearItems() {
+        listItems.clear();
+        notifyDataSetChanged();
+    }
+
+    private void convertNetData(ArrayList<Map<String, Object>> listItemsReceived) {
         for (int i =0; i < listItemsReceived.size(); ++i) {
             Map<String, Object> temMap = listItemsReceived.get(i);
             temMap.put("content", ((String) temMap.get("content")).replaceAll("!\\[title].*\\)", "[图片]"));
             temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
             temMap.put("header", R.drawable.logo);
             listItems.add(temMap);
-            Global.userManager.getAvatar((String) temMap.get("ownerEmail"), listItems.size() - 1, this);
+            NetDataPlus.getAvatar(context, (String) temMap.get("ownerEmail"), listItems.size() - 1, this);
         }
     }
 
@@ -184,11 +189,13 @@ public class ContestClarification extends Fragment implements ViewHandler{
             mListAdapter.notifyDataSetChanged();
         }
         mListAdapter.notifyDataSetChanged();
-        if (mListView.isPullUpLoading()) {
-            mListView.setPullUpLoading(false);
-        }
-        if (mListView.isRefreshing()) {
-            mListView.setRefreshing(false);
+        if (mListView != null) {
+            if (mListView.isPullUpLoading()) {
+                mListView.setPullUpLoading(false);
+            }
+            if (mListView.isRefreshing()) {
+                mListView.setRefreshing(false);
+            }
         }
     }
 
@@ -198,11 +205,11 @@ public class ContestClarification extends Fragment implements ViewHandler{
 
     public ContestClarification refresh(int contestID) {
         if (contestID < 1) return this;
-        refreshed = true;
+        requestRefresh = true;
         this.contestID = contestID;
         if (mListView != null) {
             mListView.resetPullUpLoad();
-            NetData.getContestComment(contestID, 1, this);
+            NetDataPlus.getContestComment(context, contestID, 1, this);
         }
         return this;
     }

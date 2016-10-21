@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.net.NetData;
+import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
 import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
@@ -41,7 +41,7 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
     private ListViewWithGestureLoad mListView;
     private PageInfo mPageInfo;
     private Context context;
-    private boolean refreshed;
+    private boolean requestRefresh;
     private int progressContainerVisibility = View.VISIBLE;
     private boolean hasSetProgressListener;
 
@@ -78,7 +78,7 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
             @Override
             public void onPullUpLoading() {
                 if (mPageInfo != null && mPageInfo.currentPage < mPageInfo.totalPages) {
-                    NetData.getArticleList(mPageInfo.currentPage + 1, NoticeListFragment.this);
+                    NetDataPlus.getArticleList(context, mPageInfo.currentPage + 1, NoticeListFragment.this);
                 } else {
                     mListView.setPullUpLoadFinish();
                 }
@@ -86,7 +86,7 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
         });
         mListView.setProgressContainerVisibility(progressContainerVisibility);
         configOnListItemClick();
-        if (refreshed) refresh();
+        if (requestRefresh) refresh();
         mListView.setLayoutParams(container.getLayoutParams());
         return mListView;
     }
@@ -118,32 +118,40 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
 
     @Override
     public void show(int which, Result result, long time) {
-        if (refreshed) {
-            if (hasSetProgressListener) progressListener.end();
-            listItems.clear();
-            notifyDataSetChanged();
-            refreshed = false;
-        }
-        if (result.result) {
-            Map<String, Object> listMap = (Map<String, Object>) result.getContent();
-            mPageInfo = new PageInfo((Map<String, Object>) listMap.get("pageInfo"));
-            ArrayList<Map<String, Object>> temArrayList = (ArrayList<Map<String, Object>>) listMap.get("list");
-            for (Map<String, Object> temMap : temArrayList) {
-                temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
-            }
-            listItems.addAll(temArrayList);
-            if (mPageInfo.totalItems == 0) {
-                mListView.setDataIsNull();
+        switch (which) {
+            case ViewHandler.ARTICLE_LIST:
+                if (requestRefresh) {
+                    if (hasSetProgressListener) progressListener.end();
+                    listItems.clear();
+                    notifyDataSetChanged();
+                    requestRefresh = false;
+                }
+                if (result.result) {
+                    Map<String, Object> listMap = (Map<String, Object>) result.getContent();
+                    mPageInfo = new PageInfo((Map<String, Object>) listMap.get("pageInfo"));
+
+                    listItems.addAll(convertNetData((ArrayList<Map<String, Object>>) listMap.get("list")));
+
+                    if (mPageInfo.totalItems == 0) {
+                        mListView.setDataIsNull();
+                        notifyDataSetChanged();
+                        return;
+                    }
+                    if (listItems.size() >= mPageInfo.totalItems) {
+                        mListView.setPullUpLoadFinish();
+                    }
+                }else {
+                    mListView.setPullUpLoadFailure();
+                }
                 notifyDataSetChanged();
-                return;
-            }
-            if (listItems.size() >= mPageInfo.totalItems) {
-                mListView.setPullUpLoadFinish();
-            }
-        }else {
-            mListView.setPullUpLoadFailure();
         }
-        notifyDataSetChanged();
+    }
+
+    private ArrayList<Map<String, Object>> convertNetData(ArrayList<Map<String, Object>> temArrayList) {
+        for (Map<String, Object> temMap : temArrayList) {
+            temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
+        }
+        return temArrayList;
     }
 
     @Override
@@ -153,11 +161,13 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
         }else {
             mListAdapter.notifyDataSetChanged();
         }
-        if (mListView.isPullUpLoading()) {
-            mListView.setPullUpLoading(false);
-        }
-        if (mListView.isRefreshing()) {
-            mListView.setRefreshing(false);
+        if (mListView != null) {
+            if (mListView.isPullUpLoading()) {
+                mListView.setPullUpLoading(false);
+            }
+            if (mListView.isRefreshing()) {
+                mListView.setRefreshing(false);
+            }
         }
     }
 
@@ -195,11 +205,11 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
     }
 
     public NoticeListFragment refresh() {
-        refreshed = true;
+        requestRefresh = true;
         if (mListView != null){
             if (hasSetProgressListener) progressListener.start();
             mListView.resetPullUpLoad();
-            NetData.getArticleList(1, this);
+            NetDataPlus.getArticleList(context, 1, this);
         }
         return this;
     }

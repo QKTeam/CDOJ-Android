@@ -1,8 +1,8 @@
 package cn.edu.uestc.acm.cdoj.ui.problem;
 
+import android.app.Activity;
 import android.app.Fragment;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -14,8 +14,8 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
-import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebViewFragment;
-import cn.edu.uestc.acm.cdoj.net.NetData;
+import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebView;
+import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.Problem;
 
@@ -24,11 +24,24 @@ import cn.edu.uestc.acm.cdoj.net.data.Problem;
  */
 public class ProblemFragment extends Fragment implements ViewHandler{
     private View rootView;
-    private DetailWebViewFragment webViewFragment;
+    private DetailWebView mWebView;
     private TextView titleView;
     private String title;
     private FloatingActionButton button_addCode;
     private FloatingActionButton button_checkResult;
+    private Context context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        context = activity;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,11 +53,8 @@ public class ProblemFragment extends Fragment implements ViewHandler{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             rootView = inflater.inflate(R.layout.problem, container, false);
-            webViewFragment = new DetailWebViewFragment();
-            webViewFragment.switchHTMLData(ViewHandler.PROBLEM_DETAIL);
-            getChildFragmentManager().beginTransaction()
-                    .add(R.id.problem_webViewFragment, webViewFragment)
-                    .commit();
+            mWebView = (DetailWebView) rootView.findViewById(R.id.problem_detailWebView);
+            mWebView.switchType(ViewHandler.PROBLEM_DETAIL);
             titleView = (TextView) rootView.findViewById(R.id.problem_title);
             if (title != null) titleView.setText(title);
         }
@@ -57,7 +67,7 @@ public class ProblemFragment extends Fragment implements ViewHandler{
     }
 
     public void addJSData(String jsData) {
-        webViewFragment.addJSData(jsData);
+        mWebView.addJSData(jsData);
     }
 
     public ProblemFragment setTitle(String title) {
@@ -67,7 +77,7 @@ public class ProblemFragment extends Fragment implements ViewHandler{
     }
 
     public ProblemFragment refresh(int id) {
-        NetData.getProblemDetail(id, this);
+        NetDataPlus.getProblemDetail(context, id, this);
         return this;
     }
 

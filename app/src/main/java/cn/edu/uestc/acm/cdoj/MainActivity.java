@@ -47,7 +47,7 @@ public class MainActivity extends Activity {
         if (Global.userManager.isLogin()) {
             Global.userManager.keepLogin();
         }
-        UserInfoManager.readLocalUserInfo();
+        UserInfoManager.readLocalUserInfo(this);
     }
 
     private void readHTMLFile() {

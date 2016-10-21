@@ -16,14 +16,13 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.net.NetData;
+import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
-import cn.edu.uestc.acm.cdoj.net.data.InfoList;
-import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
 import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
+import cn.edu.uestc.acm.cdoj.ui.modules.list.PageInfo;
 
 /**
  * Created by great on 2016/8/25.
@@ -36,7 +35,7 @@ public class ContestStatus extends Fragment implements ViewHandler{
     private ListViewWithGestureLoad mListView;
     private PageInfo mPageInfo;
     private Context context;
-    private boolean refreshed;
+    private boolean requestRefresh;
 
     @Override
     public void onAttach(Context context) {
@@ -64,19 +63,15 @@ public class ContestStatus extends Fragment implements ViewHandler{
             @Override
             public void onPullUpLoading() {
                 if (mPageInfo != null && mPageInfo.currentPage != mPageInfo.totalPages) {
-                    NetData.getStatusList(-1, null, contestID, mPageInfo.currentPage + 1, ContestStatus.this);
+                    NetDataPlus.getStatusList(context, contestID, mPageInfo.currentPage + 1, ContestStatus.this);
                 } else {
                     mListView.setPullUpLoadFinish();
                 }
             }
         });
-        if (refreshed) refresh();
+        if (requestRefresh) refresh();
         mListView.setLayoutParams(container.getLayoutParams());
         return mListView;
-    }
-
-    public void addListItem(Map<String, Object> listItem) {
-        listItems.add(listItem);
     }
 
     public void notifyDataSetChanged() {
@@ -85,11 +80,13 @@ public class ContestStatus extends Fragment implements ViewHandler{
         }else {
             mListAdapter.notifyDataSetChanged();
         }
-        if (mListView.isPullUpLoading()) {
-            mListView.setPullUpLoading(false);
-        }
-        if (mListView.isRefreshing()) {
-            mListView.setRefreshing(false);
+        if (mListView != null) {
+            if (mListView.isPullUpLoading()) {
+                mListView.setPullUpLoading(false);
+            }
+            if (mListView.isRefreshing()) {
+                mListView.setRefreshing(false);
+            }
         }
     }
 
@@ -109,43 +106,53 @@ public class ContestStatus extends Fragment implements ViewHandler{
 
     @Override
     public void show(int which, Result result, long time) {
-        if (refreshed) {
-            listItems.clear();
-            notifyDataSetChanged();
-            refreshed = false;
+        if (requestRefresh) {
+            clearItems();
+            requestRefresh = false;
         }
         if (result.result) {
-            mPageInfo = ((InfoList) result.getContent()).pageInfo;
-            ArrayList<Map<String, Object>> temArrayList = ((InfoList) result.getContent()).getInfoList();
-            for (Map<String, Object> temMap : temArrayList) {
-                temMap.put("length", temMap.get("length") + "B");
-                temMap.put("timeCost", temMap.get("timeCost") + " ms");
-                temMap.put("memoryCost", temMap.get("memoryCost") + " B");
-                if (problemIDs != null) {
-                    int i = 0;
-                    while (i < problemIDs.length && (int) temMap.get("problemId") != problemIDs[i])
-                        ++i;
-                    if (i == problemIDs.length) {
-                        temMap.put("probOrder", "?");
-                    } else {
-                        temMap.put("probOrder", String.valueOf((char)('A' + i)));
-                    }
-                }
-                temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
-            }
-            listItems.addAll(temArrayList);
+            Map<String, Object> listMap = (Map<String, Object>) result.getContent();
+            mPageInfo = new PageInfo((Map<String, Object>) listMap.get("pageInfo"));
+
+            listItems.addAll(convertNetData((ArrayList<Map<String, Object>>) listMap.get("list")));
+
             if (listItems.size() == 0) {
                 mListView.setDataIsNull();
                 notifyDataSetChanged();
                 return;
             }
-            if (mPageInfo.currentPage == mPageInfo.totalItems) {
+            if (listItems.size() == mPageInfo.totalItems) {
                 mListView.setPullUpLoadFinish();
             }
         } else {
             mListView.setPullUpLoadFailure();
         }
         notifyDataSetChanged();
+    }
+
+    public void clearItems() {
+        listItems.clear();
+        notifyDataSetChanged();
+    }
+
+    private ArrayList<Map<String, Object>> convertNetData(ArrayList<Map<String, Object>> temArrayList) {
+        for (Map<String, Object> temMap : temArrayList) {
+            temMap.put("length", temMap.get("length") + "B");
+            temMap.put("timeCost", temMap.get("timeCost") + " ms");
+            temMap.put("memoryCost", temMap.get("memoryCost") + " B");
+            if (problemIDs != null) {
+                int i = 0;
+                while (i < problemIDs.length && (int) temMap.get("problemId") != problemIDs[i])
+                    ++i;
+                if (i == problemIDs.length) {
+                    temMap.put("probOrder", "?");
+                } else {
+                    temMap.put("probOrder", String.valueOf((char)('A' + i)));
+                }
+            }
+            temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
+        }
+        return temArrayList;
     }
 
     private void refresh() {
@@ -155,10 +162,10 @@ public class ContestStatus extends Fragment implements ViewHandler{
     public ContestStatus refresh(int contestID)  {
         if (contestID < 1) return this;
         this.contestID = contestID;
-        refreshed = true;
+        requestRefresh = true;
         if (mListView != null) {
             mListView.resetPullUpLoad();
-            NetData.getStatusList(-1, null, contestID, 1, this);
+            NetDataPlus.getStatusList(context, contestID, 1, this);
         }
         return this;
     }

@@ -1,10 +1,13 @@
 package cn.edu.uestc.acm.cdoj.ui.contest;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +16,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebViewFragment;
+import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebView;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.Problem;
 
@@ -25,7 +28,20 @@ public class ContestProblems extends Fragment{
     private ViewPager mViewPager;
     private TabLayout tabLayout;
     private int problemsCount;
-    private DetailWebViewFragment[] problems;
+    private DetailWebView[] problems;
+    private Context context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.context = activity;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,24 +71,35 @@ public class ContestProblems extends Fragment{
 
     public void addProblems(ArrayList<Problem> problemList) {
         problemsCount = problemList.size();
-        problems = new DetailWebViewFragment[problemsCount];
+        problems = new DetailWebView[problemsCount];
         for (int i = 0; i != problemsCount; ++i) {
-            problems[i] = (new DetailWebViewFragment()).switchHTMLData(ViewHandler.PROBLEM_DETAIL);
-            problems[i].addJSData(problemList.get(i).getContentString());
+            problems[i] = new DetailWebView(context, ViewHandler.PROBLEM_DETAIL)
+                    .addJSData(problemList.get(i).getContentString());
         }
         if (mViewPager != null) setViewPagerAdapter();
     }
 
     private void setViewPagerAdapter() {
-        mViewPager.setAdapter(new FragmentPagerAdapter(getChildFragmentManager()) {
+        mViewPager.setAdapter(new PagerAdapter() {
             @Override
-            public Fragment getItem(int position) {
+            public int getCount() {
+                return problemsCount;
+            }
+
+            @Override
+            public boolean isViewFromObject(View view, Object object) {
+                return view == object;
+            }
+
+            @Override
+            public Object instantiateItem(ViewGroup container, int position) {
+                container.addView(problems[position]);
                 return problems[position];
             }
 
             @Override
-            public int getCount() {
-                return problemsCount;
+            public void destroyItem(ViewGroup container, int position, Object object) {
+                container.removeView(problems[position]);
             }
         });
         tabLayout.setupWithViewPager(mViewPager);

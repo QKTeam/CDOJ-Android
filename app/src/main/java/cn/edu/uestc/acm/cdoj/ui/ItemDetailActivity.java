@@ -71,7 +71,7 @@ public class ItemDetailActivity extends AppCompatActivity {
                 detail = new ContestFragment();
                 ((ContestFragment) detail).refresh(id);
                 break;
-    }
+        }
         getFragmentManager().beginTransaction()
                 .replace(R.id.detail_activity, detail)
                 .commit();

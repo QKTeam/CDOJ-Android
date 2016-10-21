@@ -17,10 +17,8 @@
         android:textStyle="bold"
         android:background="@color/main_background"/>
 
-    <LinearLayout
-        android:id="@+id/webViewFragment_article"
-        android:orientation="vertical"
+    <cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebView
+        android:id="@+id/article_detailWebView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
 </LinearLayout>
