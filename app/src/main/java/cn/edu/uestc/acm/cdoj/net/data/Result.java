@@ -11,6 +11,7 @@ import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 
 /**
  * Created by qwe on 16-9-12.
+ * 处理服务器返回的json字符串
  */
 public class Result {
     private final static String TAG = "ResultTag";

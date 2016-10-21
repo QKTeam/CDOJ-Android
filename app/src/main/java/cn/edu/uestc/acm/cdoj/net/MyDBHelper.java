@@ -12,6 +12,7 @@ import java.util.Map;
 
 /**
  * Created by lenovo on 2016/9/23.
+ * 负责查询存储多用户的数据库
  */
 
 public class MyDBHelper extends SQLiteOpenHelper {

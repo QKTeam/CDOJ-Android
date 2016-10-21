@@ -40,6 +40,10 @@ import java.util.ArrayList;
 /**
  * Created by lenovo on 2016/8/7.
  */
+
+//getPost请求写在这个类里
+//HttpClient可以帮助管理session，但是已经被弃用了
+
 public class NetWorkTool {
     public final static int STATE_OK = 1, STATE_ERROR = 2;
     private static ArrayList<NetStateListener> listeners = new ArrayList();
@@ -73,12 +77,16 @@ public class NetWorkTool {
     public static void addNetStateListener(NetStateListener listener){
         listeners.add(listener);
     }
+
+    //除头像外的所有get，post请求
     public static String getOrPost(String req[]){
         String re = null;
+        //检测网络是否开启
         if (isNetworkConnected()){
             re = req.length < 2||req[1] == null?get(req[0]):post(req[0], req[1]);
         }
         final String finalRe = re;
+        //去回调注册的网络监听，用于网络恢复去执行登录
         ThreadTools.runOnMainThread(new Runnable() {
             @Override
             public void run() {
@@ -132,32 +140,33 @@ public class NetWorkTool {
         return null;
     }
 
-    public static String post1(String url, String params) {
-        return getString(_post(url, params));
-    }
-    public static String get1(String url) {
-        return getString(_get(url));
-    }
-    public static InputStream _post(String url, String params) {
-        try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("accept", "*/*");
-            connection.setRequestMethod("POST");
-            connection.setDoOutput(true);
-            connection.setDoInput(true);
-            connection.connect();
-            OutputStream outputStream = connection.getOutputStream();
-            outputStream.write(params.getBytes("utf-8"));
-            outputStream.flush();
-            Log.d("_post", "" + connection.getResponseCode());
-            return connection.getInputStream();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+//    public static String post1(String url, String params) {
+//        return getString(_post(url, params));
+//    }
+//    public static String get1(String url) {
+//        return getString(_get(url));
+//    }
+//    public static InputStream _post(String url, String params) {
+//        try {
+//            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+//            connection.setRequestProperty("Content-Type", "application/json");
+//            connection.setRequestProperty("accept", "*/*");
+//            connection.setRequestMethod("POST");
+//            connection.setDoOutput(true);
+//            connection.setDoInput(true);
+//            connection.connect();
+//            OutputStream outputStream = connection.getOutputStream();
+//            outputStream.write(params.getBytes("utf-8"));
+//            outputStream.flush();
+//            Log.d("_post", "" + connection.getResponseCode());
+//            return connection.getInputStream();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
 
-    }
+    //只有获取头像用到了，下同
     public static InputStream _get(String url) {
         if (!isNetworkConnected()){
             return null;
@@ -189,7 +198,7 @@ public class NetWorkTool {
             return null;
         }
     }
-    public static String getString(InputStream is) {
+/*    public static String getString(InputStream is) {
         String string = null;
         try {
             Object[] objects = getBytes(is);
@@ -201,7 +210,9 @@ public class NetWorkTool {
             return null;
         }
         return string;
-    }
+    }*/
+
+    //登录请求的密码需要md5加密，下同
     public static String md(String s, String algorithm) {
         try {
             MessageDigest md = MessageDigest.getInstance(algorithm);
@@ -217,6 +228,8 @@ public class NetWorkTool {
     public static String sha1(String s){
         return md(s, "SHA-1");
     }
+
+    //检测网络是否开启
     private static boolean isNetworkConnected() {
         if (mConnectivityManager == null){
             return false;
