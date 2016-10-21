@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -23,14 +22,13 @@ import java.util.Map;
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
-import cn.edu.uestc.acm.cdoj.net.data.InfoList;
-import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
 import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
 import cn.edu.uestc.acm.cdoj.ui.ItemDetailActivity;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.MainList;
+import cn.edu.uestc.acm.cdoj.ui.modules.list.PageInfo;
 
 /**
  * Created by great on 2016/8/17.
@@ -121,26 +119,25 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
     @Override
     public void show(int which, Result result, long time) {
         if (refreshed) {
+            if (hasSetProgressListener) progressListener.end();
             listItems.clear();
             notifyDataSetChanged();
             refreshed = false;
         }
         if (result.result) {
-            mPageInfo = ((InfoList) result.getContent()).pageInfo;
-            ArrayList<Map<String, Object>> temArrayList = ((InfoList) result.getContent()).getInfoList();
+            Map<String, Object> listMap = (Map<String, Object>) result.getContent();
+            mPageInfo = new PageInfo((Map<String, Object>) listMap.get("pageInfo"));
+            ArrayList<Map<String, Object>> temArrayList = (ArrayList<Map<String, Object>>) listMap.get("list");
             for (Map<String, Object> temMap : temArrayList) {
                 temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
             }
             listItems.addAll(temArrayList);
-            if (listItems.size() == 0) {
+            if (mPageInfo.totalItems == 0) {
                 mListView.setDataIsNull();
                 notifyDataSetChanged();
                 return;
             }
-            if (hasSetProgressListener && mPageInfo.currentPage == 1) {
-                progressListener.end();
-            }
-            if (mPageInfo.currentPage == mPageInfo.totalItems) {
+            if (listItems.size() >= mPageInfo.totalItems) {
                 mListView.setPullUpLoadFinish();
             }
         }else {
@@ -170,20 +167,6 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
                 new String[]{"title", "content", "time", "ownerName"},
                 new int[]{R.id.article_title, R.id.article_content,
                         R.id.article_date, R.id.article_author});
-        /*mListAdapter.setViewBinder(new SimpleAdapter.ViewBinder() {
-            @Override
-            public boolean setViewValue(View view, Object data, String textRepresentation) {
-                 if (view instanceof TextView) {
-                     if (!(data instanceof String)) {
-                         ((TextView) view).setText(TimeFormat.getFormatDate((long) data));
-                     }else {
-                         ((TextView) view).setText((String) data);
-                     }
-                     return true;
-                }
-                return false;
-            }
-        });*/
         return mListAdapter;
     }
 

@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 
+import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.UserManager;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
@@ -136,7 +137,7 @@ public class UserInfo implements ViewHandler{
                         listener.synInfo(this);
                     }
                     writeInfoToLocalFile();
-                    Global.userManager.getAvatar(String.valueOf(userInfoMap.get("email")), null, this);
+                    NetData.getAvatar(String.valueOf(userInfoMap.get("email")), null, this);
                 }
                 break;
             case ViewHandler.AVATAR:

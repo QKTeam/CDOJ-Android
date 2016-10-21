@@ -26,8 +26,6 @@ import java.util.Map;
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
-import cn.edu.uestc.acm.cdoj.net.data.InfoList;
-import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
 import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
 import cn.edu.uestc.acm.cdoj.ui.ItemDetailActivity;
@@ -35,6 +33,7 @@ import cn.edu.uestc.acm.cdoj.ui.LoginActivity;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.MainList;
+import cn.edu.uestc.acm.cdoj.ui.modules.list.PageInfo;
 
 /**
  * Created by great on 2016/8/17.
@@ -107,7 +106,7 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int contestId = (int) listItems.get(position).get("contestId");
                 addInfoOfCurrentClick(position, contestId);
-                if (!Global.userManager.isLogin()){
+                if (Global.userManager.getCurrentUser() == null){
                     reminderUnLogin();
                     return;
                 }
@@ -187,28 +186,27 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
         switch (which) {
             case ViewHandler.CONTEST_LIST:
                 if (refreshed) {
+                    if (hasSetProgressListener) progressListener.end();
                     listItems.clear();
                     notifyDataSetChanged();
                     refreshed = false;
                 }
                 if (result.result) {
-                    mPageInfo = ((InfoList) result.getContent()).pageInfo;
-                    ArrayList<Map<String, Object>> temArrayList = ((InfoList) result.getContent()).getInfoList();
+                    Map<String, Object> listMap = (Map<String, Object>) result.getContent();
+                    mPageInfo = new PageInfo((Map<String, Object>) listMap.get("pageInfo"));
+                    ArrayList<Map<String, Object>> temArrayList = (ArrayList<Map<String, Object>>) listMap.get("list");
                     for (Map<String, Object> temMap : temArrayList) {
                         temMap.put("contestIdString", "ID:" + temMap.get("contestId"));
                         temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
                         temMap.put("length", TimeFormat.getFormatTime((int) temMap.get("length")));
                     }
                     listItems.addAll(temArrayList);
-                    if (listItems.size() == 0){
+                    if (mPageInfo.totalItems == 0){
                         mListView.setDataIsNull();
                         notifyDataSetChanged();
                         return;
                     }
-                    if (hasSetProgressListener && mPageInfo.currentPage == 1) {
-                        progressListener.end();
-                    }
-                    if (mPageInfo.currentPage == mPageInfo.totalItems) {
+                    if (listItems.size() >= mPageInfo.totalItems) {
                         mListView.setPullUpLoadFinish();
                     }
                 } else {
@@ -216,6 +214,7 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
                 }
                 notifyDataSetChanged();
                 break;
+
             case ViewHandler.LOGIN_CONTEST:
                 if (progressDialog != null){
                     progressDialog.cancel();

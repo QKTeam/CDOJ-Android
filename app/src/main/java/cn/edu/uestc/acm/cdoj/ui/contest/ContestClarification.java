@@ -23,12 +23,11 @@ import java.util.Map;
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.ViewHandler;
-import cn.edu.uestc.acm.cdoj.net.data.InfoList;
-import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
 import cn.edu.uestc.acm.cdoj.net.data.Result;
 import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
+import cn.edu.uestc.acm.cdoj.ui.modules.list.PageInfo;
 
 /**
  * Created by great on 2016/8/25.
@@ -137,15 +136,16 @@ public class ContestClarification extends Fragment implements ViewHandler{
                     refreshed = false;
                 }
                 if (result.result){
-                    mPageInfo = ((InfoList) result.getContent()).pageInfo;
-                    ArrayList<Map<String, Object>> listItemsReceived = ((InfoList) result.getContent()).getInfoList();
+                    Map<String, Object> listMap = (Map<String, Object>) result.getContent();
+                    mPageInfo = new PageInfo((Map<String, Object>) listMap.get("pageInfo"));
+                    ArrayList<Map<String, Object>> listItemsReceived = (ArrayList<Map<String, Object>>) listMap.get("list");
                     setupReceivedData(listItemsReceived);
                     if (listItems.size() == 0) {
                         mListView.setDataIsNull();
                         notifyDataSetChanged();
                         return;
                     }
-                    if (mPageInfo.currentPage == mPageInfo.totalItems) {
+                    if (listItems.size() >= mPageInfo.totalItems) {
                         mListView.setPullUpLoadFinish();
                     }
                 }else {
@@ -153,6 +153,7 @@ public class ContestClarification extends Fragment implements ViewHandler{
                 }
                 notifyDataSetChanged();
                 return;
+
             case ViewHandler.AVATAR:
                 int position = (int) result.getExtra();
                 if (position < listItems.size())

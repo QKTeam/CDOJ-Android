@@ -54,7 +54,6 @@ public class ContestRank extends Fragment implements ViewHandler {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-
     }
 
     @Override

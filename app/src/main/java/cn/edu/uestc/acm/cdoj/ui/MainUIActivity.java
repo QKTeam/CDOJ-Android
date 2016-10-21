@@ -448,6 +448,7 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
                         return DrawImage.draw(this, R.drawable.ic_list_notice, true);
                 }
                 break;
+
             case PROBLEMLIST:
                 switch (selectStatus) {
                     case SELECT:
@@ -456,6 +457,7 @@ public class MainUIActivity extends AppCompatActivity implements ViewHandler {
                         return DrawImage.draw(this, R.drawable.ic_list_problem, true);
                 }
                 break;
+
             case CONTESTLIST:
                 switch (selectStatus) {
                     case SELECT:
