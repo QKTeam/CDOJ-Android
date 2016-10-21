@@ -13,9 +13,12 @@ import java.util.Set;
 
 /**
  * Created by qwe on 16-10-10.
+ * json和map互相转换的工具
+ *
  */
 
 public class JsonUtils {
+
     public static Map getMapFromJson(JSONObject jsonObject){
         Map map = new HashMap<String, Object>();
         try {
@@ -39,6 +42,8 @@ public class JsonUtils {
         }
         return null;
     }
+
+    //把json里的数组转成List
     public static List getListFromJson(JSONArray jsonArray) {
         ArrayList list = new ArrayList<>();
         try {
@@ -53,7 +58,6 @@ public class JsonUtils {
                 }
                 else {
                     list.add(temp);
-//                    throw new RuntimeException("假设只有json对象与数组，没有基础数据类型");
                 }
             }
             return list;
@@ -84,6 +88,8 @@ public class JsonUtils {
         }
         return jsonObject;
     }
+
+    //把list转成json数组
     public static JSONArray getJsonArrayFromList(List list){
         JSONArray jsonArray = new JSONArray();
         for (Object temp:list) {
