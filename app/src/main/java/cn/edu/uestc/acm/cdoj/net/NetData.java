@@ -192,6 +192,7 @@ public class NetData {
         async(ViewHandler.PROBLEM_DETAIL, problemDetailUrl + id, null, viewHandler);
     }
 
+    //本地有缓存的请求(头像)，直接回调
     private static void sync(int which, Result result, ViewHandler viewHandler){
         final Object extra = NetData.mExtra;
         boolean inQueue = NetData.mInOrder;
@@ -200,6 +201,13 @@ public class NetData {
         final long time = System.currentTimeMillis();
         handleInMain(which, result, viewHandler, time, extra);
     }
+
+    //所有getXXX都调用的此方法
+    //
+    //which
+    //url 请求的网址，如：
+    //params  请求参数，get请求传null
+    //viewHandler  回调接口
     private static void async(final int which, final String url, final String params, final ViewHandler viewHandler) {
         final Object extra = NetData.mExtra;
         boolean inQueue = NetData.mInOrder;
@@ -209,29 +217,22 @@ public class NetData {
         new ThreadTools.Task<Void, Result>() {
             @Override
             Result doInBackGround(Void aVoid) {
+                //会在子线程上执行
                 return request(which, new String[]{url, params});
             }
 
             @Override
             void onPostExecute(Result result) {
+                //主线程上执行
                 handleInMain(which, result, viewHandler, time, extra);
             }
         }.execute(inQueue);
-/*        new AsyncTask<Void, Void, Result>(){
-
-            @Override
-            protected Result doInBackground(Void... voids) {
-                return request(which, req);
-            }
-
-            @Override
-            protected void onPostExecute(Result result) {
-                handleInMain(which, result, viewHandler, time, extra);
-            }
-        }.executeOnExecutor(Executors.newFixedThreadPool(1));*/
-
     }
+        //inQueue为true表示排队，false表示不排队（但是后来的不排队任务会等到前面排队任务全部完了再一起开始）
+        //调用execute后，会在子线程上调用doInBackGround，主线程上调用onPostExecute
 
+
+    //被async里的doInBackGround调用
     static Result request(int which, String[] req){
         Log.d(TAG, "request: 开始http请求" + req[0]);
         switch (which){
@@ -261,6 +262,8 @@ public class NetData {
         Log.d(TAG, "request: http请求完成");
         return new Result(which, result);
     }
+
+    //被async里的onPostExecute调用
     static void handleInMain(int which, Result result, ViewHandler viewHandler, long time, Object extra){
         if (viewHandler != null){
             result.setExtra(extra);

@@ -31,6 +31,9 @@ public class UserManager implements ViewHandler, NetStateListener {
     public String getCurrentUser(){
         return sp.getString(KEY_CURRENT_USER, null);
     }
+    public boolean hasCurrentUser(){
+        return getCurrentUser() != null;
+    }
     public void setCurrentUser(String userName, ViewHandler viewHandler){
         if (userName == null){
             sp.edit().remove(KEY_CURRENT_USER).commit();
@@ -41,10 +44,16 @@ public class UserManager implements ViewHandler, NetStateListener {
             _login(userName, sha1password, viewHandler);
         }
     }
+    public boolean hasUser(){
+        return getUserList().size() >= 1;
+    }
     public ArrayList<Map<String, Object>> getUserList(){
         return mUserDBHelper.getList(null);
     }
     public void deleteUser(String userName){
+        if (getCurrentUser().equals(userName)){
+            setCurrentUser(null, null);
+        }
         mUserDBHelper.delete(userName);
     }
     private void addUser(String userName, String sha1password){
@@ -65,7 +74,7 @@ public class UserManager implements ViewHandler, NetStateListener {
             }
         }, s , 20*60*1000);
     }
-    public void keepLogin(){
+    void keepLogin(){
         if (!hasAddListener){
             hasAddListener = true;
             NetWorkTool.addNetStateListener(this);
