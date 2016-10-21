@@ -9,12 +9,11 @@
     android:paddingRight="10dp"
     android:paddingTop="5dp">
     <ImageView
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp"
+        android:padding="4dp"
+        android:layout_marginEnd="10dp"
         android:id="@+id/contestClarification_header"
         android:layout_gravity="left"
         android:layout_width="65dp"
-        android:layout_marginRight="5dp"
         android:layout_height="match_parent" />
     <LinearLayout
         android:orientation="vertical"
@@ -38,7 +37,7 @@
                 android:id="@+id/contestClarification_submitDate"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="right"
+                android:gravity="end"
                 android:layout_weight="3"
                 android:ellipsize="end"
                 android:lines="1"
@@ -52,7 +51,6 @@
             android:layout_height="0dp"
             android:maxLines="3"
             android:gravity="center_vertical"
-            android:textStyle="bold"
             android:ellipsize="end"
             android:textSize="15sp"/>
     </LinearLayout>
