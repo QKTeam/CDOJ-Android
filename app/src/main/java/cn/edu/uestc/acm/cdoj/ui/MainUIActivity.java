@@ -1,15 +1,20 @@
 package cn.edu.uestc.acm.cdoj.ui;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.IntDef;
 import android.support.design.widget.NavigationView;
 import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -33,6 +38,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.logging.Handler;
 import java.util.regex.Pattern;
 
 import cn.edu.uestc.acm.cdoj.R;
@@ -60,7 +66,7 @@ import cn.edu.uestc.acm.cdoj.ui.statusBar.StatusBarUtil;
  * Created by Grea on 2016/10/3.
  */
 
-public class MainUIActivity extends AppCompatActivity {
+public class MainUIActivity extends AppCompatActivity implements  {
 
     public static final int NOTICELIST = 0;
     public static final int PROBLEMLIST = 1;
