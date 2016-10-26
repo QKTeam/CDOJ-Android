@@ -44,32 +44,32 @@
         <markdown id="source"></markdown>
 	</body>
     <script type="text/javascript">
-        var data = {{{replace_data_here}}};
-        document.getElementById("title").innerHTML = data.title;
-        document.getElementById("limit").innerHTML = data.javaTimeLimit + "/" + data.timeLimit + "MS, " + data.javaMemoryLimit + "/" + data.memoryLimit + "KB (Java/Others)";
-        document.getElementById("description").innerHTML = marked(data.description);
-        document.getElementById("input").innerHTML = marked(data.input);
-        document.getElementById("output").innerHTML = marked(data.output);
-        document.getElementById("hint").innerHTML = marked(data.hint);
-        document.getElementById("source").innerHTML = marked(data.source);
+        var article = {{{replace_data_here}}};
+        document.getElementById("title").innerHTML = article.title;
+        document.getElementById("limit").innerHTML = article.javaTimeLimit + "/" + article.timeLimit + "MS, " + article.javaMemoryLimit + "/" + article.memoryLimit + "KB (Java/Others)";
+        document.getElementById("description").innerHTML = marked(article.description);
+        document.getElementById("input").innerHTML = marked(article.input);
+        document.getElementById("output").innerHTML = marked(article.output);
+        document.getElementById("hint").innerHTML = marked(article.hint);
+        document.getElementById("source").innerHTML = marked(article.source);
         try {
-            data.sampleInput = JSON.parse(data.sampleInput);
-            data.sampleOutput = JSON.parse(data.sampleOutput);
+            article.sampleInput = JSON.parse(article.sampleInput);
+            article.sampleOutput = JSON.parse(article.sampleOutput);
         }
         catch (e) { // OJ database strange bug
-            data.sampleInput = Array(data.sampleInput);
-            data.sampleOutput = Array(data.sampleOutput);
+            article.sampleInput = Array(article.sampleInput);
+            article.sampleOutput = Array(article.sampleOutput);
         }
         var sample = document.getElementById("sample").tBodies[0];
-        for(var i = 0; i < data.sampleInput.length; i++) {
+        for(var i = 0; i < article.sampleInput.length; i++) {
             var tr = document.createElement('tr');
             var td1 = document.createElement('td');
             var pre1 = document.createElement('pre');
-            pre1.innerText = data.sampleInput[i];
+            pre1.innerText = article.sampleInput[i];
             td1.appendChild(pre1); tr.appendChild(td1);
             var td2 = document.createElement('td');
             var pre2 = document.createElement('pre');
-            pre2.innerText = data.sampleOutput[i];
+            pre2.innerText = article.sampleOutput[i];
             td2.appendChild(pre2); tr.appendChild(td2);
             sample.appendChild(tr);
         }

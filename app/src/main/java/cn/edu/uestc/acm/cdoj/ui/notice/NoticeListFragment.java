@@ -7,43 +7,42 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
+
+import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
-import cn.edu.uestc.acm.cdoj.net.ViewHandler;
-import cn.edu.uestc.acm.cdoj.net.data.Result;
+import cn.edu.uestc.acm.cdoj.net.ConvertNetData;
+import cn.edu.uestc.acm.cdoj.net.NetData;
+import cn.edu.uestc.acm.cdoj.net.NetDataPlus;
+import cn.edu.uestc.acm.cdoj.net.NetHandler;
+import cn.edu.uestc.acm.cdoj.net.Result;
 import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
 import cn.edu.uestc.acm.cdoj.ui.ItemDetailActivity;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
-import cn.edu.uestc.acm.cdoj.ui.modules.list.MainList;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.PageInfo;
 
 /**
  * Created by great on 2016/8/17.
  */
-public class NoticeListFragment extends Fragment implements ViewHandler, MainList {
-    private SimpleAdapter mListAdapter;
+public class NoticeListFragment extends Fragment implements ConvertNetData {
     private ArrayList<Map<String, Object>> listItems = new ArrayList<>();
     private FragmentManager mFragmentManager;
-    private MainList.OnRefreshProgressListener progressListener;
     private ListViewWithGestureLoad mListView;
+    private SimpleAdapter mListAdapter;
     private PageInfo mPageInfo;
     private Context context;
-    private boolean requestRefresh;
-    private int progressContainerVisibility = View.VISIBLE;
-    private boolean hasSetProgressListener;
 
     @Override
     public void onAttach(Context context) {
@@ -80,13 +79,12 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
                 if (mPageInfo != null && mPageInfo.currentPage < mPageInfo.totalPages) {
                     NetDataPlus.getArticleList(context, mPageInfo.currentPage + 1, NoticeListFragment.this);
                 } else {
-                    mListView.setPullUpLoadFinish();
+                    mListView.noticeLoadFinish();
                 }
             }
         });
-        mListView.setProgressContainerVisibility(progressContainerVisibility);
         configOnListItemClick();
-        if (requestRefresh) refresh();
+        if (mListAdapter != null) mListView.setAdapter(mListAdapter);
         mListView.setLayoutParams(container.getLayoutParams());
         return mListView;
     }
@@ -111,53 +109,70 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
     private void showDetailOnActivity(int position) {
         Intent intent = new Intent(context, ItemDetailActivity.class);
         intent.putExtra("title", (String) listItems.get(position).get("title"));
-        intent.putExtra("type", ViewHandler.ARTICLE_DETAIL);
+        intent.putExtra("type", NetData.ARTICLE_DETAIL);
         intent.putExtra("id", (int) listItems.get(position).get("articleId"));
         context.startActivity(intent);
     }
 
+    @NonNull
     @Override
-    public void show(int which, Result result, long time) {
-        switch (which) {
-            case ViewHandler.ARTICLE_LIST:
-                if (requestRefresh) {
-                    if (hasSetProgressListener) progressListener.end();
-                    listItems.clear();
-                    notifyDataSetChanged();
-                    requestRefresh = false;
-                }
-                if (result.result) {
-                    Map<String, Object> listMap = (Map<String, Object>) result.getContent();
-                    mPageInfo = new PageInfo((Map<String, Object>) listMap.get("pageInfo"));
+    public Result onConvertNetData(String jsonString, Result result) {
+        Map<String, Object> listMap = JSON.parseObject(jsonString);
+        mPageInfo = new PageInfo((Map) listMap.get("pageInfo"));
+        convertNetData((ArrayList<Map<String, Object>>) listMap.get("list"));
 
-                    listItems.addAll(convertNetData((ArrayList<Map<String, Object>>) listMap.get("list")));
-
-                    if (mPageInfo.totalItems == 0) {
-                        mListView.setDataIsNull();
-                        notifyDataSetChanged();
-                        return;
-                    }
-                    if (listItems.size() >= mPageInfo.totalItems) {
-                        mListView.setPullUpLoadFinish();
-                    }
-                }else {
-                    mListView.setPullUpLoadFailure();
-                }
-                notifyDataSetChanged();
+        if (mPageInfo.totalItems == 0) {
+            result.setStatus(NetHandler.Status.DATAISNULL);
+        } else if (mPageInfo.currentPage == mPageInfo.totalPages) {
+            result.setStatus(NetHandler.Status.FINISH);
+        } else if (listMap.get("result").equals("success")) {
+            result.setStatus(NetHandler.Status.SUCCESS);
+        } else {
+            result.setStatus(NetHandler.Status.FALSE);
         }
+        return result;
     }
 
-    private ArrayList<Map<String, Object>> convertNetData(ArrayList<Map<String, Object>> temArrayList) {
-        for (Map<String, Object> temMap : temArrayList) {
+    private void convertNetData(ArrayList<Map<String, Object>> list) {
+        for (Map<String, Object> temMap : list) {
             temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
         }
-        return temArrayList;
+        listItems.addAll(list);
     }
 
     @Override
+    public void onNetDataConverted(Result result) {
+        if (mListView != null) {
+            switch (result.getType()) {
+                case NetHandler.Status.SUCCESS:
+                    break;
+                case NetHandler.Status.DATAISNULL:
+                    mListView.noticeDataIsNull();
+                    break;
+                case NetHandler.Status.FINISH:
+                    mListView.noticeLoadFinish();
+                    break;
+                case NetHandler.Status.NETNOTCONECT:
+                    mListView.noticeNetNotConnect();
+                    break;
+                case NetHandler.Status.CONECTOVERTIME:
+                    mListView.noticeConnectOvertime();
+                    break;
+                case NetHandler.Status.FALSE:
+                    mListView.noticeLoadFailure();
+                    break;
+                case NetHandler.Status.DEFAULT:
+                    break;
+            }
+            notifyDataSetChanged();
+        }
+    }
+
     public void notifyDataSetChanged() {
         if (mListAdapter == null) {
-            mListView.setAdapter(createAdapter());
+            mListAdapter = createAdapter();
+            if (mListView != null)
+                mListView.setAdapter(mListAdapter);
         }else {
             mListAdapter.notifyDataSetChanged();
         }
@@ -171,7 +186,7 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
         }
     }
 
-    private ListAdapter createAdapter() {
+    private SimpleAdapter createAdapter() {
         mListAdapter =  new SimpleAdapter(
                 Global.currentMainUIActivity, listItems, R.layout.article_item_list,
                 new String[]{"title", "content", "time", "ownerName"},
@@ -180,38 +195,15 @@ public class NoticeListFragment extends Fragment implements ViewHandler, MainLis
         return mListAdapter;
     }
 
-    @Override
-    public void setRefreshProgressListener(OnRefreshProgressListener listener) {
-        hasSetProgressListener = true;
-        progressListener = listener;
-    }
-
-    @Override
-    public void addListItem(Map<String, Object> listItem) {
-        listItems.add(listItem);
-    }
-
-    @Override
-    public ListViewWithGestureLoad getListView() {
-        return mListView;
-    }
-
-    @Override
-    public void setProgressContainerVisibility(int visibility) {
-        progressContainerVisibility = visibility;
-        if (mListView != null) {
-            mListView.setProgressContainerVisibility(visibility);
-        }
-    }
-
     public NoticeListFragment refresh() {
-        requestRefresh = true;
-        if (mListView != null){
-            if (hasSetProgressListener) progressListener.start();
-            mListView.resetPullUpLoad();
-            NetDataPlus.getArticleList(context, 1, this);
-        }
+        clearItems();
+        if (mListView != null) mListView.resetPullUpLoad();
+        NetDataPlus.getArticleList(context, 1, this);
         return this;
     }
 
+    public void clearItems() {
+        listItems.clear();
+        notifyDataSetChanged();
+    }
 }

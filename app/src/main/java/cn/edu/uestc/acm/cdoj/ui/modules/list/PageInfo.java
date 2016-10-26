@@ -1,5 +1,7 @@
 package cn.edu.uestc.acm.cdoj.ui.modules.list;
 
+import org.json.JSONObject;
+
 import java.util.Map;
 
 /**
@@ -8,17 +10,17 @@ import java.util.Map;
 
 public class PageInfo {
 
-    public Integer currentPage;
-    public Integer displayDistance;
-    public Integer countPerPage;
-    public Integer totalItems;
-    public Integer totalPages;
+    public int currentPage;
+    public int displayDistance;
+    public int countPerPage;
+    public int totalItems;
+    public int totalPages;
 
-    public PageInfo(Map<String, Object> pageInfoMap) {
-        currentPage = (Integer) pageInfoMap.get("currentPage");
-        displayDistance = (Integer) pageInfoMap.get("displayDistance");
-        countPerPage = (Integer) pageInfoMap.get("countPerPage");
-        totalItems = (Integer) pageInfoMap.get("totalItems");
-        totalPages = (Integer) pageInfoMap.get("totalPages");
+    public PageInfo(Map pageInfoMap) {
+        currentPage = (int) pageInfoMap.get("currentPage");
+        displayDistance = (int) pageInfoMap.get("displayDistance");
+        countPerPage = (int) pageInfoMap.get("countPerPage");
+        totalItems = (int) pageInfoMap.get("totalItems");
+        totalPages = (int) pageInfoMap.get("totalPages");
     }
 }

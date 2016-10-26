@@ -16,7 +16,7 @@
     <string name="contest">比赛</string>
     <string name="login">登录</string>
     <string name="username">用户名</string>
-    <string name="password">密码</string>
+    <string name="passwordSHA1">密码</string>
     <string name="go">确定</string>
     <string name="linking">网络连接中.....</string>
     <string name="confirm">确定</string>
@@ -27,7 +27,12 @@
     <string name="user">用户</string>
     <string name="gettingContest">正在获取该比赛</string>
     <string name="getting">正在获取......</string>
+
     <string name="noData">数据为空！</string>
+    <string name="netNotConnect">网络未连接！</string>
+    <string name="connectOvertime">连接超时！</string>
+    <string name="loadError">加载出错！</string>
+
     <string name="yes">是</string>
     <string name="no">否</string>
     <string name="search">搜索...</string>

@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -20,38 +21,37 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 
+import com.alibaba.fastjson.JSON;
+
 import java.util.ArrayList;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
-import cn.edu.uestc.acm.cdoj.net.ViewHandler;
-import cn.edu.uestc.acm.cdoj.net.data.Result;
+import cn.edu.uestc.acm.cdoj.net.ConvertNetData;
+import cn.edu.uestc.acm.cdoj.net.NetData;
+import cn.edu.uestc.acm.cdoj.net.NetDataPlus;
+import cn.edu.uestc.acm.cdoj.net.NetHandler;
+import cn.edu.uestc.acm.cdoj.net.Result;
 import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
 import cn.edu.uestc.acm.cdoj.ui.ItemDetailActivity;
 import cn.edu.uestc.acm.cdoj.ui.LoginActivity;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
-import cn.edu.uestc.acm.cdoj.ui.modules.list.MainList;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.PageInfo;
 
 /**
  * Created by great on 2016/8/17.
  */
-public class ContestListFragment extends Fragment implements ViewHandler, MainList{
-    private SimpleAdapter mListAdapter;
-    private ArrayList<Map<String,Object>> listItems = new ArrayList<>();
+public class ContestListFragment extends Fragment implements ConvertNetData {
+    private ArrayList<Map<String, Object>> listItems = new ArrayList<>();
     private int clickPosition = -1;
     private int clickContestID = -1;
     private ProgressDialog progressDialog;
     private FragmentManager mFragmentManager;
     private ListViewWithGestureLoad mListView;
-    private MainList.OnRefreshProgressListener progressListener;
+    private SimpleAdapter mListAdapter;
     private PageInfo mPageInfo;
     private Context context;
-    private boolean requestRefresh;
-    private boolean hasSetProgressListener;
-    private int progressContainerVisibility = View.VISIBLE;
 
     @Override
     public void onAttach(Context context) {
@@ -82,19 +82,14 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
                 refresh();
             }
         });
-        mListView.setOnPullUpLoadListener(new ListViewWithGestureLoad.OnPullUpLoadListener(){
+        mListView.setOnPullUpLoadListener(new ListViewWithGestureLoad.OnPullUpLoadListener() {
             @Override
             public void onPullUpLoading() {
-                if (mPageInfo != null && mPageInfo.currentPage < mPageInfo.totalPages) {
-                    NetDataPlus.getContestList(context, mPageInfo.currentPage + 1, ContestListFragment.this);
-                }else {
-                    mListView.setPullUpLoadFinish();
-                }
+                NetDataPlus.getContestList(context, mPageInfo.currentPage + 1, ContestListFragment.this);
             }
         });
-        mListView.setProgressContainerVisibility(progressContainerVisibility);
         setupOnListItemClick();
-        if (requestRefresh) refresh();
+        if (mListAdapter != null) mListView.setAdapter(mListAdapter);
         mListView.setLayoutParams(container.getLayoutParams());
         return mListView;
     }
@@ -105,11 +100,11 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int contestId = (int) listItems.get(position).get("contestId");
                 addInfoOfCurrentClick(position, contestId);
-                if (Global.userManager.getCurrentUser() == null){
+                if (Global.user == null) {
                     reminderUnLogin();
                     return;
                 }
-                if (listItems.get(position).get("typeName").equals("Private")){
+                if (listItems.get(position).get("typeName").equals("Private")) {
                     reminderEnterPassword();
                     return;
                 }
@@ -180,62 +175,95 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
                 .show();
     }
 
+    @NonNull
     @Override
-    public void show(int which, Result result, long time) {
-        switch (which) {
-            case ViewHandler.CONTEST_LIST:
-                if (requestRefresh) {
-                    if (hasSetProgressListener) progressListener.end();
-                    listItems.clear();
-                    notifyDataSetChanged();
-                    requestRefresh = false;
-                }
-                if (result.result) {
-                    Map<String, Object> listMap = (Map<String, Object>) result.getContent();
-                    mPageInfo = new PageInfo((Map<String, Object>) listMap.get("pageInfo"));
+    public Result onConvertNetData(String jsonString, Result result) {
+        switch (result.getType()) {
+            case NetData.CONTEST_LIST:
+                Map<String, Object> listMap = JSON.parseObject(jsonString);
+                mPageInfo = new PageInfo((Map) listMap.get("pageInfo"));
+                convertNetData((ArrayList<Map<String, Object>>) listMap.get("list"));
 
-                    listItems.addAll(convertNetData((ArrayList<Map<String, Object>>) listMap.get("list")));
-
-                    if (mPageInfo.totalItems == 0){
-                        mListView.setDataIsNull();
-                        notifyDataSetChanged();
-                        return;
-                    }
-                    if (listItems.size() >= mPageInfo.totalItems) {
-                        mListView.setPullUpLoadFinish();
-                    }
+                if (mPageInfo.totalItems == 0) {
+                    result.setStatus(NetHandler.Status.DATAISNULL);
+                } else if (mPageInfo.currentPage == mPageInfo.totalPages) {
+                    result.setStatus(NetHandler.Status.FINISH);
+                } else if (listMap.get("result").equals("success")) {
+                    result.setStatus(NetHandler.Status.SUCCESS);
                 } else {
-                    mListView.setPullUpLoadFailure();
+                    result.setStatus(NetHandler.Status.FALSE);
                 }
-                notifyDataSetChanged();
                 break;
 
-            case ViewHandler.LOGIN_CONTEST:
-                if (progressDialog != null){
-                    progressDialog.cancel();
-                }
-                if (result.result) {
-                    showDetail();
-                }else {
-                    reminderLoginError();
+            case NetData.LOGIN_CONTEST:
+                boolean isSuccess = JSON.parseObject(jsonString)
+                        .get("result")
+                        .equals("success");
+                if (isSuccess) {
+                    result.setStatus(NetHandler.Status.SUCCESS);
+                } else {
+                    result.setStatus(NetHandler.Status.FALSE);
                 }
         }
+        return result;
     }
 
-    private ArrayList<Map<String, Object>> convertNetData(ArrayList<Map<String, Object>> temArrayList) {
-        for (Map<String, Object> temMap : temArrayList) {
+    private void convertNetData(ArrayList<Map<String, Object>> list) {
+        for (Map<String, Object> temMap : list) {
             temMap.put("contestIdString", "ID:" + temMap.get("contestId"));
             temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
             temMap.put("length", TimeFormat.getFormatTime((int) temMap.get("length")));
         }
-        return temArrayList;
+        listItems.addAll(list);
     }
 
     @Override
+    public void onNetDataConverted(Result result) {
+        switch (result.getType()) {
+            case NetData.CONTEST_LIST:
+                switch (result.getType()) {
+                    case NetHandler.Status.SUCCESS:
+                        break;
+                    case NetHandler.Status.DATAISNULL:
+                        mListView.noticeDataIsNull();
+                        break;
+                    case NetHandler.Status.FINISH:
+                        mListView.noticeLoadFinish();
+                        break;
+                    case NetHandler.Status.NETNOTCONECT:
+                        mListView.noticeNetNotConnect();
+                        break;
+                    case NetHandler.Status.CONECTOVERTIME:
+                        mListView.noticeConnectOvertime();
+                        break;
+                    case NetHandler.Status.FALSE:
+                        mListView.noticeLoadFailure();
+                        break;
+                    case NetHandler.Status.DEFAULT:
+                        break;
+                }
+                notifyDataSetChanged();
+                break;
+
+            case NetData.LOGIN_CONTEST:
+                if (progressDialog != null) {
+                    progressDialog.cancel();
+                }
+                if (result.getStatus() == NetHandler.Status.SUCCESS) {
+                    showDetail();
+                } else {
+                    reminderLoginError();
+                }
+        }
+
+    }
+
     public void notifyDataSetChanged() {
         if (mListAdapter == null) {
-            mListView.setAdapter(createAdapter());
-        } else{
+            mListAdapter = setupAdapter();
+            if (mListView != null)
+                mListView.setAdapter(mListAdapter);
+        } else {
             mListAdapter.notifyDataSetChanged();
         }
         if (mListView != null) {
@@ -248,13 +276,21 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
         }
     }
 
-    private ListAdapter createAdapter() {
-        mListAdapter =  new SimpleAdapter(
+    private SimpleAdapter setupAdapter() {
+        mListAdapter = new SimpleAdapter(
                 Global.currentMainUIActivity, listItems, R.layout.contest_item_list,
                 new String[]{"title", "time", "length", "contestIdString", "status", "typeName"},
                 new int[]{R.id.contest_title, R.id.contest_date, R.id.contest_timeLimit,
                         R.id.contest_id, R.id.contest_status, R.id.contest_permission});
         return mListAdapter;
+    }
+
+    private void showDetailOnActivity() {
+        Intent intent = new Intent(context, ItemDetailActivity.class);
+        intent.putExtra("title", (String) listItems.get(clickPosition).get("title"));
+        intent.putExtra("type", NetData.CONTEST_DETAIL);
+        intent.putExtra("id", clickContestID);
+        context.startActivity(intent);
     }
 
     private void showDetail() {
@@ -267,14 +303,6 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
                 .refresh(clickContestID);
         mTransaction.replace(R.id.ui_main_detail, contest);
         mTransaction.commit();
-    }
-
-    private void showDetailOnActivity() {
-        Intent intent = new Intent(context, ItemDetailActivity.class);
-        intent.putExtra("title", (String) listItems.get(clickPosition).get("title"));
-        intent.putExtra("type", ViewHandler.CONTEST_DETAIL);
-        intent.putExtra("id",clickContestID);
-        context.startActivity(intent);
     }
 
     private void reminderLoginError() {
@@ -293,38 +321,15 @@ public class ContestListFragment extends Fragment implements ViewHandler, MainLi
         alert.show();
     }
 
-    @Override
-    public void setRefreshProgressListener(OnRefreshProgressListener listener) {
-        hasSetProgressListener = true;
-        progressListener = listener;
-    }
-
-    @Override
-    public void addListItem(Map<String ,Object> listItem) {
-        listItems.add(listItem);
-    }
-
-    @Override
-    public ListViewWithGestureLoad getListView() {
-        return mListView;
-    }
-
-    @Override
-    public void setProgressContainerVisibility(int visibility) {
-        progressContainerVisibility = visibility;
-        if (mListView != null) {
-            mListView.setProgressContainerVisibility(visibility);
-        }
-    }
-
-
     public ContestListFragment refresh() {
-        requestRefresh = true;
-        if (mListView != null) {
-            if (progressListener != null) progressListener.start();
-            mListView.resetPullUpLoad();
-            NetDataPlus.getContestList(context, 1, this);
-        }
+        clearItems();
+        if (mListView != null) mListView.resetPullUpLoad();
+        NetDataPlus.getContestList(context, 1, this);
         return this;
+    }
+
+    public void clearItems() {
+        listItems.clear();
+        notifyDataSetChanged();
     }
 }

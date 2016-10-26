@@ -5,7 +5,9 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -13,17 +15,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
+import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
-import cn.edu.uestc.acm.cdoj.net.ViewHandler;
-import cn.edu.uestc.acm.cdoj.net.data.Result;
+import cn.edu.uestc.acm.cdoj.net.ConvertNetData;
+import cn.edu.uestc.acm.cdoj.net.NetData;
+import cn.edu.uestc.acm.cdoj.net.NetDataPlus;
+import cn.edu.uestc.acm.cdoj.net.NetHandler;
+import cn.edu.uestc.acm.cdoj.net.Result;
 import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
@@ -32,16 +37,15 @@ import cn.edu.uestc.acm.cdoj.ui.modules.list.PageInfo;
 /**
  * Created by great on 2016/8/25.
  */
-public class ContestClarification extends Fragment implements ViewHandler{
+public class ContestClarification extends Fragment implements ConvertNetData {
 
-    private SimpleAdapter mListAdapter;
     private int contestID = -1;
     private ArrayList<Map<String, Object>> listItems = new ArrayList<>();
     private ProgressDialog mProgressDialog;
     private ListViewWithGestureLoad mListView;
+    private SimpleAdapter mListAdapter;
     private PageInfo mPageInfo;
     private Context context;
-    private boolean requestRefresh;
 
     @Override
     public void onAttach(Context context) {
@@ -71,22 +75,122 @@ public class ContestClarification extends Fragment implements ViewHandler{
                 if (mPageInfo != null && mPageInfo.currentPage < mPageInfo.totalPages) {
                     NetDataPlus.getContestComment(context, contestID, mPageInfo.currentPage + 1, ContestClarification.this);
                 } else {
-                    mListView.setPullUpLoadFinish();
+                    mListView.noticeLoadFinish();
                 }
             }
         });
         setupOnListItemClick();
-        if (requestRefresh) refresh();
+        if (mListAdapter != null) mListView.setAdapter(mListAdapter);
         mListView.setLayoutParams(container.getLayoutParams());
         return mListView;
     }
 
-    private ListAdapter setupAdapter() {
+    private void setupOnListItemClick() {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mProgressDialog = ProgressDialog
+                        .show(context, getString(R.string.getting), getString(R.string.linking));
+                NetDataPlus.getArticleDetail(context, (int) listItems.get(position).get("articleId"),
+                        new ContestClarificationAlert(context, mProgressDialog));
+            }
+        });
+    }
+
+    @NonNull
+    @Override
+    public Result onConvertNetData(String jsonString, Result result) {
+        Map<String, Object> listMap = JSON.parseObject(jsonString);
+        mPageInfo = new PageInfo((Map) listMap.get("pageInfo"));
+        convertNetData((ArrayList<Map<String, Object>>) listMap.get("list"));
+
+        if (mPageInfo.totalItems == 0) {
+            result.setStatus(NetHandler.Status.DATAISNULL);
+        } else if (mPageInfo.currentPage == mPageInfo.totalPages) {
+            result.setStatus(NetHandler.Status.FINISH);
+        } else if (listMap.get("result").equals("success")) {
+            result.setStatus(NetHandler.Status.SUCCESS);
+        } else {
+            result.setStatus(NetHandler.Status.FALSE);
+        }
+        return result;
+    }
+
+    private void convertNetData(ArrayList<Map<String, Object>> list) {
+        for (Map<String, Object> temMap : list) {
+            temMap.put("content", ((String) temMap.get("content")).replaceAll("!\\[title].*\\)", "[图片]"));
+            temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
+            temMap.put("header", R.drawable.logo);
+            listItems.add(temMap);
+            NetDataPlus.getAvatar(context, (String) temMap.get("ownerEmail"), listItems.size() - 1, this);
+        }
+    }
+
+    @Override
+    public void onNetDataConverted(Result result) {
+        switch (result.getType()) {
+            case NetData.CONTEST_COMMENT:
+                if (mListView != null) {
+                    switch (result.getType()) {
+                        case NetHandler.Status.SUCCESS:
+                            break;
+                        case NetHandler.Status.DATAISNULL:
+                            mListView.noticeDataIsNull();
+                            break;
+                        case NetHandler.Status.FINISH:
+                            mListView.noticeLoadFinish();
+                            break;
+                        case NetHandler.Status.NETNOTCONECT:
+                            mListView.noticeNetNotConnect();
+                            break;
+                        case NetHandler.Status.CONECTOVERTIME:
+                            mListView.noticeConnectOvertime();
+                            break;
+                        case NetHandler.Status.FALSE:
+                            mListView.noticeLoadFailure();
+                            break;
+                        case NetHandler.Status.DEFAULT:
+                            break;
+                    }
+                    notifyDataSetChanged();
+                }
+                break;
+
+            case NetData.AVATAR:
+                int position = (int) result.getExtra();
+                if (position < listItems.size())
+                    listItems.get(position).put("header", result.getContent());
+                View view = mListView.findItemViewWithTag(position);
+                if (view != null) {
+                    ((ImageView) view.findViewById(R.id.contestClarification_header))
+                            .setImageDrawable((BitmapDrawable) result.getContent());
+                }
+        }
+    }
+
+    public void notifyDataSetChanged() {
+        if (mListAdapter == null) {
+            mListAdapter = setupAdapter();
+            if (mListView != null) mListView.setAdapter(mListAdapter);
+        } else {
+            mListAdapter.notifyDataSetChanged();
+        }
+        if (mListView != null) {
+            if (mListView.isPullUpLoading()) {
+                mListView.setPullUpLoading(false);
+            }
+            if (mListView.isRefreshing()) {
+                mListView.setRefreshing(false);
+            }
+        }
+    }
+
+    private SimpleAdapter setupAdapter() {
         mListAdapter = new SimpleAdapter(
                 Global.currentMainUIActivity, listItems, R.layout.contest_clarification_item_list,
                 new String[]{"header", "ownerName", "time", "content"},
                 new int[]{R.id.contestClarification_header, R.id.contestClarification_user,
-                        R.id.contestClarification_submitDate, R.id.contestClarification_content}){
+                        R.id.contestClarification_submitDate, R.id.contestClarification_content}) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
@@ -115,102 +219,21 @@ public class ContestClarification extends Fragment implements ViewHandler{
         return mListAdapter;
     }
 
-    private void setupOnListItemClick() {
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mProgressDialog = ProgressDialog
-                        .show(context, getString(R.string.getting), getString(R.string.linking));
-                NetDataPlus.getArticleDetail(context, (int) listItems.get(position).get("articleId"), new ContestClarificationAlert(context, mProgressDialog));
-            }
-        });
-    }
-
-    @Override
-    public void show(int which, Result result, long time) {
-        switch (which) {
-            case ViewHandler.CONTEST_COMMENT:
-                if (requestRefresh) {
-                    clearItems();
-                    requestRefresh = false;
-                }
-                if (result.result){
-                    Map<String, Object> listMap = (Map<String, Object>) result.getContent();
-                    mPageInfo = new PageInfo((Map<String, Object>) listMap.get("pageInfo"));
-
-                    convertNetData((ArrayList<Map<String, Object>>) listMap.get("list"));
-
-                    if (listItems.size() == 0) {
-                        mListView.setDataIsNull();
-                        notifyDataSetChanged();
-                        return;
-                    }
-                    if (listItems.size() >= mPageInfo.totalItems) {
-                        mListView.setPullUpLoadFinish();
-                    }
-                }else {
-                    mListView.setPullUpLoadFailure();
-                }
-                notifyDataSetChanged();
-                return;
-
-            case ViewHandler.AVATAR:
-                int position = (int) result.getExtra();
-                if (position < listItems.size())
-                    listItems.get(position).put("header", result.getContent());
-                View view = mListView.findItemViewWithTag(position);
-                if (view != null) {
-                    ((ImageView) view.findViewById(R.id.contestClarification_header))
-                            .setImageBitmap((Bitmap) result.getContent());
-                }
-        }
-    }
-
-    public void clearItems() {
-        listItems.clear();
-        notifyDataSetChanged();
-    }
-
-    private void convertNetData(ArrayList<Map<String, Object>> listItemsReceived) {
-        for (int i =0; i < listItemsReceived.size(); ++i) {
-            Map<String, Object> temMap = listItemsReceived.get(i);
-            temMap.put("content", ((String) temMap.get("content")).replaceAll("!\\[title].*\\)", "[图片]"));
-            temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
-            temMap.put("header", R.drawable.logo);
-            listItems.add(temMap);
-            NetDataPlus.getAvatar(context, (String) temMap.get("ownerEmail"), listItems.size() - 1, this);
-        }
-    }
-
-    public void notifyDataSetChanged() {
-        if (mListAdapter == null) {
-            mListView.setAdapter(setupAdapter());
-        }else {
-            mListAdapter.notifyDataSetChanged();
-        }
-        mListAdapter.notifyDataSetChanged();
-        if (mListView != null) {
-            if (mListView.isPullUpLoading()) {
-                mListView.setPullUpLoading(false);
-            }
-            if (mListView.isRefreshing()) {
-                mListView.setRefreshing(false);
-            }
-        }
-    }
-
     private void refresh() {
         if (contestID != -1) refresh(contestID);
     }
 
     public ContestClarification refresh(int contestID) {
         if (contestID < 1) return this;
-        requestRefresh = true;
+        clearItems();
         this.contestID = contestID;
-        if (mListView != null) {
-            mListView.resetPullUpLoad();
-            NetDataPlus.getContestComment(context, contestID, 1, this);
-        }
+        if (mListView != null) mListView.resetPullUpLoad();
+        NetDataPlus.getContestComment(context, contestID, 1, this);
         return this;
+    }
+
+    public void clearItems() {
+        listItems.clear();
+        notifyDataSetChanged();
     }
 }

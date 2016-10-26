@@ -4,25 +4,30 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.net.data.Result;
-import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebView;
-import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
-import cn.edu.uestc.acm.cdoj.net.ViewHandler;
+import cn.edu.uestc.acm.cdoj.net.ConvertNetData;
+import cn.edu.uestc.acm.cdoj.net.NetData;
+import cn.edu.uestc.acm.cdoj.net.NetHandler;
+import cn.edu.uestc.acm.cdoj.net.Result;
 import cn.edu.uestc.acm.cdoj.net.data.Problem;
+import cn.edu.uestc.acm.cdoj.net.data.ProblemReceived;
+import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebView;
+import cn.edu.uestc.acm.cdoj.net.NetDataPlus;
 
 /**
  * Created by great on 2016/8/25.
  */
-public class ProblemFragment extends Fragment implements ViewHandler{
+public class ProblemFragment extends Fragment implements ConvertNetData{
     private View rootView;
     private DetailWebView mWebView;
     private TextView titleView;
@@ -30,6 +35,7 @@ public class ProblemFragment extends Fragment implements ViewHandler{
     private FloatingActionButton button_addCode;
     private FloatingActionButton button_checkResult;
     private Context context;
+    private Problem problem;
 
     @Override
     public void onAttach(Context context) {
@@ -54,7 +60,7 @@ public class ProblemFragment extends Fragment implements ViewHandler{
         if (savedInstanceState == null) {
             rootView = inflater.inflate(R.layout.problem, container, false);
             mWebView = (DetailWebView) rootView.findViewById(R.id.problem_detailWebView);
-            mWebView.switchType(ViewHandler.PROBLEM_DETAIL);
+            mWebView.switchType(NetData.PROBLEM_DETAIL);
             titleView = (TextView) rootView.findViewById(R.id.problem_title);
             if (title != null) titleView.setText(title);
         }
@@ -81,8 +87,36 @@ public class ProblemFragment extends Fragment implements ViewHandler{
         return this;
     }
 
+    @NonNull
     @Override
-    public void show(int which, Result result, long time) {
-        addJSData(((Problem) result.getContent()).getContentString());
+    public Result onConvertNetData(String jsonString, Result result) {
+        ProblemReceived problemReceived = JSON.parseObject(jsonString, ProblemReceived.class);
+        Problem problem = problemReceived.getProblem();
+        problem.addJsonString(JSON.toJSONString(problem));
+        result.setContent(problem);
+
+        if (problemReceived.getResult().equals("success")) {
+            result.setStatus(NetHandler.Status.SUCCESS);
+        } else {
+            result.setStatus(NetHandler.Status.FALSE);
+        }
+        return result;
+    }
+
+    @Override
+    public void onNetDataConverted(Result result) {
+        if (result.getStatus() == NetHandler.Status.SUCCESS) {
+            this.problem = (Problem) result.getContent();
+            addJSData(problem.obtainJsonString());
+        }
+    }
+
+    public Problem getProblem() {
+        return problem;
+    }
+
+    public void setProblem(Problem problem) {
+        this.problem = problem;
+        addJSData(problem.obtainJsonString());
     }
 }

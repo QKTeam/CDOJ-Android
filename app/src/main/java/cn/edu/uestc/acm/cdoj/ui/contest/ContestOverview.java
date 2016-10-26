@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.net.ViewHandler;
+import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebView;
 
 /**
@@ -29,7 +29,7 @@ public class ContestOverview extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             mWebView = (DetailWebView) inflater.inflate(R.layout.article, container, false);
-            mWebView.switchType(ViewHandler.ARTICLE_DETAIL);
+            mWebView.switchType(NetData.ARTICLE_DETAIL);
             if (jsData != null) mWebView.addJSData(jsData);
         }
         return mWebView;

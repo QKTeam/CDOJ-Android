@@ -7,8 +7,8 @@ import android.webkit.WebView;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
-import cn.edu.uestc.acm.cdoj.net.ViewHandler;
 
 /**
  * Created by great on 2016/8/16.
@@ -21,7 +21,7 @@ public class DetailWebView extends WebView {
     private String webData;
     int htmlType = -1;
 
-    @IntDef({ViewHandler.ARTICLE_DETAIL, ViewHandler.PROBLEM_DETAIL, ViewHandler.CONTEST_DETAIL})
+    @IntDef({NetData.ARTICLE_DETAIL, NetData.PROBLEM_DETAIL, NetData.CONTEST_DETAIL})
     @Retention(RetentionPolicy.SOURCE)
     @interface detail{}
 
@@ -37,16 +37,15 @@ public class DetailWebView extends WebView {
 
     public void init(@detail int htmlType) {
         switch (htmlType) {
-            case ViewHandler.ARTICLE_DETAIL:
+            case NetData.ARTICLE_DETAIL:
                 htmlData = Global.HTMLDATA_ARTICLE;
                 break;
-            case ViewHandler.PROBLEM_DETAIL:
+            case NetData.PROBLEM_DETAIL:
                 htmlData = Global.HTMLDATA_PROBLEM;
                 break;
-            case ViewHandler.CONTEST_DETAIL:
+            case NetData.CONTEST_DETAIL:
                 htmlData = Global.HTMLDATA_CONTEST;
         }
-        getSettings().setJavaScriptEnabled(true);
     }
 
     public int getHtmlType() {

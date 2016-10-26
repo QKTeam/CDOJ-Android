@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -16,9 +15,9 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebView;
-import cn.edu.uestc.acm.cdoj.net.ViewHandler;
+import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.data.Problem;
+import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebView;
 
 /**
  * Created by great on 2016/8/25.
@@ -73,8 +72,8 @@ public class ContestProblems extends Fragment{
         problemsCount = problemList.size();
         problems = new DetailWebView[problemsCount];
         for (int i = 0; i != problemsCount; ++i) {
-            problems[i] = new DetailWebView(context, ViewHandler.PROBLEM_DETAIL)
-                    .addJSData(problemList.get(i).getContentString());
+            problems[i] = new DetailWebView(context, NetData.PROBLEM_DETAIL)
+                    .addJSData(problemList.get(i).obtainJsonString());
         }
         if (mViewPager != null) setViewPagerAdapter();
     }

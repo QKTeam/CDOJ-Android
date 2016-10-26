@@ -1,26 +1,19 @@
 package cn.edu.uestc.acm.cdoj.ui;
 
 import android.app.Fragment;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
-import android.os.Message;
 import android.support.annotation.IntDef;
 import android.support.design.widget.NavigationView;
 import android.support.v13.app.FragmentPagerAdapter;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -38,20 +31,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.logging.Handler;
 import java.util.regex.Pattern;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.net.ViewHandler;
-import cn.edu.uestc.acm.cdoj.net.data.Result;
+import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.tools.DrawImage;
-import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
+import cn.edu.uestc.acm.cdoj.net.NetDataPlus;
 import cn.edu.uestc.acm.cdoj.tools.RGBAColor;
 import cn.edu.uestc.acm.cdoj.ui.contest.ContestListFragment;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
-import cn.edu.uestc.acm.cdoj.ui.user.UserInfo;
-import cn.edu.uestc.acm.cdoj.ui.user.UserInfoManager;
-import cn.edu.uestc.acm.cdoj.ui.modules.list.MainList;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchHistory;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchHistoryManager;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchResult;
@@ -66,7 +54,7 @@ import cn.edu.uestc.acm.cdoj.ui.statusBar.StatusBarUtil;
  * Created by Grea on 2016/10/3.
  */
 
-public class MainUIActivity extends AppCompatActivity implements  {
+public class MainUIActivity extends AppCompatActivity {
 
     public static final int NOTICELIST = 0;
     public static final int PROBLEMLIST = 1;
@@ -75,7 +63,7 @@ public class MainUIActivity extends AppCompatActivity implements  {
     public static final int NOTSELECT = 1;
 
     public void loginOrExit(View view) {
-        if (Global.userManager.isLogin()) {
+        /*if (Global.userManager.isLogin()) {
             Global.userManager.logout(new UserInfoManager());
             ((ImageView) view).setImageResource(R.drawable.logo_orange);
             ((TextView) findViewById(R.id.main_ui_nav_view_nickName)).setText("");
@@ -93,7 +81,7 @@ public class MainUIActivity extends AppCompatActivity implements  {
             Intent intent = new Intent(MainUIActivity.this, LoginActivity.class);
             startActivity(intent);
         }
-        mDrawerLayout.closeDrawer(GravityCompat.START);
+        mDrawerLayout.closeDrawer(GravityCompat.START);*/
     }
 
     @IntDef({NOTICELIST, PROBLEMLIST, CONTESTLIST})
@@ -139,7 +127,7 @@ public class MainUIActivity extends AppCompatActivity implements  {
 
     @Override
     protected void onRestart() {
-        Global.userManager.keepLogin();
+//        Global.userManager.keepLogin();
         super.onRestart();
     }
 
@@ -173,9 +161,9 @@ public class MainUIActivity extends AppCompatActivity implements  {
         noticeList = new NoticeListFragment();
         problemList = new ProblemListFragment();
         contestList = new ContestListFragment();
-        NetDataPlus.getArticleList(this, 1, true, noticeList);
-        NetDataPlus.getProblemList(this, 1, true, problemList);
-        NetDataPlus.getContestList(this, 1, true, contestList);
+        NetDataPlus.getArticleList(this, 1, noticeList);
+        NetDataPlus.getProblemList(this, 1, problemList);
+        NetDataPlus.getContestList(this, 1, contestList);
     }
 
     private void setupSystemBar() {
@@ -208,12 +196,12 @@ public class MainUIActivity extends AppCompatActivity implements  {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                if (UserInfoManager.hasUserInfo()) {
+                /*if (UserInfoManager.hasUserInfo()) {
                     UserInfo userInfo = UserInfoManager.getUserInfo();
                     ((TextView) findViewById(R.id.main_ui_nav_view_nickName)).setText(userInfo.getNickName());
                     ((TextView) findViewById(R.id.main_ui_nav_view_userName)).setText(userInfo.getUserName());
                     ((ImageView) findViewById(R.id.main_ui_nav_view_header)).setImageBitmap(userInfo.getHeader());
-                }
+                }*/
             }
         };
         toggle.syncState();
@@ -319,10 +307,10 @@ public class MainUIActivity extends AppCompatActivity implements  {
                 if (isId(str)) {
                     intent.putExtra("problemId", Integer.valueOf(str.replaceFirst("#", "")));
                 }
-                intent.putExtra("type", ViewHandler.PROBLEM_LIST);
+                intent.putExtra("type", NetData.PROBLEM_LIST);
                 break;
             case 2:
-                intent.putExtra("type", ViewHandler.CONTEST_LIST);
+                intent.putExtra("type", NetData.CONTEST_LIST);
         }
         startActivity(intent);
     }

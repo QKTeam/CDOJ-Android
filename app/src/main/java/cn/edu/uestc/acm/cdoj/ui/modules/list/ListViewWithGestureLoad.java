@@ -82,19 +82,29 @@ public class ListViewWithGestureLoad extends LinearLayout {
         }
     }
 
-    public void setPullUpLoadFinish() {
+    public void noticeLoadFinish() {
         hasMoreData = false;
         mListViewFooter.updateContent(ListViewFooter.LOADCOMPLETE);
     }
 
-    public void setPullUpLoadFailure() {
+    public void noticeLoadFailure() {
         isPullUpLoading = false;
         mListViewFooter.updateContent(ListViewFooter.LOADPROBLEM);
     }
 
-    public void setDataIsNull() {
+    public void noticeDataIsNull() {
         hasMoreData = false;
-        mListViewFooter.updateContent(ListViewFooter.NODATA);
+        mListViewFooter.updateContent(ListViewFooter.DATAISNULL);
+    }
+
+    public void noticeNetNotConnect() {
+        isPullUpLoading = false;
+        mListViewFooter.updateContent(ListViewFooter.NETNOTCONNECT);
+    }
+
+    public void noticeConnectOvertime() {
+        isPullUpLoading = false;
+        mListViewFooter.updateContent(ListViewFooter.CONNECTOVERTIME);
     }
 
     public void resetPullUpLoad() {

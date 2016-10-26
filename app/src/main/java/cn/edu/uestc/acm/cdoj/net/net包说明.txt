@@ -1,8 +1,0 @@
-NetData:
-	getXXX：负责把这个请求的网址和参数构造好，去调用async()
-	async：在子线程上调用doInBackGround()，这里面进行了联网；在主线程上调用onPostExecute()，这里进行了回调
-
-NetWorkTool：get和post写在里面
-ThreadTools：负责排队任务
-JsonUtils：json和map的互转
-UserManager：管理用户

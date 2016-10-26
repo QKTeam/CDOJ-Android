@@ -4,29 +4,36 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 
+import com.alibaba.fastjson.JSON;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
-import cn.edu.uestc.acm.cdoj.net.ViewHandler;
-import cn.edu.uestc.acm.cdoj.net.data.Result;
+import cn.edu.uestc.acm.cdoj.net.ConvertNetData;
+import cn.edu.uestc.acm.cdoj.net.NetDataPlus;
+import cn.edu.uestc.acm.cdoj.net.NetHandler;
+import cn.edu.uestc.acm.cdoj.net.Result;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
-import cn.edu.uestc.acm.cdoj.ui.user.UserInfo;
-import cn.edu.uestc.acm.cdoj.ui.user.UserInfoManager;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.FlyMeUtils;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.MIUIUtils;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.StatusBarUtil;
+import cn.edu.uestc.acm.cdoj.ui.user.User;
 
-public class LoginActivity extends AppCompatActivity implements ViewHandler{
+public class LoginActivity extends AppCompatActivity implements ConvertNetData{
     ProgressDialog loggingDialog;
     EditText et_username;
     EditText et_password;
     String username;
-    String password;
+    String passwordSHA1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,37 +53,64 @@ public class LoginActivity extends AppCompatActivity implements ViewHandler{
 
     public void go(View view) {
         username = et_username.getText().toString();
-        password = et_password.getText().toString();
-        Global.userManager.login(username, password, this);
+        passwordSHA1 = NetDataPlus.sha1(et_password.getText().toString());
+        NetDataPlus.login(this, username, passwordSHA1, true, this);
         loggingDialog = ProgressDialog.show(this, getString(R.string.login), getString(R.string.linking));
     }
 
+    @NonNull
     @Override
-    public void show(int which, Result result, long time) {
-        final boolean isSuccessful = result.result;
-        loggingDialog.cancel();
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this)
-                .setPositiveButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (isSuccessful) {
+    public Result onConvertNetData(String jsonString, Result result) {
+        User user = JSON.parseObject(jsonString, User.class);
+        if (user.getResult().equals("success")) {
+            result.setStatus(NetHandler.Status.SUCCESS);
+            result.setContent(user);
+        } else {
+            result.setStatus(NetHandler.Status.FALSE);
+        }
+        return result;
+    }
+
+    @Override
+    public void onNetDataConverted(Result result) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        switch (result.getStatus()) {
+            case NetHandler.Status.SUCCESS:
+                saveUserInfo();
+                dialog.setMessage(R.string.loginSuccess)
+                    .setPositiveButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
                             finish();
                         }
-                    }
-                });
-        if (isSuccessful) {
-            dialog.setMessage(R.string.loginSuccess);
-            UserInfo userInfoTem;
-            if (!UserInfoManager.hasUserInfo()) {
-                userInfoTem = new UserInfo(this);
-                UserInfoManager.addNewUser(this, userInfoTem);
-            } else {
-                userInfoTem = UserInfoManager.getUserInfo();
-            }
-            NetDataPlus.getUserProfile(this, username, userInfoTem);
-        }else {
-            dialog.setMessage(R.string.loginFail);
+                    });
+                break;
+
+            case NetHandler.Status.FALSE:
+                dialog.setMessage(R.string.loginFail)
+                        .setPositiveButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                break;
         }
+        loggingDialog.cancel();
         dialog.show();
+    }
+
+    private void saveUserInfo() {
+        File file = new File(Global.filesDirPath + "user");
+        if (file.exists()) file.delete();
+        try {
+            file.createNewFile();
+            FileWriter writer = new FileWriter(file);
+            writer.write(username);
+            writer.write("\n");
+            writer.write(passwordSHA1);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

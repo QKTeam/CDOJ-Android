@@ -4,21 +4,24 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
+
+import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.tools.NetDataPlus;
-import cn.edu.uestc.acm.cdoj.net.ViewHandler;
-import cn.edu.uestc.acm.cdoj.net.data.Result;
+import cn.edu.uestc.acm.cdoj.net.ConvertNetData;
+import cn.edu.uestc.acm.cdoj.net.NetDataPlus;
+import cn.edu.uestc.acm.cdoj.net.NetHandler;
+import cn.edu.uestc.acm.cdoj.net.Result;
 import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
@@ -27,16 +30,14 @@ import cn.edu.uestc.acm.cdoj.ui.modules.list.PageInfo;
 /**
  * Created by great on 2016/8/25.
  */
-public class ContestStatus extends Fragment implements ViewHandler{
-    private SimpleAdapter mListAdapter;
+public class ContestStatus extends Fragment implements ConvertNetData {
     private ArrayList<Map<String, Object>> listItems = new ArrayList<>();
     private int contestID = -1;
     private int[] problemIDs;
     private ListViewWithGestureLoad mListView;
+    private SimpleAdapter mListAdapter;
     private PageInfo mPageInfo;
     private Context context;
-    private boolean requestRefresh;
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -65,19 +66,21 @@ public class ContestStatus extends Fragment implements ViewHandler{
                 if (mPageInfo != null && mPageInfo.currentPage != mPageInfo.totalPages) {
                     NetDataPlus.getStatusList(context, contestID, mPageInfo.currentPage + 1, ContestStatus.this);
                 } else {
-                    mListView.setPullUpLoadFinish();
+                    mListView.noticeLoadFinish();
                 }
             }
         });
-        if (requestRefresh) refresh();
+        if (mListAdapter != null) mListView.setAdapter(mListAdapter);
         mListView.setLayoutParams(container.getLayoutParams());
         return mListView;
     }
 
     public void notifyDataSetChanged() {
         if (mListAdapter == null) {
-            mListView.setAdapter(setupAdapter());
-        }else {
+            mListAdapter = setupAdapter();
+            if (mListView != null)
+                mListView.setAdapter(mListAdapter);
+        } else {
             mListAdapter.notifyDataSetChanged();
         }
         if (mListView != null) {
@@ -90,7 +93,7 @@ public class ContestStatus extends Fragment implements ViewHandler{
         }
     }
 
-    private ListAdapter setupAdapter() {
+    private SimpleAdapter setupAdapter() {
         mListAdapter = new SimpleAdapter(
                 Global.currentMainUIActivity, listItems, R.layout.contest_status_item_list,
                 new String[]{"returnType", "language", "length", "nickName", "timeCost", "memoryCost", "probOrder", "time"},
@@ -104,69 +107,81 @@ public class ContestStatus extends Fragment implements ViewHandler{
         this.problemIDs = problemIDs;
     }
 
+    @NonNull
     @Override
-    public void show(int which, Result result, long time) {
-        if (requestRefresh) {
-            clearItems();
-            requestRefresh = false;
-        }
-        if (result.result) {
-            Map<String, Object> listMap = (Map<String, Object>) result.getContent();
-            mPageInfo = new PageInfo((Map<String, Object>) listMap.get("pageInfo"));
+    public Result onConvertNetData(String jsonString, Result result) {
+        Map<String, Object> statusMap = JSON.parseObject(jsonString);
+        mPageInfo = new PageInfo((Map) statusMap.get("pageInfo"));
+        convertNetData((ArrayList<Map<String, Object>>) statusMap.get("list"));
 
-            listItems.addAll(convertNetData((ArrayList<Map<String, Object>>) listMap.get("list")));
-
-            if (listItems.size() == 0) {
-                mListView.setDataIsNull();
-                notifyDataSetChanged();
-                return;
-            }
-            if (listItems.size() == mPageInfo.totalItems) {
-                mListView.setPullUpLoadFinish();
-            }
+        if (mPageInfo.totalItems == 0) {
+            result.setStatus(NetHandler.Status.DATAISNULL);
+        } else if (mPageInfo.currentPage == mPageInfo.totalPages) {
+            result.setStatus(NetHandler.Status.FINISH);
         } else {
-            mListView.setPullUpLoadFailure();
+            result.setStatus(NetHandler.Status.SUCCESS);
         }
-        notifyDataSetChanged();
+        return result;
     }
 
-    public void clearItems() {
-        listItems.clear();
-        notifyDataSetChanged();
-    }
-
-    private ArrayList<Map<String, Object>> convertNetData(ArrayList<Map<String, Object>> temArrayList) {
-        for (Map<String, Object> temMap : temArrayList) {
+    private void convertNetData(ArrayList<Map<String, Object>> list) {
+        for (Map<String, Object> temMap : list) {
             temMap.put("length", temMap.get("length") + "B");
             temMap.put("timeCost", temMap.get("timeCost") + " ms");
             temMap.put("memoryCost", temMap.get("memoryCost") + " B");
+            temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
             if (problemIDs != null) {
                 int i = 0;
-                while (i < problemIDs.length && (int) temMap.get("problemId") != problemIDs[i])
-                    ++i;
-                if (i == problemIDs.length) {
-                    temMap.put("probOrder", "?");
-                } else {
-                    temMap.put("probOrder", String.valueOf((char)('A' + i)));
-                }
+                while (i < problemIDs.length && (int) temMap.get("problemId") != problemIDs[i]) ++i;
+                temMap.put("probOrder", String.valueOf((char) ('A' + i)));
             }
-            temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
         }
-        return temArrayList;
+        listItems.addAll(list);
+    }
+
+    @Override
+    public void onNetDataConverted(Result result) {
+        if (mListView != null) {
+            switch (result.getType()) {
+                case NetHandler.Status.SUCCESS:
+                    break;
+                case NetHandler.Status.DATAISNULL:
+                    mListView.noticeDataIsNull();
+                    break;
+                case NetHandler.Status.FINISH:
+                    mListView.noticeLoadFinish();
+                    break;
+                case NetHandler.Status.NETNOTCONECT:
+                    mListView.noticeNetNotConnect();
+                    break;
+                case NetHandler.Status.CONECTOVERTIME:
+                    mListView.noticeConnectOvertime();
+                    break;
+                case NetHandler.Status.FALSE:
+                    mListView.noticeLoadFailure();
+                    break;
+                case NetHandler.Status.DEFAULT:
+                    break;
+            }
+            notifyDataSetChanged();
+        }
     }
 
     private void refresh() {
         if (contestID != -1) refresh(contestID);
     }
 
-    public ContestStatus refresh(int contestID)  {
+    public ContestStatus refresh(int contestID) {
         if (contestID < 1) return this;
+        clearItems();
         this.contestID = contestID;
-        requestRefresh = true;
-        if (mListView != null) {
-            mListView.resetPullUpLoad();
-            NetDataPlus.getStatusList(context, contestID, 1, this);
-        }
+        if (mListView != null) mListView.resetPullUpLoad();
+        NetDataPlus.getStatusList(context, contestID, 1, this);
         return this;
+    }
+
+    public void clearItems() {
+        listItems.clear();
+        notifyDataSetChanged();
     }
 }

@@ -1,41 +1,137 @@
 package cn.edu.uestc.acm.cdoj.net.data;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Map;
 
-import cn.edu.uestc.acm.cdoj.net.JsonUtils;
-
 /**
- * Created by lenovo on 2016/8/7.
+ * Created by Grea on 2016/10/25.
  */
+
 public class Contest {
-    Map<String, Object> map;
-    String contentString = "";
-    public ArrayList<Problem> problemList = new ArrayList<>(15);
-    public Contest(JSONObject jsonObject){
-        try {
-            map = JsonUtils.getMapFromJson(jsonObject);
-            JSONObject contestObject = jsonObject.getJSONObject("contest");
-            contentString = contestObject.toString();
-            JSONArray plist = jsonObject.getJSONArray("problemList");
-            for (int i = 0; i < plist.length(); i++) {
-                problemList.add(Problem.newInstance(plist.getJSONObject(i)));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    private Integer contestId;
+    private Integer type;
+    private String typeName;
+    private String title;
+    private String status;
+    private String description;
+    private Boolean isVisible;
+    private Long currentTime;
+    private Long timeLeft;
+    private Long startTime;
+    private Long length;
+    private Long endTime;
+    private Long frozenTime;
+    private String jsonString;
+
+    public Integer getContestId() {
+        return contestId;
     }
-    public ArrayList<Problem> getProblemList(){
-        return problemList;
+
+    public void setContestId(Integer contestId) {
+        this.contestId = contestId;
     }
-    public String getContentString(){
-        return contentString;
+
+    public Integer getType() {
+        return type;
     }
-    public Map<String, Object> getMap() {
-        return map;
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Boolean getVisible() {
+        return isVisible;
+    }
+
+    public void setVisible(Boolean visible) {
+        isVisible = visible;
+    }
+
+    public Long getCurrentTime() {
+        return currentTime;
+    }
+
+    public void setCurrentTime(Long currentTime) {
+        this.currentTime = currentTime;
+    }
+
+    public Long getTimeLeft() {
+        return timeLeft;
+    }
+
+    public void setTimeLeft(Long timeLeft) {
+        this.timeLeft = timeLeft;
+    }
+
+    public Long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Long startTime) {
+        this.startTime = startTime;
+    }
+
+    public Long getLength() {
+        return length;
+    }
+
+    public void setLength(Long length) {
+        this.length = length;
+    }
+
+    public Long getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Long endTime) {
+        this.endTime = endTime;
+    }
+
+    public Long getFrozenTime() {
+        return frozenTime;
+    }
+
+    public void setFrozenTime(Long frozenTime) {
+        this.frozenTime = frozenTime;
+    }
+
+    public String obtainJsonString() {
+        return jsonString;
+    }
+
+    public void addJsonString(String jsonString) {
+        this.jsonString = jsonString;
     }
 }

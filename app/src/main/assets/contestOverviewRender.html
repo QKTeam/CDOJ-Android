@@ -53,12 +53,12 @@
             newDate.setTime(timeStamp);
             return newDate.format('yyyy-MM-dd hh:mm:ss');
         }
-        var data = {{{replace_data_here}}};
-        document.getElementById("title").innerHTML = data.title;
-        document.getElementById("description").innerHTML = marked(data.description);
-        document.getElementById("startTime").innerHTML = toTimeString(data.startTime);
-        document.getElementById("endTime").innerHTML = toTimeString(data.endTime);
-        document.getElementById("status").innerHTML = data.status;
+        var article = {{{replace_data_here}}};
+        document.getElementById("title").innerHTML = article.title;
+        document.getElementById("description").innerHTML = marked(article.description);
+        document.getElementById("startTime").innerHTML = toTimeString(article.startTime);
+        document.getElementById("endTime").innerHTML = toTimeString(article.endTime);
+        document.getElementById("status").innerHTML = article.status;
         function refreshCurrentTime() {
             document.getElementById("currentTime").innerHTML = toTimeString(Date.now());
         }
