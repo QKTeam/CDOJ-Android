@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -44,8 +45,8 @@ public class ContestRank extends Fragment implements ConvertNetData {
     public static final int SOLVED = 2;
     public static final int THEFIRSTSOLVED = 3;
 
-    private ArrayList<Map<String, Object>> listItems = new ArrayList<>();
-    private ArrayList<String> problemsSolvedPercent = new ArrayList<>();
+    private List<Map<String, Object>> listItems = new ArrayList<>();
+    private List<String> problemsSolvedPercent = new ArrayList<>();
     private int problemsCount = 0;
     private ListViewWithGestureLoad mListView;
     private SimpleAdapter mListAdapter;
@@ -85,7 +86,7 @@ public class ContestRank extends Fragment implements ConvertNetData {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Map<String, Object> item = listItems.get(position);
-                ArrayList<Map<String, Object>> problemsStatusList = (ArrayList<Map<String, Object>>) item.get("itemList");
+                List<Map<String, Object>> problemsStatusList = (List<Map<String, Object>>) item.get("itemList");
                 new ContestRankAlert(context, item, problemsStatusList).show();
             }
         });
@@ -111,22 +112,22 @@ public class ContestRank extends Fragment implements ConvertNetData {
     }
 
     private void convertNetData(Map<String, Object> rankMap) {
-        convertCompactorsInfo((ArrayList<Map<String, Object>>) rankMap.get("rankList"));
-        convertProblemsInfo((ArrayList<Map<String, Object>>) rankMap.get("problemList"));
+        convertCompactorsInfo((List<Map<String, Object>>) rankMap.get("rankList"));
+        convertProblemsInfo((List<Map<String, Object>>) rankMap.get("problemList"));
     }
 
-    private void convertCompactorsInfo(ArrayList<Map<String, Object>> compactorList) {
+    private void convertCompactorsInfo(List<Map<String, Object>> compactorList) {
         for (Map<String, Object> compactor : compactorList) {
             compactor.put("header", R.drawable.logo);
             compactor.put("rank", String.valueOf((int) compactor.get("rank")));
-            convertCompactorProblemsInfo((ArrayList<Map<String, Object>>) compactor.get("itemList"));
+            convertCompactorProblemsInfo((List<Map<String, Object>>) compactor.get("itemList"));
 
             listItems.add(compactor);
             NetDataPlus.getAvatar(context, String.valueOf(compactor.get("email")), listItems.size() - 1, this);
         }
     }
 
-    private void convertCompactorProblemsInfo(ArrayList<Map<String, Object>> problemList) {
+    private void convertCompactorProblemsInfo(List<Map<String, Object>> problemList) {
         for (int j = 0; j < problemList.size(); ++j) {
             Map<String, Object> problem = problemList.get(j);
             problem.put("problemOrder", String.valueOf((char) ('A' + j)));
@@ -146,7 +147,7 @@ public class ContestRank extends Fragment implements ConvertNetData {
         }
     }
 
-    private void convertProblemsInfo(ArrayList<Map<String, Object>> problemList) {
+    private void convertProblemsInfo(List<Map<String, Object>> problemList) {
         int compactorCount = listItems.size();
         problemsCount = problemList.size();
 
@@ -262,7 +263,7 @@ public class ContestRank extends Fragment implements ConvertNetData {
     }
 
     private void setupProblemsStatusView(View view, Object data) {
-        ArrayList<Map<String, Object>> problemsStatusList = (ArrayList<Map<String, Object>>) data;
+        List<Map<String, Object>> problemsStatusList = (List<Map<String, Object>>) data;
         for (int i = 0; i < problemsCount && i < 9; ++i) {
             Map<String, Object> problemStatus = problemsStatusList.get(i);
             FrameLayout markContainer = (FrameLayout) ((LinearLayout) view).getChildAt(i);
@@ -291,9 +292,15 @@ public class ContestRank extends Fragment implements ConvertNetData {
         if (contestID != null) refresh(contestID);
     }
 
-    public ContestRank refresh(Integer contestID) {
-        if (contestID < 1) return this;
+    public ContestRank refresh(int contestID) {
+        if (contestID < 1 || context == null) return this;
+        return refresh(context, contestID);
+    }
+
+    public ContestRank refresh(Context context, int contestID) {
+        if (contestID < 1 || context == null) return this;
         this.contestID = contestID;
+        this.context = context;
         NetDataPlus.getContestRank(context, contestID, this);
         return this;
     }

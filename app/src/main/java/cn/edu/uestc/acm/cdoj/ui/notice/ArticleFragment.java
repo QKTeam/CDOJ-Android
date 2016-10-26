@@ -77,7 +77,13 @@ public class ArticleFragment extends Fragment implements ConvertNetData{
         return this;
     }
 
-    public ArticleFragment refresh(int id) {
+    public ArticleFragment refresh( int id) {
+        if (context == null ) return this;
+        NetDataPlus.getArticleDetail(context, id, this);
+        return this;
+    }
+
+    public ArticleFragment refresh(Context context, int id) {
         NetDataPlus.getArticleDetail(context, id, this);
         return this;
     }

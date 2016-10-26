@@ -83,6 +83,12 @@ public class ProblemFragment extends Fragment implements ConvertNetData{
     }
 
     public ProblemFragment refresh(int id) {
+        if (context == null) return this;
+        NetDataPlus.getProblemDetail(context, id, this);
+        return this;
+    }
+
+    public ProblemFragment refresh(Context context, int id) {
         NetDataPlus.getProblemDetail(context, id, this);
         return this;
     }

@@ -117,7 +117,8 @@ public class NetData {
                 @Override
                 public void run() {
                     convertNetData.onNetDataConverted(
-                            new Result(AVATAR, NetHandler.Status.SUCCESS, extra, NetWorkUtils.getAvatar(avatarUrl.replace("%@", email))));
+                            new Result(AVATAR, NetHandler.Status.SUCCESS, extra,
+                                    NetWorkUtils.getAvatar(avatarUrl.replace("%@", email))));
 
                     avatarThreadList.remove(this);
                     if (avatarThreadList.get(0) != null) {
@@ -258,7 +259,7 @@ public class NetData {
         NetHandler handler = new NetHandler(context, requestType, urlString, extra, convertNetData);
         handler.setRequestMethod(NetHandler.Request.POST);
         handler.setPostJsonString(postJsonString);
-        handler.sendEmptyMessage(NetHandler.Thread.NETTHREAD);
+        mNetThread.addTask(handler);
     }
 
     private static void get(Context context, @NetRequestType int requestType,
@@ -269,7 +270,7 @@ public class NetData {
             mNetThread.start();
         }
         NetHandler handler = new NetHandler(context, requestType, urlString, extra, convertNetData);
-        handler.sendEmptyMessage(NetHandler.Thread.NETTHREAD);
+        mNetThread.addTask(handler);
     }
 
     private static BitmapDrawable readAvatarFromLocal(Context context, String email) {

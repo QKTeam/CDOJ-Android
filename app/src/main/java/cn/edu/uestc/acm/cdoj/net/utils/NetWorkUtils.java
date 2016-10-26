@@ -3,18 +3,26 @@ package cn.edu.uestc.acm.cdoj.net.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Scanner;
 
 /**
  * Created by Grea on 2016/10/23.
  */
 
 public class NetWorkUtils {
+
+    static String TAG = "网络";
 
     public static String getJsonString(Context context, String url) {
         HttpURLConnection mUrlConnection = null;
@@ -25,11 +33,10 @@ public class NetWorkUtils {
             mUrlConnection = (HttpURLConnection) new URL(url).openConnection();
             mUrlConnection.addRequestProperty("Cookie", mPreferences.getString("cookie", ""));
 
-            InputStream input = mUrlConnection.getInputStream();
-            byte[] buffer = new byte[input.available()];
-            if (input.read(buffer) > 0) {
-                resultJsonString = new String(buffer);
-            }
+            BufferedReader input = new BufferedReader(new InputStreamReader(mUrlConnection.getInputStream()));
+            resultJsonString = input.readLine();
+            input.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -52,14 +59,13 @@ public class NetWorkUtils {
             mUrlConnection.addRequestProperty("Content-Type", "application/json");
             mUrlConnection.addRequestProperty("Cookie", mPreferences.getString("cookie", ""));
 
-            OutputStream output = mUrlConnection.getOutputStream();
+            OutputStream output = new BufferedOutputStream(mUrlConnection.getOutputStream());
             output.write(json.getBytes());
+            output.close();
 
-            InputStream input = mUrlConnection.getInputStream();
-            byte[] buffer = new byte[input.available()];
-            if (input.read(buffer) > 0) {
-                resultJsonString = new String(buffer);
-            }
+            BufferedReader input = new BufferedReader(new InputStreamReader(mUrlConnection.getInputStream()));
+            resultJsonString = input.readLine();
+            input.close();
 
             mPreferencesEditor.putString("cookie", mUrlConnection.getHeaderField("Cookie"));
             mPreferencesEditor.apply();

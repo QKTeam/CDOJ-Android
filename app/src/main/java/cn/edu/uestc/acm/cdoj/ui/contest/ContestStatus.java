@@ -15,6 +15,7 @@ import android.widget.SimpleAdapter;
 import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.R;
@@ -31,7 +32,7 @@ import cn.edu.uestc.acm.cdoj.ui.modules.list.PageInfo;
  * Created by great on 2016/8/25.
  */
 public class ContestStatus extends Fragment implements ConvertNetData {
-    private ArrayList<Map<String, Object>> listItems = new ArrayList<>();
+    private List<Map<String, Object>> listItems = new ArrayList<>();
     private int contestID = -1;
     private int[] problemIDs;
     private ListViewWithGestureLoad mListView;
@@ -112,7 +113,7 @@ public class ContestStatus extends Fragment implements ConvertNetData {
     public Result onConvertNetData(String jsonString, Result result) {
         Map<String, Object> statusMap = JSON.parseObject(jsonString);
         mPageInfo = new PageInfo((Map) statusMap.get("pageInfo"));
-        convertNetData((ArrayList<Map<String, Object>>) statusMap.get("list"));
+        convertNetData((List<Map<String, Object>>) statusMap.get("list"));
 
         if (mPageInfo.totalItems == 0) {
             result.setStatus(NetHandler.Status.DATAISNULL);
@@ -124,7 +125,7 @@ public class ContestStatus extends Fragment implements ConvertNetData {
         return result;
     }
 
-    private void convertNetData(ArrayList<Map<String, Object>> list) {
+    private void convertNetData(List<Map<String, Object>> list) {
         for (Map<String, Object> temMap : list) {
             temMap.put("length", temMap.get("length") + "B");
             temMap.put("timeCost", temMap.get("timeCost") + " ms");
@@ -172,7 +173,12 @@ public class ContestStatus extends Fragment implements ConvertNetData {
     }
 
     public ContestStatus refresh(int contestID) {
-        if (contestID < 1) return this;
+        if (contestID < 1 || context == null) return this;
+        return refresh(context, contestID);
+    }
+
+    public ContestStatus refresh(Context context, int contestID) {
+        if (contestID < 1 || context == null) return this;
         clearItems();
         this.contestID = contestID;
         if (mListView != null) mListView.resetPullUpLoad();

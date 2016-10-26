@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.R;
@@ -40,7 +41,7 @@ import cn.edu.uestc.acm.cdoj.ui.modules.list.PageInfo;
 public class ContestClarification extends Fragment implements ConvertNetData {
 
     private int contestID = -1;
-    private ArrayList<Map<String, Object>> listItems = new ArrayList<>();
+    private List<Map<String, Object>> listItems = new ArrayList<>();
     private ProgressDialog mProgressDialog;
     private ListViewWithGestureLoad mListView;
     private SimpleAdapter mListAdapter;
@@ -102,7 +103,7 @@ public class ContestClarification extends Fragment implements ConvertNetData {
     public Result onConvertNetData(String jsonString, Result result) {
         Map<String, Object> listMap = JSON.parseObject(jsonString);
         mPageInfo = new PageInfo((Map) listMap.get("pageInfo"));
-        convertNetData((ArrayList<Map<String, Object>>) listMap.get("list"));
+        convertNetData((List<Map<String, Object>>) listMap.get("list"));
 
         if (mPageInfo.totalItems == 0) {
             result.setStatus(NetHandler.Status.DATAISNULL);
@@ -116,7 +117,7 @@ public class ContestClarification extends Fragment implements ConvertNetData {
         return result;
     }
 
-    private void convertNetData(ArrayList<Map<String, Object>> list) {
+    private void convertNetData(List<Map<String, Object>> list) {
         for (Map<String, Object> temMap : list) {
             temMap.put("content", ((String) temMap.get("content")).replaceAll("!\\[title].*\\)", "[图片]"));
             temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
@@ -224,8 +225,14 @@ public class ContestClarification extends Fragment implements ConvertNetData {
     }
 
     public ContestClarification refresh(int contestID) {
-        if (contestID < 1) return this;
+        if (contestID < 1 || context == null) return this;
+        return refresh(context, contestID);
+    }
+
+    public ContestClarification refresh(Context context, int contestID) {
+        if (contestID < 1 || context == null) return this;
         clearItems();
+        this.context = context;
         this.contestID = contestID;
         if (mListView != null) mListView.resetPullUpLoad();
         NetDataPlus.getContestComment(context, contestID, 1, this);

@@ -6,6 +6,7 @@ import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.IntDef;
+import android.util.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -18,6 +19,8 @@ import cn.edu.uestc.acm.cdoj.net.utils.NetWorkUtils;
  */
 
 public class NetHandler extends Handler {
+
+    String TAG = "这是HANdle";
 
     public static class Request {
         public static final int GET = 0x1;
@@ -38,6 +41,7 @@ public class NetHandler extends Handler {
         public static final int SUCCESS = 0x104;
         public static final int FINISH = 0x105;
         public static final int DATAISNULL = 0x106;
+        public static final int GETDATAERROR = 0x107;
     }
 
     @IntDef({Request.GET, Request.POST, Request.AVATAR})
@@ -86,30 +90,37 @@ public class NetHandler extends Handler {
     public void handleMessage(Message msg) {
         switch (msg.what) {
             case Thread.UITHREAD:
-                new ConvertNetDataThread(this)
-                        .execute(jsonStringReceived);
-                break;
-
-            case Thread.NETTHREAD:
-                if (!isNetworkConnected(context)) {
-                    result.setStatus(Status.NETNOTCONECT);
+                if (result.getStatus() == Status.GETDATAERROR) {
                     onNetDataConverted(result);
                     return;
                 }
-                switch (requestMethod) {
-                    case Request.GET:
-                        jsonStringReceived = NetWorkUtils.getJsonString(context, urlString);
-                        return;
-                    case Request.POST:
-                        jsonStringReceived = NetWorkUtils.postJsonString(context, urlString, postJsonString);
-                        return;
-                }
-                sendEmptyMessage(Thread.UITHREAD);
+                new ConvertNetDataThread(this)
+                        .execute(jsonStringReceived);
+                break;
         }
     }
 
-    public Result onConvertNetData(String jsonObject) {
-        return convertNetData.onConvertNetData(jsonObject, result);
+    public void onGetNetData() {
+        if (!isNetworkConnected(context)) {
+            result.setStatus(Status.NETNOTCONECT);
+            onNetDataConverted(result);
+            return;
+        }
+        switch (requestMethod) {
+            case Request.GET:
+                jsonStringReceived = NetWorkUtils.getJsonString(context, urlString);
+                return;
+            case Request.POST:
+                jsonStringReceived = NetWorkUtils.postJsonString(context, urlString, postJsonString);
+        }
+        if (jsonStringReceived == null) {
+            result.setStatus(Status.GETDATAERROR);
+        }
+        sendEmptyMessage(Thread.UITHREAD);
+    }
+
+    public Result onConvertNetData(String jsonString) {
+        return convertNetData.onConvertNetData(jsonString, result);
     }
 
     public void onNetDataConverted(Result result) {

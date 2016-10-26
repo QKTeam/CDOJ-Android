@@ -15,6 +15,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.R;
@@ -30,12 +31,12 @@ public class ContestRankAlert extends LinearLayout {
         super(context);
     }
 
-    public ContestRankAlert(Context context, Map<String, Object> rankListItem, ArrayList<Map<String, Object>> problemsStatusList) {
+    public ContestRankAlert(Context context, Map<String, Object> rankListItem, List<Map<String, Object>> problemsStatusList) {
         super(context);
         initViews(rankListItem, problemsStatusList);
     }
 
-    public void initViews(Map<String, Object> rankListItem, ArrayList<Map<String, Object>> problemsStatusList) {
+    public void initViews(Map<String, Object> rankListItem, List<Map<String, Object>> problemsStatusList) {
         setOrientation(VERTICAL);
         addView(createItemListViewHeader(rankListItem));
         ListView listView = new ListView(getContext());
@@ -62,7 +63,7 @@ public class ContestRankAlert extends LinearLayout {
         return headerView;
     }
 
-    private ListAdapter createItemAdapter(final ArrayList<Map<String, Object>> problemsStatusList) {
+    private ListAdapter createItemAdapter(final List<Map<String, Object>> problemsStatusList) {
         SimpleAdapter adapter = new SimpleAdapter(
                 Global.currentMainUIActivity, problemsStatusList, R.layout.contest_rank_list_item_detail,
                 new String[]{"solvedStatus", "problemOrder", "solvedTime", "tried", "problemSolvedPercent"},

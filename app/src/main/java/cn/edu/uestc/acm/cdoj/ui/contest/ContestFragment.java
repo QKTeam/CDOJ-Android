@@ -193,7 +193,13 @@ public class ContestFragment extends Fragment implements ConvertNetData {
     }
 
     public ContestFragment refresh(int contestID) {
-        if (contestID < 1) return this;
+        if (contestID < 1 || context == null) return this;
+        return refresh(context, contestID);
+    }
+
+    public ContestFragment refresh(Context context, int contestID) {
+        if (contestID < 1 || context == null) return this;
+        this.context = context;
         if (rootView != null) refreshModules(contestID);
         NetDataPlus.getContestDetail(context, contestID, this);
         return this;

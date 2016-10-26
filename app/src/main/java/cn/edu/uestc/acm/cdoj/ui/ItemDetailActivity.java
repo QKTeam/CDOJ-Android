@@ -50,16 +50,16 @@ public class ItemDetailActivity extends AppCompatActivity {
             case NetData.ARTICLE_DETAIL:
                 detail = new ArticleFragment();
                 ((ArticleFragment) detail).setTitle(intent.getStringExtra("title"))
-                        .refresh(id);
+                        .refresh(this, id);
                 break;
             case NetData.PROBLEM_DETAIL:
                 detail = new ProblemFragment();
                 ((ProblemFragment) detail).setTitle(intent.getStringExtra("title"))
-                        .refresh(id);
+                        .refresh(this, id);
                 break;
             case NetData.CONTEST_DETAIL:
                 detail = new ContestFragment();
-                ((ContestFragment) detail).refresh(id);
+                ((ContestFragment) detail).refresh(this, id);
                 break;
         }
         getFragmentManager().beginTransaction()

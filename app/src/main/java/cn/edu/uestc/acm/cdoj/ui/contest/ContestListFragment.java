@@ -24,6 +24,7 @@ import android.widget.SimpleAdapter;
 import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.R;
@@ -43,7 +44,7 @@ import cn.edu.uestc.acm.cdoj.ui.modules.list.PageInfo;
  * Created by great on 2016/8/17.
  */
 public class ContestListFragment extends Fragment implements ConvertNetData {
-    private ArrayList<Map<String, Object>> listItems = new ArrayList<>();
+    private List<Map<String, Object>> listItems = new ArrayList<>();
     private int clickPosition = -1;
     private int clickContestID = -1;
     private ProgressDialog progressDialog;
@@ -182,7 +183,7 @@ public class ContestListFragment extends Fragment implements ConvertNetData {
             case NetData.CONTEST_LIST:
                 Map<String, Object> listMap = JSON.parseObject(jsonString);
                 mPageInfo = new PageInfo((Map) listMap.get("pageInfo"));
-                convertNetData((ArrayList<Map<String, Object>>) listMap.get("list"));
+                convertNetData((List<Map<String, Object>>) listMap.get("list"));
 
                 if (mPageInfo.totalItems == 0) {
                     result.setStatus(NetHandler.Status.DATAISNULL);
@@ -208,7 +209,7 @@ public class ContestListFragment extends Fragment implements ConvertNetData {
         return result;
     }
 
-    private void convertNetData(ArrayList<Map<String, Object>> list) {
+    private void convertNetData(List<Map<String, Object>> list) {
         for (Map<String, Object> temMap : list) {
             temMap.put("contestIdString", "ID:" + temMap.get("contestId"));
             temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
@@ -322,6 +323,11 @@ public class ContestListFragment extends Fragment implements ConvertNetData {
     }
 
     public ContestListFragment refresh() {
+        if (context == null) return this;
+        return refresh(context);
+    }
+
+    public ContestListFragment refresh(Context context) {
         clearItems();
         if (mListView != null) mListView.resetPullUpLoad();
         NetDataPlus.getContestList(context, 1, this);

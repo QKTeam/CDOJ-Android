@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import android.widget.SimpleAdapter;
 import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.R;
@@ -37,7 +39,7 @@ import cn.edu.uestc.acm.cdoj.ui.modules.list.PageInfo;
  * Created by great on 2016/8/17.
  */
 public class NoticeListFragment extends Fragment implements ConvertNetData {
-    private ArrayList<Map<String, Object>> listItems = new ArrayList<>();
+    private List<Map<String, Object>> listItems = new ArrayList<>();
     private FragmentManager mFragmentManager;
     private ListViewWithGestureLoad mListView;
     private SimpleAdapter mListAdapter;
@@ -117,9 +119,16 @@ public class NoticeListFragment extends Fragment implements ConvertNetData {
     @NonNull
     @Override
     public Result onConvertNetData(String jsonString, Result result) {
+        Log.d("通知列表", "onConvertNetData: "+jsonString.length()+"end"+jsonString.charAt(jsonString.length()-1));
+        char[] tem = new char[1000];
+        jsonString.getChars(jsonString.length() - 1001, jsonString.length() - 1, tem, 0);
+        Log.d("后续", "\nonConvertNetData: " + new String(tem));
+
+
         Map<String, Object> listMap = JSON.parseObject(jsonString);
         mPageInfo = new PageInfo((Map) listMap.get("pageInfo"));
-        convertNetData((ArrayList<Map<String, Object>>) listMap.get("list"));
+        convertNetData((List<Map<String, Object>>) listMap.get("list"));
+
 
         if (mPageInfo.totalItems == 0) {
             result.setStatus(NetHandler.Status.DATAISNULL);
@@ -133,7 +142,7 @@ public class NoticeListFragment extends Fragment implements ConvertNetData {
         return result;
     }
 
-    private void convertNetData(ArrayList<Map<String, Object>> list) {
+    private void convertNetData(List<Map<String, Object>> list) {
         for (Map<String, Object> temMap : list) {
             temMap.put("time", TimeFormat.getFormatDate((long) temMap.get("time")));
         }
@@ -196,6 +205,11 @@ public class NoticeListFragment extends Fragment implements ConvertNetData {
     }
 
     public NoticeListFragment refresh() {
+        if (context == null) return this;
+        return refresh(context);
+    }
+
+    public NoticeListFragment refresh(Context context) {
         clearItems();
         if (mListView != null) mListView.resetPullUpLoad();
         NetDataPlus.getArticleList(context, 1, this);
