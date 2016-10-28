@@ -21,12 +21,12 @@ import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 public class SearchHistoryManager {
 
     public static void deleteSuggestionFile(String type) {
-        File file = new File(Global.filesDirPath + type + "Suggestion");
+        File file = new File(Global.getFilesDirPath() + type + "Suggestion");
         file.delete();
     }
 
     public static void addSuggestion(String type, ArrayList<SearchHistory> searchHistoryList, boolean clearHistory) {
-        File file = new File(Global.filesDirPath + type + "Suggestion");
+        File file = new File(Global.getFilesDirPath() + type + "Suggestion");
         if (clearHistory) {
             file.delete();
         }
@@ -45,7 +45,7 @@ public class SearchHistoryManager {
     }
 
     public static void addSuggestion(String type, String searchString) {
-        File file = new File(Global.filesDirPath + type + "Suggestion");
+        File file = new File(Global.getFilesDirPath() + type + "Suggestion");
         try {
             if (!file.exists()) {
                 if (!file.createNewFile()) return;
@@ -66,7 +66,7 @@ public class SearchHistoryManager {
     public static ArrayList<SearchHistory> getHistories(String type, int count) {
         if (count > 10) count = 10;
         ArrayList<SearchHistory> suggestionList = new ArrayList<>();
-        File file = new File(Global.filesDirPath + type + "Suggestion");
+        File file = new File(Global.getFilesDirPath() + type + "Suggestion");
         if (!file.exists()) return suggestionList;
         try {
             Scanner input = new Scanner(file);

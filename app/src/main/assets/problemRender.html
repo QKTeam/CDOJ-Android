@@ -43,37 +43,37 @@
         <h3 class="title">Source</h3>
         <markdown id="source"></markdown>
 	</body>
-    <script type="text/javascript">
-        var article = {{{replace_data_here}}};
-        document.getElementById("title").innerHTML = article.title;
-        document.getElementById("limit").innerHTML = article.javaTimeLimit + "/" + article.timeLimit + "MS, " + article.javaMemoryLimit + "/" + article.memoryLimit + "KB (Java/Others)";
-        document.getElementById("description").innerHTML = marked(article.description);
-        document.getElementById("input").innerHTML = marked(article.input);
-        document.getElementById("output").innerHTML = marked(article.output);
-        document.getElementById("hint").innerHTML = marked(article.hint);
-        document.getElementById("source").innerHTML = marked(article.source);
+    <script dataType="text/javascript">
+        var articleData = {{{replace_data_here}}};
+        document.getElementById("title").innerHTML = articleData.title;
+        document.getElementById("limit").innerHTML = articleData.javaTimeLimit + "/" + articleData.timeLimit + "MS, " + articleData.javaMemoryLimit + "/" + articleData.memoryLimit + "KB (Java/Others)";
+        document.getElementById("description").innerHTML = marked(articleData.description);
+        document.getElementById("input").innerHTML = marked(articleData.input);
+        document.getElementById("output").innerHTML = marked(articleData.output);
+        document.getElementById("hint").innerHTML = marked(articleData.hint);
+        document.getElementById("source").innerHTML = marked(articleData.source);
         try {
-            article.sampleInput = JSON.parse(article.sampleInput);
-            article.sampleOutput = JSON.parse(article.sampleOutput);
+            articleData.sampleInput = JSON.parse(articleData.sampleInput);
+            articleData.sampleOutput = JSON.parse(articleData.sampleOutput);
         }
         catch (e) { // OJ database strange bug
-            article.sampleInput = Array(article.sampleInput);
-            article.sampleOutput = Array(article.sampleOutput);
+            articleData.sampleInput = Array(articleData.sampleInput);
+            articleData.sampleOutput = Array(articleData.sampleOutput);
         }
         var sample = document.getElementById("sample").tBodies[0];
-        for(var i = 0; i < article.sampleInput.length; i++) {
+        for(var i = 0; i < articleData.sampleInput.length; i++) {
             var tr = document.createElement('tr');
             var td1 = document.createElement('td');
             var pre1 = document.createElement('pre');
-            pre1.innerText = article.sampleInput[i];
+            pre1.innerText = articleData.sampleInput[i];
             td1.appendChild(pre1); tr.appendChild(td1);
             var td2 = document.createElement('td');
             var pre2 = document.createElement('pre');
-            pre2.innerText = article.sampleOutput[i];
+            pre2.innerText = articleData.sampleOutput[i];
             td2.appendChild(pre2); tr.appendChild(td2);
             sample.appendChild(tr);
         }
     </script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>
+    <script dataType="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>
     <script src="http://cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_SVG"></script>
 </html>

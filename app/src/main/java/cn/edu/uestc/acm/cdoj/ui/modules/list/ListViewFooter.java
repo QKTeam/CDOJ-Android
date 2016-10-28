@@ -67,23 +67,23 @@ public class ListViewFooter extends LinearLayout {
                 mLoadCompleteLayout.setVisibility(View.GONE);
                 return;
             case LOADCOMPLETE:
-                mImageView.setImageBitmap(Global.listFooterIcon_done);
+                mImageView.setImageDrawable(Global.getListFooterIcon_done());
                 mTextView.setText(getContext().getString(R.string.loadComplete));
                 break;
             case LOADPROBLEM:
-                mImageView.setImageBitmap(Global.listFooterIcon_problem);
+                mImageView.setImageDrawable(Global.getListFooterIcon_problem());
                 mTextView.setText(getContext().getString(R.string.loadProblem));
                 break;
             case DATAISNULL:
-                mImageView.setImageBitmap(Global.listFooterIcon_noData);
+                mImageView.setImageDrawable(Global.getListFooterIcon_noData());
                 mTextView.setText(getContext().getString(R.string.noData));
                 break;
             case NETNOTCONNECT:
-                mImageView.setImageBitmap(Global.listFooterIcon_netProblem);
+                mImageView.setImageDrawable(Global.getListFooterIcon_netProblem());
                 mTextView.setText(getContext().getString(R.string.netNotConnect));
                 break;
             case CONNECTOVERTIME:
-                mImageView.setImageBitmap(Global.listFooterIcon_netProblem);
+                mImageView.setImageDrawable(Global.getListFooterIcon_netProblem());
                 mTextView.setText(getContext().getString(R.string.connectOvertime));
                 break;
         }
@@ -102,7 +102,7 @@ public class ListViewFooter extends LinearLayout {
         mLoadingLayout.setVisibility(View.GONE);
         mLoadCompleteLayout.setVisibility(View.VISIBLE);
         mTextView.setText(text);
-        if (themeRenderImage) imageBitmap = DrawImage.render(imageBitmap, Global.mainColorMatrix);
+        if (themeRenderImage) imageBitmap = DrawImage.render(imageBitmap, Global.getMainColorMatrix());
         mImageView.setImageBitmap(imageBitmap);
     }
 }

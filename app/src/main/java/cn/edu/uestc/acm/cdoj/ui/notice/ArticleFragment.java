@@ -17,10 +17,9 @@ import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.ConvertNetData;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.NetDataPlus;
-import cn.edu.uestc.acm.cdoj.net.NetHandler;
 import cn.edu.uestc.acm.cdoj.net.Result;
-import cn.edu.uestc.acm.cdoj.net.data.Article;
-import cn.edu.uestc.acm.cdoj.net.data.ArticleReceived;
+import cn.edu.uestc.acm.cdoj.net.data.ArticleData;
+import cn.edu.uestc.acm.cdoj.net.data.ArticleReceive;
 import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebView;
 
 /**
@@ -31,9 +30,11 @@ public class ArticleFragment extends Fragment implements ConvertNetData{
     private DetailWebView mWebView;
     private TextView titleView;
     private String title;
-    private String jsData;
-    private Article article;
+    private String jsonString;
+    private ArticleData articleData;
     private Context context;
+
+    String TAG = "文章";
 
     @Override
     public void onAttach(Context context) {
@@ -59,16 +60,18 @@ public class ArticleFragment extends Fragment implements ConvertNetData{
             rootView = inflater.inflate(R.layout.article, container, false);
             mWebView = (DetailWebView) rootView.findViewById(R.id.article_detailWebView);
             mWebView.switchType(NetData.ARTICLE_DETAIL);
-            if (jsData != null) mWebView.addJSData(jsData);
+            if (jsonString != null) mWebView.setJsonString(jsonString);
+
             titleView = (TextView) rootView.findViewById(R.id.title_article);
             if (title != null) titleView.setText(title);
         }
         return rootView;
     }
 
-    public void addJSData(String jsData) {
-        this.jsData = jsData;
-        if (mWebView != null) mWebView.addJSData(this.jsData);
+    public ArticleFragment setJsonString(String jsonString) {
+        this.jsonString = jsonString;
+        if (mWebView != null) mWebView.setJsonString(this.jsonString);
+        return this;
     }
 
     public ArticleFragment setTitle(String title) {
@@ -77,8 +80,8 @@ public class ArticleFragment extends Fragment implements ConvertNetData{
         return this;
     }
 
-    public ArticleFragment refresh( int id) {
-        if (context == null ) return this;
+    public ArticleFragment refresh(int id) {
+        if (context == null) return this;
         NetDataPlus.getArticleDetail(context, id, this);
         return this;
     }
@@ -91,33 +94,28 @@ public class ArticleFragment extends Fragment implements ConvertNetData{
     @NonNull
     @Override
     public Result onConvertNetData(String jsonString, Result result) {
-        ArticleReceived articleReceived = JSON.parseObject(jsonString, ArticleReceived.class);
-        Article article = articleReceived.getArticle();
-        article.addJsonString(JSON.toJSONString(article));
-        result.setContent(article);
+        ArticleReceive articleReceive = JSON.parseObject(jsonString, ArticleReceive.class);
+        articleData = articleReceive.getArticle();
+        articleData.jsonString = JSON.toJSONString(articleData);
+        this.jsonString = articleData.jsonString;
 
-        if (articleReceived.getResult().equals("success")) {
-            result.setStatus(NetHandler.Status.SUCCESS);
+        if (articleReceive.getResult().equals("success")) {
+            result.setStatus(Result.SUCCESS);
         } else {
-            result.setStatus(NetHandler.Status.FALSE);
+            result.setStatus(Result.FALSE);
         }
         return result;
     }
 
     @Override
     public void onNetDataConverted(Result result) {
-        if (result.getStatus() == NetHandler.Status.SUCCESS) {
-            this.article = (Article) result.getContent();
-            addJSData(article.obtainJsonString());
+        switch (result.getStatus()) {
+            case Result.SUCCESS:
+                if (mWebView != null) {
+                    mWebView.setJsonString(jsonString);
+                }
+                break;
+            case Result.FALSE:
         }
-    }
-
-    public Article getArticle() {
-        return article;
-    }
-
-    public void setArticle(Article article) {
-        this.article = article;
-        addJSData(article.obtainJsonString());
     }
 }

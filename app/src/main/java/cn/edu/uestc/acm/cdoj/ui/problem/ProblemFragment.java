@@ -17,10 +17,9 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.ConvertNetData;
 import cn.edu.uestc.acm.cdoj.net.NetData;
-import cn.edu.uestc.acm.cdoj.net.NetHandler;
 import cn.edu.uestc.acm.cdoj.net.Result;
-import cn.edu.uestc.acm.cdoj.net.data.Problem;
-import cn.edu.uestc.acm.cdoj.net.data.ProblemReceived;
+import cn.edu.uestc.acm.cdoj.net.data.ProblemData;
+import cn.edu.uestc.acm.cdoj.net.data.ProblemReceive;
 import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebView;
 import cn.edu.uestc.acm.cdoj.net.NetDataPlus;
 
@@ -35,7 +34,7 @@ public class ProblemFragment extends Fragment implements ConvertNetData{
     private FloatingActionButton button_addCode;
     private FloatingActionButton button_checkResult;
     private Context context;
-    private Problem problem;
+    private ProblemData problemData;
 
     @Override
     public void onAttach(Context context) {
@@ -61,7 +60,7 @@ public class ProblemFragment extends Fragment implements ConvertNetData{
             rootView = inflater.inflate(R.layout.problem, container, false);
             mWebView = (DetailWebView) rootView.findViewById(R.id.problem_detailWebView);
             mWebView.switchType(NetData.PROBLEM_DETAIL);
-            titleView = (TextView) rootView.findViewById(R.id.problem_title);
+            titleView = (TextView) rootView.findViewById(R.id.problem_list_item_title);
             if (title != null) titleView.setText(title);
         }
         return rootView;
@@ -73,7 +72,7 @@ public class ProblemFragment extends Fragment implements ConvertNetData{
     }
 
     public void addJSData(String jsData) {
-        mWebView.addJSData(jsData);
+        mWebView.setJsonString(jsData);
     }
 
     public ProblemFragment setTitle(String title) {
@@ -96,33 +95,33 @@ public class ProblemFragment extends Fragment implements ConvertNetData{
     @NonNull
     @Override
     public Result onConvertNetData(String jsonString, Result result) {
-        ProblemReceived problemReceived = JSON.parseObject(jsonString, ProblemReceived.class);
-        Problem problem = problemReceived.getProblem();
-        problem.addJsonString(JSON.toJSONString(problem));
-        result.setContent(problem);
+        ProblemReceive problemReceive = JSON.parseObject(jsonString, ProblemReceive.class);
+        ProblemData problemData = problemReceive.getProblem();
+        problemData.jsonString = JSON.toJSONString(problemData);
+        result.setContent(problemData);
 
-        if (problemReceived.getResult().equals("success")) {
-            result.setStatus(NetHandler.Status.SUCCESS);
+        if (problemReceive.getResult().equals("success")) {
+            result.setStatus(Result.SUCCESS);
         } else {
-            result.setStatus(NetHandler.Status.FALSE);
+            result.setStatus(Result.FALSE);
         }
         return result;
     }
 
     @Override
     public void onNetDataConverted(Result result) {
-        if (result.getStatus() == NetHandler.Status.SUCCESS) {
-            this.problem = (Problem) result.getContent();
-            addJSData(problem.obtainJsonString());
+        if (result.getStatus() == Result.SUCCESS) {
+            this.problemData = (ProblemData) result.getContent();
+            addJSData(problemData.jsonString);
         }
     }
 
-    public Problem getProblem() {
-        return problem;
+    public ProblemData getProblem() {
+        return problemData;
     }
 
-    public void setProblem(Problem problem) {
-        this.problem = problem;
-        addJSData(problem.obtainJsonString());
+    public void setProblem(ProblemData problemData) {
+        this.problemData = problemData;
+        addJSData(problemData.jsonString);
     }
 }

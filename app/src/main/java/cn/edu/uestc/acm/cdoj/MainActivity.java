@@ -2,8 +2,14 @@ package cn.edu.uestc.acm.cdoj;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.widget.EditText;
+import android.support.annotation.NonNull;
+import android.view.View;
+import android.widget.ImageView;
+
+import com.alibaba.fastjson.JSON;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,100 +17,154 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
 
+import cn.edu.uestc.acm.cdoj.net.ConvertNetData;
+import cn.edu.uestc.acm.cdoj.net.NetDataPlus;
+import cn.edu.uestc.acm.cdoj.net.Result;
 import cn.edu.uestc.acm.cdoj.tools.DrawImage;
 import cn.edu.uestc.acm.cdoj.tools.RGBAColor;
+import cn.edu.uestc.acm.cdoj.ui.MainUIActivity;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchHistoryManager;
 import cn.edu.uestc.acm.cdoj.ui.user.User;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements ConvertNetData{
 
     String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        startLaunchActivity();
-        readHTMLFile();
+//        setContentView(R.layout.activity_launch);
+        startMainUIActivity();
+//        setupLaunchCartoon();
         setupDefaultColorMatrix();
-        setupStatusIcons();
+        readHTMLFile();
+        setupRankProblemIcons();
         setupListFooterIcons();
         readSearchHistoriesFile();
-        Global.filesDirPath = getFilesDir() + File.separator;
+        Global.setDefaultLogo(new BitmapDrawable(getResources(),
+                BitmapFactory.decodeResource(getResources(), R.drawable.logo)));
+        Global.setFilesDirPath(getFilesDir() + File.separator);
+        Global.setCacheDirPath(getCacheDir() + File.separator);
         loadLocalUser();
-        EditText editText = new EditText(this);
-
-        finish();
     }
 
-    private void startLaunchActivity() {
-        Intent launchActivityIntent = new Intent(this, LaunchCartoonActivity.class);
-        startActivity(launchActivityIntent);
+    private void setupLaunchCartoon() {
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        ImageView mImageView = (ImageView) findViewById(R.id.launch_image);
+        mImageView.setImageResource(R.drawable.launch);
+    }
+
+    private void startMainUIActivity() {
+        Intent mainUIActivityIntent = new Intent(MainActivity.this, MainUIActivity.class);
+        startActivity(mainUIActivityIntent);
     }
 
     private void readHTMLFile() {
         try {
             InputStream input;
             byte[] in;
+
             input = getResources().getAssets().open("articleRender.html");
             in = new byte[input.available()];
             input.read(in);
-            Global.HTMLDATA_ARTICLE = new String(in);
+            Global.setHtmldataArticle(new String(in));
+
             input = getResources().getAssets().open("problemRender.html");
             in = new byte[input.available()];
             input.read(in);
-            Global.HTMLDATA_PROBLEM = new String(in);
+            Global.setHtmldataProblem(new String(in));
+
             input = getResources().getAssets().open("contestOverviewRender.html");
             in = new byte[input.available()];
             input.read(in);
-            Global.HTMLDATA_CONTEST = new String(in);
+            Global.setHtmldataContest(new String(in));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void setupDefaultColorMatrix() {
-        Global.mainColorMatrix = new float[]{
+        Global.setMainColorMatrix(new float[]{
                 0, 0, 0, 0, 255,
                 0, 0, 0, 0, 166,
                 0, 0, 0, 0, 0,
-                0, 0, 0, 1, 0};
+                0, 0, 0, 1, 0});
     }
 
-    private void setupStatusIcons() {
-        Global.rankIcon_didNothing = DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
-                RGBAColor.getColorMatrix(this, R.color.rank_didNothing, false));
-        Global.rankIcon_tried = DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
-                RGBAColor.getColorMatrix(this, R.color.rank_tried, false));
-        Global.rankIcon_solved = DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
-                RGBAColor.getColorMatrix(this, R.color.rank_solved, false));
-        Global.rankIcon_theFirstSolved = DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
-                RGBAColor.getColorMatrix(this, R.color.rank_theFirstSolved, false));
+    private void setupRankProblemIcons() {
+        Global.setRankIcon_didNothing(new BitmapDrawable(getResources(),
+                DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
+                        RGBAColor.getColorMatrix(this, R.color.rank_didNothing, false))));
+
+        Global.setRankIcon_tried(new BitmapDrawable(getResources(),
+                DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
+                        RGBAColor.getColorMatrix(this, R.color.rank_tried, false))));
+
+        Global.setRankIcon_solved(new BitmapDrawable(getResources(),
+                DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
+                        RGBAColor.getColorMatrix(this, R.color.rank_solved, false))));
+
+        Global.setRankIcon_theFirstSolved(new BitmapDrawable(getResources(),
+                DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
+                        RGBAColor.getColorMatrix(this, R.color.rank_theFirstSolved, false))));
     }
 
     private void setupListFooterIcons() {
-        Global.listFooterIcon_noData = DrawImage.draw(this, R.drawable.ic_notifications_none_white_36dp, true);
-        Global.listFooterIcon_problem = DrawImage.draw(this, R.drawable.ic_sync_problem_white, true);
-        Global.listFooterIcon_done = DrawImage.draw(this, R.drawable.ic_done_white, true);
-        Global.listFooterIcon_netProblem = DrawImage.draw(this, R.drawable.ic_sync_disabled_white, true);
+        Global.setListIcon_up(new BitmapDrawable(getResources(),
+                DrawImage.draw(this, R.drawable.ic_arrow_upward_white_48dp,
+                RGBAColor.getColorMatrixWithPercentAlpha(this, R.color.main_yellow, 0.5f, false))));
+
+        Global.setListFooterIcon_noData(new BitmapDrawable(getResources(),
+                DrawImage.draw(this, R.drawable.ic_notifications_none_white_36dp, true)));
+
+        Global.setListFooterIcon_problem(new BitmapDrawable(getResources(),
+                DrawImage.draw(this, R.drawable.ic_sync_problem_white, true)));
+
+        Global.setListFooterIcon_done(new BitmapDrawable(getResources(),
+                DrawImage.draw(this, R.drawable.ic_done_white, true)));
+
+        Global.setListFooterIcon_netProblem(new BitmapDrawable(getResources(),
+                DrawImage.draw(this, R.drawable.ic_sync_disabled_white, true)));
     }
 
     private void readSearchHistoriesFile() {
-        Global.problemSearchHistory = SearchHistoryManager.getAllHistories("problem");
-        Global.contestSearchHistory = SearchHistoryManager.getAllHistories("contest");
+        Global.setProblemSearchHistory(SearchHistoryManager.getAllHistories("problem"));
+
+        Global.setContestSearchHistory(SearchHistoryManager.getAllHistories("contest_button_container"));
     }
 
     private void loadLocalUser() {
-        File file = new File(Global.filesDirPath + "user");
+        File file = new File(Global.getFilesDirPath() + "user");
         if (!file.exists()) {
+            finish();
             return;
         }
         try {
             Scanner input = new Scanner(file);
-            Global.user = new User(input.nextLine(), input.nextLine());
+            Global.setUser(new User(input.nextLine(), input.nextLine()));
             input.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        NetDataPlus.login(this, Global.getUser().getUserName(), Global.getUser().getPasswordSHA1(), this);
+    }
+
+    @NonNull
+    @Override
+    public Result onConvertNetData(String jsonString, Result result) {
+        User user = JSON.parseObject(jsonString, User.class);
+        if (user.getResult().equals("success")) {
+            result.setStatus(Result.SUCCESS);
+            result.setContent(user);
+        } else {
+            result.setStatus(Result.FALSE);
+        }
+        return result;
+    }
+
+    @Override
+    public void onNetDataConverted(Result result) {
+        finish();
     }
 }

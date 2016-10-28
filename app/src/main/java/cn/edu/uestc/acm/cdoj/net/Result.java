@@ -5,27 +5,37 @@ package cn.edu.uestc.acm.cdoj.net;
  */
 
 public class Result {
-    private int type;
+
+    public static final int DEFAULT = 0x100;
+    public static final int NETNOTCONECT = 0x101;
+    public static final int CONECTOVERTIME = 0x102;
+    public static final int FALSE = 0x103;
+    public static final int SUCCESS = 0x104;
+    public static final int FINISH = 0x105;
+    public static final int DATAISNULL = 0x106;
+    public static final int NORESPONSE = 0x107;
+
+    private int dataType;
     private int status;
     private Object content;
     private Object extra;
 
-    public Result(int type, int status) {
-        this(type, status, null, null);
+    public Result(int dataType, int status) {
+        this(dataType, status, null, null);
     }
-    public Result(int type, int status, Object extra, Object content) {
-        this.type = type;
+    public Result(int dataType, int status, Object extra, Object content) {
+        this.dataType = dataType;
         this.status = status;
         this.content = content;
         this.extra = extra;
     }
 
-    public int getType() {
-        return type;
+    public int getDataType() {
+        return dataType;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setDataType(int dataType) {
+        this.dataType = dataType;
     }
 
     public int getStatus() {

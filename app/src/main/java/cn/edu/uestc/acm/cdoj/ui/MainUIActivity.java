@@ -11,12 +11,14 @@ import android.support.design.widget.NavigationView;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -38,13 +40,13 @@ import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.tools.DrawImage;
 import cn.edu.uestc.acm.cdoj.net.NetDataPlus;
 import cn.edu.uestc.acm.cdoj.tools.RGBAColor;
-import cn.edu.uestc.acm.cdoj.ui.contest.ContestListFragment;
+import cn.edu.uestc.acm.cdoj.ui.contest.ContestList;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchHistory;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchHistoryManager;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchResult;
-import cn.edu.uestc.acm.cdoj.ui.notice.NoticeListFragment;
-import cn.edu.uestc.acm.cdoj.ui.problem.ProblemListFragment;
+import cn.edu.uestc.acm.cdoj.ui.notice.NoticeList;
+import cn.edu.uestc.acm.cdoj.ui.problem.ProblemList;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.FlyMeUtils;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.MIUIUtils;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.StatusBarUtil;
@@ -94,9 +96,9 @@ public class MainUIActivity extends AppCompatActivity {
     }
     private int[] listInts = new int[]{NOTICELIST, PROBLEMLIST, CONTESTLIST};
 
-    private NoticeListFragment noticeList;
-    private ProblemListFragment problemList;
-    private ContestListFragment contestList;
+    private NoticeList noticeList;
+    private ProblemList problemList;
+    private ContestList contestList;
     private Toolbar mToolbar;
     private ImageButton[] bottomButtons = new ImageButton[4];
     private FloatingSearchView mSearchView;
@@ -114,8 +116,8 @@ public class MainUIActivity extends AppCompatActivity {
         mSearchView = (FloatingSearchView) findViewById(R.id.ui_main_floating_search_view);
         mSearchFrameLayout = (FrameLayout) findViewById(R.id.ui_main_search_frame);
         mViewPager = (ViewPager) findViewById(R.id.ui_main_list_ViewPager);
-        Global.currentMainUIActivity = this;
-        Global.isTwoPane = findViewById(R.id.landAndPadMark) != null;
+        Global.setCurrentMainUIActivity(this);
+        Global.setIsTwoPane(false);
         initViews();
     }
 
@@ -133,8 +135,8 @@ public class MainUIActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        SearchHistoryManager.addSuggestion("problem", Global.problemSearchHistory, true);
-        SearchHistoryManager.addSuggestion("contest", Global.contestSearchHistory, true);
+        SearchHistoryManager.addSuggestion("problem", Global.getProblemSearchHistory(), true);
+        SearchHistoryManager.addSuggestion("contest_button_container", Global.getContestSearchHistory(), true);
         super.onDestroy();
     }
 
@@ -154,13 +156,14 @@ public class MainUIActivity extends AppCompatActivity {
         setupSystemBar();
         setupSearchView();
         setupViewPager();
-        if (Global.isTwoPane) setupTwoPane();
+        if (Global.isTwoPane()) setupTwoPane();
     }
 
     private void setupList() {
-        noticeList = new NoticeListFragment();
-        problemList = new ProblemListFragment();
-        contestList = new ContestListFragment();
+        noticeList = new NoticeList(this);
+        problemList = new ProblemList(this);
+        contestList = new ContestList(this);
+
         NetDataPlus.getArticleList(this, 1, noticeList);
         NetDataPlus.getProblemList(this, 1, problemList);
         NetDataPlus.getContestList(this, 1, contestList);
@@ -219,12 +222,12 @@ public class MainUIActivity extends AppCompatActivity {
             public void onFocus() {
                 switch (mViewPager.getCurrentItem()) {
                     case 1:
-                        Collections.reverse(Global.problemSearchHistory);
-                        mSearchView.swapSuggestions(Global.problemSearchHistory);
+                        Collections.reverse(Global.getProblemSearchHistory());
+                        mSearchView.swapSuggestions(Global.getProblemSearchHistory());
                         break;
                     case 2:
-                        Collections.reverse(Global.contestSearchHistory);
-                        mSearchView.swapSuggestions(Global.contestSearchHistory);
+                        Collections.reverse(Global.getContestSearchHistory());
+                        mSearchView.swapSuggestions(Global.getContestSearchHistory());
                 }
             }
 
@@ -240,21 +243,21 @@ public class MainUIActivity extends AppCompatActivity {
                 if (!oldQuery.equals("") && newQuery.equals("")) {
                     switch (mViewPager.getCurrentItem()) {
                         case 1:
-                            Collections.reverse(Global.problemSearchHistory);
-                            mSearchView.swapSuggestions(Global.problemSearchHistory);
+                            Collections.reverse(Global.getProblemSearchHistory());
+                            mSearchView.swapSuggestions(Global.getProblemSearchHistory());
                             break;
                         case 2:
-                            Collections.reverse(Global.contestSearchHistory);
-                            mSearchView.swapSuggestions(Global.contestSearchHistory);
+                            Collections.reverse(Global.getContestSearchHistory());
+                            mSearchView.swapSuggestions(Global.getContestSearchHistory());
                     }
                 }else {
                     ArrayList<SearchHistory> histories = null;
                     switch (mViewPager.getCurrentItem()) {
                         case 1:
-                            histories = Global.problemSearchHistory;
+                            histories = Global.getProblemSearchHistory();
                             break;
                         case 2:
-                            histories = Global.contestSearchHistory;
+                            histories = Global.getContestSearchHistory();
                     }
                     SearchHistoryManager.findMatchHistories(histories, newQuery, 5, new SearchHistoryManager.OnFindHistoriesListener() {
                         @Override
@@ -277,10 +280,10 @@ public class MainUIActivity extends AppCompatActivity {
             public void onSearchAction(String currentQuery) {
                 switch (mViewPager.getCurrentItem()) {
                     case 1:
-                        Global.problemSearchHistory.add(new SearchHistory(currentQuery));
+                        Global.getProblemSearchHistory().add(new SearchHistory(currentQuery));
                         break;
                     case 2:
-                        Global.contestSearchHistory.add(new SearchHistory(currentQuery));
+                        Global.getContestSearchHistory().add(new SearchHistory(currentQuery));
                 }
                 showSearchResult(currentQuery);
             }
@@ -328,23 +331,48 @@ public class MainUIActivity extends AppCompatActivity {
     }
 
     private void setViewPagerAdapter() {
-        mViewPager.setAdapter(new FragmentPagerAdapter(getFragmentManager()) {
-            @Override
-            public Fragment getItem(int position) {
-                switch (position) {
-                    case 0:
-                        return noticeList;
-                    case 1:
-                        return problemList;
-                    case 2:
-                        return contestList;
-                }
-                return null;
-            }
-
+        mViewPager.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
                 return 3;
+            }
+
+            @Override
+            public boolean isViewFromObject(View view, Object object) {
+                return view == object;
+            }
+
+            @Override
+            public Object instantiateItem(ViewGroup container, int position) {
+                View v = null;
+                switch (position) {
+                    case 0:
+                        v = noticeList;
+                        break;
+                    case 1:
+                        v = problemList;
+                        break;
+                    case 2:
+                        v = contestList;
+                }
+                container.addView(v);
+                return v;
+            }
+
+            @Override
+            public void destroyItem(ViewGroup container, int position, Object object) {
+                View v = null;
+                switch (position) {
+                    case 0:
+                        v = noticeList;
+                        break;
+                    case 1:
+                        v = problemList;
+                        break;
+                    case 2:
+                        v = contestList;
+                }
+                container.removeView(v);
             }
         });
     }
@@ -385,9 +413,9 @@ public class MainUIActivity extends AppCompatActivity {
     }
 
     private void setupTwoPane() {
-        ImageView bgImageView = (ImageView) findViewById(R.id.main_detail_bg);
-        float[] colorMatrix = RGBAColor.getColorMatrixWithPercentAlpha(0, 0, 0, 0.7, true);
-        bgImageView.setImageBitmap(DrawImage.draw(this, R.drawable.logo_orange, colorMatrix));
+        /*ImageView bgImageView = (ImageView) findViewById(R.id.main_detail_bg);
+        float[] colorMatrix = RGBAColor.getColorMatrixWithPercentAlpha(0, 0, 0, 0.7f, true);
+        bgImageView.setImageBitmap(DrawImage.draw(this, R.drawable.logo_orange, colorMatrix));*/
     }
 
     private void setupBottomButton() {

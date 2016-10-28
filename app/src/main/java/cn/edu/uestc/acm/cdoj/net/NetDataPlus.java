@@ -26,7 +26,7 @@ public class NetDataPlus {
 
     public static void login(Context context, String userName, String password, boolean isSha1, Object extra, ConvertNetData convertNetData) {
         if (!isSha1) {
-            password = sha1(password);
+            password = NetData.sha1(password);
         }
         NetData.login(context, userName, password, extra, convertNetData);
     }
@@ -129,6 +129,10 @@ public class NetDataPlus {
 
     public static void getStatusList(Context context, Integer problemId, int page, ConvertNetData convertNetData) {
         getStatusList(context, problemId, "", -1, page, null, convertNetData);
+    }
+
+    public static void getStatusList(Context context, int problemId, String userName, int contestId, int page, ConvertNetData convertNetData) {
+        getStatusList(context, problemId, userName, contestId, page, null, convertNetData);
     }
 
     public static void getStatusList(Context context, int problemId, String userName, int contestId, int page, Object extra, ConvertNetData convertNetData) {
@@ -238,21 +242,5 @@ public class NetDataPlus {
 
     public static void getContestDetail(Context context, int id, Object extra, ConvertNetData convertNetData) {
         NetData.getContestDetail(context, id, extra, convertNetData);
-    }
-
-    public static String sha1(String s) {
-        return md(s, "SHA-1");
-    }
-
-    public static String md(String s, String algorithm) {
-        try {
-            MessageDigest md = MessageDigest.getInstance(algorithm);
-            byte[] bytes = s.getBytes();
-            md.update(bytes);
-            return new BigInteger(1, md.digest()).toString(16);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

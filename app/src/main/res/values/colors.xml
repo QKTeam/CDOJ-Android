@@ -35,4 +35,5 @@
     <color name="contestStatus_Ended">#FF0000</color>
     <color name="contestStatus_Running">#00FF00</color>
     <color name="transparent">#00000000</color>
+    <color name="transparentHalf">#30000000</color>
 </resources>

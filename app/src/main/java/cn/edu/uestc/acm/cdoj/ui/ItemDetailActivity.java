@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.NetData;
+import cn.edu.uestc.acm.cdoj.net.data.ArticleData;
 import cn.edu.uestc.acm.cdoj.ui.notice.ArticleFragment;
-import cn.edu.uestc.acm.cdoj.ui.contest.ContestFragment;
+import cn.edu.uestc.acm.cdoj.ui.contest.ContestView;
 import cn.edu.uestc.acm.cdoj.ui.problem.ProblemFragment;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.FlyMeUtils;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.MIUIUtils;
@@ -35,7 +38,7 @@ public class ItemDetailActivity extends AppCompatActivity {
 
     private void initStatusBar() {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        StatusBarUtil.setStatusBarColor(this, R.color.main_background, R.color.statusBar_background_gray,true);
+        StatusBarUtil.setStatusBarColor(this, R.color.main_background, R.color.statusBar_background_gray, true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M || MIUIUtils.isMIUI() || FlyMeUtils.isFlyMe()) {
             StatusBarUtil.StatusBarLightMode(this);
         }
@@ -48,9 +51,15 @@ public class ItemDetailActivity extends AppCompatActivity {
         Fragment detail = null;
         switch (type) {
             case NetData.ARTICLE_DETAIL:
-                detail = new ArticleFragment();
-                ((ArticleFragment) detail).setTitle(intent.getStringExtra("title"))
-                        .refresh(this, id);
+                ArticleData articleData = (ArticleData) intent.getSerializableExtra("article");
+                ArticleFragment articleFragment = new ArticleFragment();
+                articleFragment.setTitle(articleData.getTitle());
+                if (articleData.isHasMore()) {
+                    articleFragment.refresh(this, articleData.getArticleId());
+                } else {
+                    articleFragment.setJsonString(articleData.jsonString);
+                }
+                detail = articleFragment;
                 break;
             case NetData.PROBLEM_DETAIL:
                 detail = new ProblemFragment();
@@ -58,9 +67,9 @@ public class ItemDetailActivity extends AppCompatActivity {
                         .refresh(this, id);
                 break;
             case NetData.CONTEST_DETAIL:
-                detail = new ContestFragment();
-                ((ContestFragment) detail).refresh(this, id);
-                break;
+                View detailView = new ContestView(this, id).refresh();
+                ((ViewGroup) findViewById(R.id.detail_activity)).addView(detailView);
+                return;
         }
         getFragmentManager().beginTransaction()
                 .replace(R.id.detail_activity, detail)

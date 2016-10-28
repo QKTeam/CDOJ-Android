@@ -1,7 +1,6 @@
 package cn.edu.uestc.acm.cdoj.tools;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.support.annotation.ColorRes;
 import android.support.v4.content.ContextCompat;
 
@@ -91,7 +90,23 @@ public class RGBAColor {
                 0, 0, 0, 0, A};
     }
 
-    public static float[] getColorMatrix(Context context, @ColorRes int colorResource, boolean includeAlpha) {
+    public static float[] getColorMatrixWithAlpha(Context context, @ColorRes int colorResource, boolean asSkew, int alpha) {
+        int[] RGBA = getRGBAFromColorResource(context, colorResource);
+        if (asSkew) {
+            return new float[]{
+                    1, 0, 0, 0, RGBA[0],
+                    0, 1, 0, 0, RGBA[1],
+                    0, 0, 1, 0, RGBA[2],
+                    0, 0, 0, 0, alpha};
+        }
+        return new float[]{
+                0, 0, 0, 0, RGBA[0],
+                0, 0, 0, 0, RGBA[1],
+                0, 0, 0, 0, RGBA[2],
+                0, 0, 0, 0, alpha};
+    }
+
+        public static float[] getColorMatrix(Context context, @ColorRes int colorResource, boolean includeAlpha) {
         return getColorMatrix(context, colorResource, false, includeAlpha);
     }
 
@@ -130,18 +145,43 @@ public class RGBAColor {
         }
     }
 
-    public static float[] getColorMatrixWithPercentAlpha(int R, int G, int B, double A, boolean asSkew) {
+    public static float[] getColorMatrixWithPercentAlpha(Context context, @ColorRes int colorResource, float percent, boolean asSkew) {
+        int[] RGBA = getRGBAFromColorResource(context, colorResource);
+        if (asSkew) {
+            return new float[]{
+                    1, 0, 0, 0, RGBA[0],
+                    0, 1, 0, 0, RGBA[1],
+                    0, 0, 1, 0, RGBA[2],
+                    0, 0, 0, percent, 0};
+        }
+        return new float[]{
+                0, 0, 0, 0, RGBA[0],
+                0, 0, 0, 0, RGBA[1],
+                0, 0, 0, 0, RGBA[2],
+                0, 0, 0, percent, 0};
+    }
+
+    public static float[] getColorMatrixWithPercentAlpha(int R, int G, int B, float percent, boolean asSkew) {
         if (asSkew) {
             return new float[]{
                     1, 0, 0, 0, R,
                     0, 1, 0, 0, G,
                     0, 0, 1, 0, B,
-                    0, 0, 0, (float)A, 0};
+                    0, 0, 0, percent, 0};
         }
         return new float[]{
                 0, 0, 0, 0, R,
                 0, 0, 0, 0, G,
                 0, 0, 0, 0, B,
-                0, 0, 0, (float)A, 0};
+                0, 0, 0, percent, 0};
+    }
+
+    private static int[] getRGBAFromColorResource(Context context, @ColorRes int colorResource){
+        int color = ContextCompat.getColor(context, colorResource);
+        int A = (color & 0xff000000) >>> 24;
+        int R = (color & 0x00ff0000) >>> 16;
+        int G = (color & 0x0000ff00) >>> 8;
+        int B = (color & 0x000000ff);
+        return new int[]{R, G, B, A};
     }
 }

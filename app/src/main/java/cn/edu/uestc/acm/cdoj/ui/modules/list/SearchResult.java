@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -14,8 +16,8 @@ import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.ConvertNetData;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.NetDataPlus;
-import cn.edu.uestc.acm.cdoj.ui.contest.ContestListFragment;
-import cn.edu.uestc.acm.cdoj.ui.problem.ProblemListFragment;
+import cn.edu.uestc.acm.cdoj.ui.contest.ContestList;
+import cn.edu.uestc.acm.cdoj.ui.problem.ProblemList;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.FlyMeUtils;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.MIUIUtils;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.StatusBarUtil;
@@ -49,23 +51,23 @@ public class SearchResult extends AppCompatActivity {
         intent = getIntent();
         int type = intent.getIntExtra("type", 0);
         String key = intent.getStringExtra("key");
-        TextView textView = (TextView) findViewById(R.id.searchResult_title);
-        textView.setText(String.format(Locale.CHINA, "\"%s\" search result:", key));
+        ((TextView) findViewById(R.id.searchResult_title))
+                .setText(String.format(Locale.CHINA, "\"%s\" search result:", key));
+
         ConvertNetData result = null;
         switch (type) {
             case NetData.PROBLEM_LIST:
-                result = new ProblemListFragment();
+                result = new ProblemList(this);
                 int problemId = intent.getIntExtra("problemId", 0);
                 if (problemId != 0) key = "";
                 NetDataPlus.getProblemList(this, 1, key, problemId, result);
                 break;
             case NetData.CONTEST_LIST:
-                result = new ContestListFragment();
+                result = new ContestList(this);
                 NetDataPlus.getContestList(this, 1, key, result);
                 break;
         }
-        getFragmentManager().beginTransaction()
-                .replace(R.id.searchResult_container, (Fragment) result)
-                .commit();
+        ((ViewGroup)findViewById(R.id.searchResult_container))
+                .addView((View) result);
     }
 }

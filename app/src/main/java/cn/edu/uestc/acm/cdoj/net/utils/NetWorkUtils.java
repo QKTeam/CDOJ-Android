@@ -8,6 +8,9 @@ import android.util.Log;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,18 +25,20 @@ import java.util.Scanner;
 
 public class NetWorkUtils {
 
-    static String TAG = "网络";
+    static String TAG = "网络工具";
+    public static String cookie = "";
 
     public static String getJsonString(Context context, String url) {
         HttpURLConnection mUrlConnection = null;
         String resultJsonString = null;
         try {
-            SharedPreferences mPreferences = context.getSharedPreferences("cookie", Context.MODE_PRIVATE);
-
             mUrlConnection = (HttpURLConnection) new URL(url).openConnection();
-            mUrlConnection.addRequestProperty("Cookie", mPreferences.getString("cookie", ""));
+            mUrlConnection.addRequestProperty("Cookie", cookie);
 
             BufferedReader input = new BufferedReader(new InputStreamReader(mUrlConnection.getInputStream()));
+            if (mUrlConnection.getHeaderField("Set-Cookie") != null) {
+                cookie = mUrlConnection.getHeaderField("Set-Cookie");
+            }
             resultJsonString = input.readLine();
             input.close();
 
@@ -42,6 +47,7 @@ public class NetWorkUtils {
         } finally {
             if (mUrlConnection != null) mUrlConnection.disconnect();
         }
+        Log.d(TAG, "getJsonString:cookie: " + cookie + "  "+url+" " + resultJsonString);
         return resultJsonString;
     }
 
@@ -49,48 +55,55 @@ public class NetWorkUtils {
         HttpURLConnection mUrlConnection = null;
         String resultJsonString = null;
         try {
-            SharedPreferences mPreferences = context.getSharedPreferences("cookie", Context.MODE_PRIVATE);
-            SharedPreferences.Editor mPreferencesEditor = mPreferences.edit();
-
             mUrlConnection = (HttpURLConnection) new URL(url).openConnection();
             mUrlConnection.setRequestMethod("POST");
             mUrlConnection.setDoOutput(true);
             mUrlConnection.setChunkedStreamingMode(0);
             mUrlConnection.addRequestProperty("Content-Type", "application/json");
-            mUrlConnection.addRequestProperty("Cookie", mPreferences.getString("cookie", ""));
+            mUrlConnection.addRequestProperty("Cookie", cookie);
 
             OutputStream output = new BufferedOutputStream(mUrlConnection.getOutputStream());
             output.write(json.getBytes());
             output.close();
 
             BufferedReader input = new BufferedReader(new InputStreamReader(mUrlConnection.getInputStream()));
+            if (mUrlConnection.getHeaderField("Set-Cookie") != null) {
+                cookie = mUrlConnection.getHeaderField("Set-Cookie");
+            }
             resultJsonString = input.readLine();
             input.close();
 
-            mPreferencesEditor.putString("cookie", mUrlConnection.getHeaderField("Cookie"));
-            mPreferencesEditor.apply();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             if (mUrlConnection != null) mUrlConnection.disconnect();
         }
+        Log.d(TAG, "postJsonString:cookie: " + cookie + "  "+url+" "+json+" " + resultJsonString);
         return resultJsonString;
     }
 
-    public static BitmapDrawable getAvatar(String url) {
+    public static byte[] getAvatar(String url) {
         HttpURLConnection mUrlConnection = null;
-        BitmapDrawable resultDrawable = null;
+        byte[] result = null;
         try {
             mUrlConnection = (HttpURLConnection) new URL(url).openConnection();
 
             InputStream input = mUrlConnection.getInputStream();
-
-            resultDrawable =  (BitmapDrawable) BitmapDrawable.createFromStream(input, null);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int len = 0;
+            while ((len = input.read(buffer)) > 0) {
+                bos.write(buffer, 0, len);
+            }
+            bos.flush();
+            input.close();
+            result = bos.toByteArray();
+            bos.close();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             if (mUrlConnection != null) mUrlConnection.disconnect();
         }
-        return resultDrawable;
+        return result;
     }
 }

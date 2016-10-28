@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.ConvertNetData;
+import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.NetDataPlus;
 import cn.edu.uestc.acm.cdoj.net.NetHandler;
 import cn.edu.uestc.acm.cdoj.net.Result;
@@ -53,7 +54,7 @@ public class LoginActivity extends AppCompatActivity implements ConvertNetData{
 
     public void go(View view) {
         username = et_username.getText().toString();
-        passwordSHA1 = NetDataPlus.sha1(et_password.getText().toString());
+        passwordSHA1 = NetData.sha1(et_password.getText().toString());
         NetDataPlus.login(this, username, passwordSHA1, true, this);
         loggingDialog = ProgressDialog.show(this, getString(R.string.login), getString(R.string.linking));
     }
@@ -63,10 +64,10 @@ public class LoginActivity extends AppCompatActivity implements ConvertNetData{
     public Result onConvertNetData(String jsonString, Result result) {
         User user = JSON.parseObject(jsonString, User.class);
         if (user.getResult().equals("success")) {
-            result.setStatus(NetHandler.Status.SUCCESS);
+            result.setStatus(Result.SUCCESS);
             result.setContent(user);
         } else {
-            result.setStatus(NetHandler.Status.FALSE);
+            result.setStatus(Result.FALSE);
         }
         return result;
     }
@@ -75,7 +76,7 @@ public class LoginActivity extends AppCompatActivity implements ConvertNetData{
     public void onNetDataConverted(Result result) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         switch (result.getStatus()) {
-            case NetHandler.Status.SUCCESS:
+            case Result.SUCCESS:
                 saveUserInfo();
                 dialog.setMessage(R.string.loginSuccess)
                     .setPositiveButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
@@ -86,7 +87,7 @@ public class LoginActivity extends AppCompatActivity implements ConvertNetData{
                     });
                 break;
 
-            case NetHandler.Status.FALSE:
+            case Result.FALSE:
                 dialog.setMessage(R.string.loginFail)
                         .setPositiveButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
                             @Override
@@ -100,7 +101,7 @@ public class LoginActivity extends AppCompatActivity implements ConvertNetData{
     }
 
     private void saveUserInfo() {
-        File file = new File(Global.filesDirPath + "user");
+        File file = new File(Global.getFilesDirPath() + "user");
         if (file.exists()) file.delete();
         try {
             file.createNewFile();

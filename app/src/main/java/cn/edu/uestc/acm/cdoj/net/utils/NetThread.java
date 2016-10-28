@@ -31,7 +31,7 @@ public class NetThread extends Thread {
                     }
                 }
             }else {
-                NetHandler task = taskList.get(taskList.size() - 1);
+                NetHandler task = taskList.get(0);
                 task.onGetNetData();
                 taskList.remove(task);
             }

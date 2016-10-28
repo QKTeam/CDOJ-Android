@@ -1,5 +1,7 @@
 package cn.edu.uestc.acm.cdoj.ui.user;
 
+import android.graphics.drawable.BitmapDrawable;
+
 /**
  * Created by Grea on 2016/10/25.
  */
@@ -9,17 +11,18 @@ public class User {
     private String result;
     private String userName;
     private String passwordSHA1;
-    private Integer type;
-    private Integer size;
-    private Integer sex;
-    private Integer grade;
-    private Integer departmentId;
+    private int type;
+    private int size;
+    private int sex;
+    private int grade;
+    private int departmentId;
     private String studentId;
     private String school;
     private String phone;
     private String nickName;
     private String name;
     private String motto;
+    private BitmapDrawable avatar;
 
     public User() {}
 
@@ -52,11 +55,11 @@ public class User {
         this.userName = userName;
     }
 
-    public Integer getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(int type) {
         this.type = type;
     }
 
@@ -68,35 +71,35 @@ public class User {
         this.passwordSHA1 = passwordSHA1;
     }
 
-    public Integer getSize() {
+    public int getSize() {
         return size;
     }
 
-    public void setSize(Integer size) {
+    public void setSize(int size) {
         this.size = size;
     }
 
-    public Integer getSex() {
+    public int getSex() {
         return sex;
     }
 
-    public void setSex(Integer sex) {
+    public void setSex(int sex) {
         this.sex = sex;
     }
 
-    public Integer getGrade() {
+    public int getGrade() {
         return grade;
     }
 
-    public void setGrade(Integer grade) {
+    public void setGrade(int grade) {
         this.grade = grade;
     }
 
-    public Integer getDepartmentId() {
+    public int getDepartmentId() {
         return departmentId;
     }
 
-    public void setDepartmentId(Integer departmentId) {
+    public void setDepartmentId(int departmentId) {
         this.departmentId = departmentId;
     }
 
@@ -146,5 +149,13 @@ public class User {
 
     public void setMotto(String motto) {
         this.motto = motto;
+    }
+
+    public BitmapDrawable getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(BitmapDrawable avatar) {
+        this.avatar = avatar;
     }
 }

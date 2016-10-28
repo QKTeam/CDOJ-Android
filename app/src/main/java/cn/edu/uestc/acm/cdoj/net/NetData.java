@@ -2,7 +2,9 @@ package cn.edu.uestc.acm.cdoj.net;
 
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Looper;
 import android.support.annotation.IntDef;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,10 +15,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Vector;
 
+import cn.edu.uestc.acm.cdoj.net.utils.AvatarTaskManager;
 import cn.edu.uestc.acm.cdoj.net.utils.NetThread;
 import cn.edu.uestc.acm.cdoj.net.utils.NetWorkUtils;
+import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 
 /**
  * Created by Grea on 16-10-22.
@@ -52,7 +55,7 @@ public class NetData {
 
     static String TAG = "-------NetDataTag-----";
 
-    private final static String avatarUrl = "http://cdn.v2ex.com/gravatar/%@.jpg?s=200&&d=retro";
+    public final static String avatarUrl = "http://cdn.v2ex.com/gravatar/%@.jpg?s=200&&d=retro";
 
     private final static String ojBaseUrl = "http://acm.uestc.edu.cn";
     private final static String problemListUrl = ojBaseUrl + "/problem/search";
@@ -75,7 +78,6 @@ public class NetData {
     private final static String userCenterDataUrl = ojBaseUrl + "/user/userCenterData/";
 
     private static NetThread mNetThread;
-    private static Vector<Thread> avatarThreadList = new Vector<>(); //应寻找LinkedList的线程安全版本
 
     static void getUserCenterData(Context context, String userName, Object extra, ConvertNetData convertNetData) {
         get(context, USER_CENTER_DATA, userCenterDataUrl + userName, extra, convertNetData);
@@ -108,28 +110,18 @@ public class NetData {
         post(context, REGISTER, constructJson(key, o), registerUrl, extra, convertNetData);
     }
 
-    static void getAvatar(Context context, final String email, final Object extra, final ConvertNetData convertNetData) {
-        BitmapDrawable avatarDrawable = readAvatarFromLocal(context, email);
+    static void getAvatar(final Context context, final String email, final Object extra, final ConvertNetData convertNetData) {
+        BitmapDrawable avatarDrawable = readAvatarFromLocal(email);
         if (avatarDrawable != null) {
-            convertNetData.onNetDataConverted(new Result(AVATAR, NetHandler.Status.SUCCESS, extra, avatarDrawable));
+            convertNetData.onNetDataConverted(new Result(AVATAR, Result.SUCCESS, extra, avatarDrawable));
         } else {
-            Thread avatarThread = new Thread() {
-                @Override
-                public void run() {
-                    convertNetData.onNetDataConverted(
-                            new Result(AVATAR, NetHandler.Status.SUCCESS, extra,
-                                    NetWorkUtils.getAvatar(avatarUrl.replace("%@", email))));
-
-                    avatarThreadList.remove(this);
-                    if (avatarThreadList.get(0) != null) {
-                        avatarThreadList.get(0).start();
-                    }
-                }
-            };
-            avatarThreadList.add(avatarThread);
-            if (avatarThreadList.size() < 5) {
-                avatarThread.start();
+            try {
+                Looper.prepare();
+            } catch (RuntimeException e) {
+                Log.d(TAG, "has prepared");
             }
+            NetHandler handler = new NetHandler(context, AVATAR, avatarUrl.replace("%@", md(email, "md5")), extra, convertNetData);
+            AvatarTaskManager.addTask(handler, email);
         }
     }
 
@@ -148,6 +140,7 @@ public class NetData {
                               int contestId, int page, Object extra, ConvertNetData convertNetData) {
         String key[] = new String[]{"problemId", "userName", "contestId", "currentPage", "orderAsc", "orderFields", "result"};
         Object[] o = new Object[]{problemId == -1 ? "" : problemId, userName, contestId, page, false, "statusId", 0};
+        Log.d(TAG, "getStatusList:" + statusListUrl + "  " + constructJson(key, o));
         post(context, STATUS_LIST, constructJson(key, o), statusListUrl, extra, convertNetData);
     }
 
@@ -158,6 +151,7 @@ public class NetData {
     }
 
     static void getContestRank(Context context, int contestId, Object extra, ConvertNetData convertNetData) {
+        Log.d(TAG, "getContestRank: " + contestRankListUrl + contestId);
         get(context, CONTEST_RANK, contestRankListUrl + contestId, extra, convertNetData);
     }
 
@@ -257,7 +251,7 @@ public class NetData {
             mNetThread.start();
         }
         NetHandler handler = new NetHandler(context, requestType, urlString, extra, convertNetData);
-        handler.setRequestMethod(NetHandler.Request.POST);
+        handler.setRequestMethod(NetHandler.POST);
         handler.setPostJsonString(postJsonString);
         mNetThread.addTask(handler);
     }
@@ -273,8 +267,8 @@ public class NetData {
         mNetThread.addTask(handler);
     }
 
-    private static BitmapDrawable readAvatarFromLocal(Context context, String email) {
-        File avatarFile = new File(context.getCacheDir() + File.separator + email);
+    private static BitmapDrawable readAvatarFromLocal(String email) {
+        File avatarFile = new File(Global.getCacheDirPath() + email);
         if (!avatarFile.exists()) {
             return null;
         } else {
@@ -292,5 +286,21 @@ public class NetData {
             e.printStackTrace();
         }
         return temp.toString();
+    }
+
+    public static String sha1(String s) {
+        return md(s, "SHA-1");
+    }
+
+    public static String md(String s, String algorithm) {
+        try {
+            MessageDigest md = MessageDigest.getInstance(algorithm);
+            byte[] bytes = s.getBytes();
+            md.update(bytes);
+            return new BigInteger(1, md.digest()).toString(16);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

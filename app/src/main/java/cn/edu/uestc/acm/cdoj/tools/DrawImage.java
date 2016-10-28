@@ -58,7 +58,7 @@ public class DrawImage {
     }
 
     public static Bitmap draw(Context context, @DrawableRes int imageResource, float[] colorMatrix, boolean themeRender) {
-        if (colorMatrix == null) colorMatrix = Global.mainColorMatrix;
+        if (colorMatrix == null) colorMatrix = Global.getMainColorMatrix();
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), imageResource);
         if (themeRender) {
             return render(bitmap, colorMatrix);
