@@ -1,28 +1,54 @@
 <resources>
     <string name="app_name">CDOJ</string>
     <string name="action_settings">Settings</string>
-    <string name="loading">loading</string>
+    <string name="loading">加载中......</string>
+    <string name="loadComplete">加载完成！</string>
+    <string name="loadProblem">加载出错！</string>
     <string name="title_activity_login">Sign in</string>
-
 
     <string name="overview">概览</string>
     <string name="problems">题目</string>
     <string name="clarification">讨论</string>
     <string name="status">记录</string>
     <string name="rank">排名</string>
-    <string name="Article">公告</string>
-    <string name="problem">问题</string>
-    <string name="contest">比赛</string>
+    <string name="notice">公告</string>
+    <string name="problemData">问题</string>
+    <string name="contestData">比赛</string>
     <string name="login">登录</string>
-    <string name="Username">用户名</string>
-    <string name="Password">密码</string>
+    <string name="username">用户名</string>
+    <string name="passwordSHA1">密码</string>
     <string name="go">确定</string>
     <string name="linking">网络连接中.....</string>
     <string name="confirm">确定</string>
     <string name="loginSuccess">登录成功</string>
     <string name="loginFail">账号密码错误，或者网络有问题</string>
     <string name="login_success">已登录</string>
-    <string name="article">公告</string>
+    <string name="articleData">公告</string>
     <string name="user">用户</string>
-    <string name="getingContest">正在获取该比赛</string>
+    <string name="gettingContest">正在获取该比赛</string>
+    <string name="getting">正在获取......</string>
+
+    <string name="noData">数据为空！</string>
+    <string name="netNotConnect">网络未连接！</string>
+    <string name="connectOvertime">连接超时！</string>
+    <string name="loadError">加载出错！</string>
+
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    <string name="search">搜索…</string>
+    <string name="searchWithId">搜索(可使用\"#\"+题号)…</string>
+    <string name="reminderLoginError">密码错误或者您无权查看该比赛！</string>
+    <string name="passwordIsWrong">密码错误，请重新输入！</string>
+    <string name="noPermission">您无查看该比赛的相关权限！</string>
+    <string name="pleaseEnterPassword">请输入进入该比赛的密码：</string>
+    <string name="cancel">取消</string>
+    <string name="notLogin">未登录</string>
+    <string name="reminderNotLogin">您还未登录,请登录!</string>
+    <string name="enterDirectly">直接进入</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="me">我</string>
+    <string name="addCode">提交代码</string>
+    <string name="checkResult">查看提交结果</string>
 </resources>

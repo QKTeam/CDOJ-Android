@@ -19,55 +19,65 @@
             android:id="@+id/contestRank_header"
             android:layout_width="65dp"
             android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginRight="5dp" />
+            android:layout_gravity="start"
+            android:layout_marginEnd="5dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/contestRank_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:text="fjkdhgkdsag"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/contestRank_nickName"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:text="fdsafsad"
+                    android:textSize="17sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="105dp"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-                <LinearLayout
+                <TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/contestRank_nickName"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:lines="1"
-                        android:text="fjkdhgkdsag"
-                        android:textSize="17sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/contestRank_account"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:ellipsize="end"
-                        android:lines="1"
-                        android:text="fdsafsad"
-                        android:textSize="17sp" />
-                </LinearLayout>
+                    android:gravity="center_vertical"
+                    android:lines="1"
+                    android:text="Rank"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/contestRank_rank"
-                    android:layout_width="105dp"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:ellipsize="end"
                     android:gravity="center_vertical"
                     android:lines="1"
-                    android:text="Rank  100"
                     android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -75,181 +85,111 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/contestRank_solved"
+        android:id="@+id/contestRank_problemsStatus"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <FrameLayout
-            android:layout_width="40dp"
+
+        <TextView
+            android:id="@+id/contest_rank_mark_tx_0"
+            android:layout_width="20dp"
             android:layout_height="match_parent"
-            android:paddingLeft="5dp"
-            android:paddingRight="15dp">
+            android:layout_marginEnd="9dp"
+            android:layout_marginStart="5dp"
+            android:gravity="center"
+            android:text="A"
+            android:visibility="gone" />
 
-            <ImageView
-                android:id="@+id/contest_rank_mark_bg_0"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
 
-            <TextView
-                android:id="@+id/contest_rank_mark_tx_0"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:gravity="center" />
-        </FrameLayout>
+        <TextView
+            android:id="@+id/contest_rank_mark_tx_1"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="9dp"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:text="B"
+            android:visibility="gone" />
 
-        <FrameLayout
-            android:layout_width="40dp"
-            android:layout_height="20dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="15dp">
+        <TextView
+            android:id="@+id/contest_rank_mark_tx_2"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="9dp"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:text="C"
+            android:visibility="gone" />
 
-            <ImageView
-                android:id="@+id/contest_rank_mark_bg_1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/contest_rank_mark_tx_3"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="9dp"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:text="D"
+            android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/contest_rank_mark_tx_1"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:gravity="center" />
-        </FrameLayout>
+        <TextView
+            android:id="@+id/contest_rank_mark_tx_4"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="9dp"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:text="E"
+            android:visibility="gone" />
 
-        <FrameLayout
-            android:layout_width="40dp"
-            android:layout_height="20dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="15dp">
+        <TextView
+            android:id="@+id/contest_rank_mark_tx_5"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="9dp"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:text="F"
+            android:visibility="gone" />
 
-            <ImageView
-                android:id="@+id/contest_rank_mark_bg_2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/contest_rank_mark_tx_6"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="9dp"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:text="G"
+            android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/contest_rank_mark_tx_2"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:gravity="center" />
-        </FrameLayout>
+        <TextView
+            android:id="@+id/contest_rank_mark_tx_7"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="9dp"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:text="H"
+            android:visibility="gone" />
 
-        <FrameLayout
-            android:layout_width="40dp"
-            android:layout_height="20dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="15dp">
-
-            <ImageView
-                android:id="@+id/contest_rank_mark_bg_3"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:id="@+id/contest_rank_mark_tx_3"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:gravity="center" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="40dp"
-            android:layout_height="20dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="15dp">
-
-            <ImageView
-                android:id="@+id/contest_rank_mark_bg_4"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:id="@+id/contest_rank_mark_tx_4"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:gravity="center" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="40dp"
-            android:layout_height="20dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="15dp">
-
-            <ImageView
-                android:id="@+id/contest_rank_mark_bg_5"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:id="@+id/contest_rank_mark_tx_5"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:gravity="center" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="40dp"
-            android:layout_height="20dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="15dp">
-
-            <ImageView
-                android:id="@+id/contest_rank_mark_bg_6"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:id="@+id/contest_rank_mark_tx_6"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:gravity="center" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="40dp"
-            android:layout_height="20dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="15dp">
-
-            <ImageView
-                android:id="@+id/contest_rank_mark_bg_7"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:id="@+id/contest_rank_mark_tx_7"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:gravity="center" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="40dp"
-            android:layout_height="20dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="15dp">
-
-            <ImageView
-                android:id="@+id/contest_rank_mark_bg_8"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:id="@+id/contest_rank_mark_tx_8"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:gravity="center" />
-        </FrameLayout>
-
+        <TextView
+            android:id="@+id/contest_rank_mark_tx_8"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="9dp"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            android:text="I"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/contest_rank_mark_end"
             android:layout_width="30dp"
             android:layout_height="wrap_content"
-            android:layout_marginRight="15dp"
-            android:gravity="center" />
+            android:layout_marginEnd="15dp"
+            android:gravity="center"
+            android:text="......"
+            android:visibility="gone" />
     </LinearLayout>
-
 </LinearLayout>

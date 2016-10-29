@@ -20,11 +20,11 @@
         <h3 id="title" class="title"></h3>
         <markdown id="content"></markdown>
     </body>
-    <script type="text/javascript">
-        var data = {{{replace_data_here}}};
-        document.getElementById("title").innerHTML = data.title;
-        document.getElementById("content").innerHTML = marked(data.content);
+    <script dataType="text/javascript">
+        var articleData = {{{replace_data_here}}};
+        document.getElementById("title").innerHTML = articleData.title;
+        document.getElementById("content").innerHTML = marked(articleData.content);
     </script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>
+    <script dataType="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>
     <script src="http://cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_SVG"></script>
 </html>

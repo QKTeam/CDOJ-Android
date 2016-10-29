@@ -3,6 +3,7 @@
     package="cn.edu.uestc.acm.cdoj">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -11,26 +12,37 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:screenOrientation="portrait"
             android:name="cn.edu.uestc.acm.cdoj.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:screenOrientation="portrait"
-            android:name="cn.edu.uestc.acm.cdoj.ItemContentActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity
-            android:screenOrientation="portrait"
-            android:name="cn.edu.uestc.acm.cdoj.LoginActivity"
+            android:name="cn.edu.uestc.acm.cdoj.LaunchCartoonActivity"
             android:parentActivityName="cn.edu.uestc.acm.cdoj.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity
+            android:name="cn.edu.uestc.acm.cdoj.ui.MainUIActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="cn.edu.uestc.acm.cdoj.ui.ItemDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="cn.edu.uestc.acm.cdoj.ui.LoginActivity"
+            android:parentActivityName="cn.edu.uestc.acm.cdoj.ui.MainUIActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="cn.edu.uestc.acm.cdoj.ui.modules.list.SearchResultActivity"
+            android:parentActivityName="cn.edu.uestc.acm.cdoj.ui.MainUIActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
-
 </manifest>
