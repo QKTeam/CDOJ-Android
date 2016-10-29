@@ -4,7 +4,7 @@ package cn.edu.uestc.acm.cdoj.net.data;
  * Created by Grea on 2016/10/27.
  */
 
-public class RankCompactorProblem {
+public class RankCompactorProblemData {
     private Boolean triedAfterFrozen;
     private Boolean solved;
     private Boolean firstBlood;

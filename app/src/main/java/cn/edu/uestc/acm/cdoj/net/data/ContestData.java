@@ -21,7 +21,9 @@ public class ContestData {
     private Long length;
     private Long endTime;
     private Long frozenTime;
-    private String jsonString;
+
+
+    public String jsonString;
 
     public Integer getContestId() {
         return contestId;
@@ -125,13 +127,5 @@ public class ContestData {
 
     public void setFrozenTime(Long frozenTime) {
         this.frozenTime = frozenTime;
-    }
-
-    public String obtainJsonString() {
-        return jsonString;
-    }
-
-    public void addJsonString(String jsonString) {
-        this.jsonString = jsonString;
     }
 }

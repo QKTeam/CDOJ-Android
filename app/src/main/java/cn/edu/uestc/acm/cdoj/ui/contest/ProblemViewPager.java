@@ -8,7 +8,6 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,7 @@ public class ProblemViewPager extends ViewPager{
     private TabLayout mTabLayout;
     private List<DetailWebView> problemViewList;
     private PagerAdapter mAdapter;
-    private ArrayList<ProblemData> problemDataList;
+    private List<ProblemData> problemDataList;
 
     public ProblemViewPager(Context context) {
         super(context);
@@ -45,11 +44,12 @@ public class ProblemViewPager extends ViewPager{
     public void init() {
         problemViewList = new ArrayList<>();
         mTabLayout = new TabLayout(getContext());
+        setProblemDataList(problemDataList);
+        setupAdapter();
+        setAdapter(mAdapter);
         setupTabLayout();
         addView(mTabLayout);
-        setOffscreenPageLimit(4);
-        setAdapter(setupAdapter());
-        setProblemDataList(problemDataList);
+        setOffscreenPageLimit(3);
     }
 
     private void setupTabLayout() {
@@ -58,15 +58,15 @@ public class ProblemViewPager extends ViewPager{
         layoutParams.isDecor = true;
         layoutParams.height = LayoutParams.WRAP_CONTENT;
         mTabLayout.setLayoutParams(layoutParams);
-        mTabLayout.setupWithViewPager(this, true);
         mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+        mTabLayout.setupWithViewPager(this, true);
     }
 
-    public void setProblemDataList(ArrayList<ProblemData> problemDataList) {
+    public void setProblemDataList(List<ProblemData> problemDataList) {
         if (problemDataList == null) return;
         for (ProblemData problemData : problemDataList) {
-            DetailWebView problemView = new DetailWebView(getContext(), NetData.PROBLEM_DETAIL)
-                    .setJsonString(problemData.jsonString);
+            DetailWebView problemView = new DetailWebView(getContext(), NetData.PROBLEM_DETAIL);
+            problemView.setJsonString(problemData.jsonString);
             problemViewList.add(problemView);
         }
         mAdapter.notifyDataSetChanged();
@@ -82,7 +82,7 @@ public class ProblemViewPager extends ViewPager{
         }
     }
 
-    private PagerAdapter setupAdapter() {
+    private void setupAdapter() {
         mAdapter = new PagerAdapter() {
             @Override
             public int getCount() {
@@ -105,6 +105,5 @@ public class ProblemViewPager extends ViewPager{
                 container.removeView(problemViewList.get(position));
             }
         };
-        return mAdapter;
     }
 }

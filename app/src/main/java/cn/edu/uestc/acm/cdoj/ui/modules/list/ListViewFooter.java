@@ -48,7 +48,7 @@ public class ListViewFooter extends LinearLayout {
     }
 
     private void init() {
-        inflate(getContext(), R.layout.list_view_footer, this);
+        inflate(getContext(), R.layout.list_view_with_gesture_load_footer, this);
         mLoadingLayout = (LinearLayout) findViewById(R.id.pull_up_load_list_view_footer_loading);
         mLoadCompleteLayout = (LinearLayout) findViewById(R.id.pull_up_load_list_view_footer_load_finish);
         mImageView = (ImageView) mLoadCompleteLayout.getChildAt(0);

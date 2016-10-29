@@ -8,7 +8,7 @@ import java.util.List;
  * Created by Grea on 2016/10/26.
  */
 
-public class RankCompactor {
+public class RankCompactorData {
     private String email;
     private String reallyName;
     private String nickName;
@@ -17,13 +17,15 @@ public class RankCompactor {
     private int solved;
     private int rank;
     private int penalty;
-    private List<RankCompactorProblem> itemList;
+    private List<RankCompactorProblemData> itemList;
+    private List<RankTeamUserData> teamUsers;
 
     public BitmapDrawable avatar;
     public String triedString;
     public String solvedString;
     public String rankString;
     public String penaltyString;
+    public String temUsersName;
 
     public String getEmail() {
         return email;
@@ -63,7 +65,6 @@ public class RankCompactor {
 
     public void setTried(int tried) {
         this.tried = tried;
-        triedString = String.valueOf(tried);
     }
 
     public int getSolved() {
@@ -72,7 +73,6 @@ public class RankCompactor {
 
     public void setSolved(int solved) {
         this.solved = solved;
-        solvedString = String.valueOf(solved);
     }
 
     public int getRank() {
@@ -93,11 +93,19 @@ public class RankCompactor {
         penaltyString = String.valueOf(penalty);
     }
 
-    public List<RankCompactorProblem> getItemList() {
+    public List<RankCompactorProblemData> getItemList() {
         return itemList;
     }
 
-    public void setItemList(List<RankCompactorProblem> itemList) {
+    public void setItemList(List<RankCompactorProblemData> itemList) {
         this.itemList = itemList;
+    }
+
+    public List<RankTeamUserData> getTeamUsers() {
+        return teamUsers;
+    }
+
+    public void setTeamUsers(List<RankTeamUserData> teamUsers) {
+        this.teamUsers = teamUsers;
     }
 }

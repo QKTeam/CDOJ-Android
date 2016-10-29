@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -31,11 +32,14 @@ public class ContestView extends ViewPager implements ConvertNetData {
 
     private static final String TAG = "比赛";
 
+    private SwipeRefreshLayout refreshLayout;
+    private TabLayout mTabLayout;
     private DetailWebView overview;
     private ProblemViewPager problemViewPager;
     private ClarificationView clarificationView;
     private StatusView statusView;
     private RankView rankView;
+    private View[] contentViews;
 
     private ContestData contestData;
     private ArrayList<ProblemData> problemDataList;
@@ -63,21 +67,32 @@ public class ContestView extends ViewPager implements ConvertNetData {
     }
 
     private void init() {
-        TabLayout mTabLayout = new TabLayout(context);
-        LayoutParams layoutParams = new LayoutParams();
-        layoutParams.gravity = Gravity.TOP;
-        layoutParams.isDecor = true;
-        layoutParams.height = LayoutParams.WRAP_CONTENT;
-        mTabLayout.setLayoutParams(layoutParams);
-
         overview = new DetailWebView(context, NetData.CONTEST_DETAIL);
+        setupRefreshLayout();
         problemViewPager = new ProblemViewPager(context);
         clarificationView = new ClarificationView(context, contestId);
         statusView = new StatusView(context, contestId, null);
         rankView = new RankView(context, contestId);
+        contentViews = new View[]{refreshLayout, problemViewPager, clarificationView, statusView, rankView};
 
-        final View[] views = new View[]{overview, problemViewPager, clarificationView, statusView, rankView};
+        setupViewPagerAdapter();
+        setupTabLayout();
+        addView(mTabLayout);
+    }
 
+    private void setupRefreshLayout() {
+        refreshLayout = new SwipeRefreshLayout(context);
+        refreshLayout.addView(overview);
+        refreshLayout.setRefreshing(true);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refresh();
+            }
+        });
+    }
+
+    private void setupViewPagerAdapter() {
         setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
@@ -91,16 +106,25 @@ public class ContestView extends ViewPager implements ConvertNetData {
 
             @Override
             public Object instantiateItem(ViewGroup container, int position) {
-                container.addView(views[position]);
-                return views[position];
+                container.addView(contentViews[position]);
+                return contentViews[position];
             }
 
             @Override
             public void destroyItem(ViewGroup container, int position, Object object) {
-                container.removeView(views[position]);
+                container.removeView(contentViews[position]);
             }
         });
+    }
 
+    private void setupTabLayout() {
+        mTabLayout = new TabLayout(context);
+        LayoutParams layoutParams = new LayoutParams();
+        layoutParams.gravity = Gravity.TOP;
+        layoutParams.isDecor = true;
+        layoutParams.height = LayoutParams.WRAP_CONTENT;
+
+        mTabLayout.setLayoutParams(layoutParams);
         mTabLayout.setupWithViewPager(this);
         for (int i = 0; i < 5; i++) {
             TabLayout.Tab tab = mTabLayout.getTabAt(i);
@@ -124,7 +148,6 @@ public class ContestView extends ViewPager implements ConvertNetData {
                 }
             }
         }
-        addView(mTabLayout);
     }
 
     @NonNull
@@ -136,11 +159,11 @@ public class ContestView extends ViewPager implements ConvertNetData {
             return result;
         }
         contestData = contestReceive.getContest();
-        contestData.addJsonString(JSON.toJSONString(contestData));
+        contestData.jsonString = JSON.toJSONString(contestData);
 
         problemDataList = contestReceive.getProblemList();
         problemIDs = new int[problemDataList.size()];
-        for (int i = 0; i != problemDataList.size(); ++i) {
+        for (int i = 0; i < problemDataList.size(); ++i) {
             ProblemData problemData = problemDataList.get(i);
             problemData.jsonString = JSON.toJSONString(problemData);
             problemIDs[i] = problemData.getProblemId();
@@ -154,7 +177,7 @@ public class ContestView extends ViewPager implements ConvertNetData {
     public void onNetDataConverted(Result result) {
         switch (result.getStatus()) {
             case Result.SUCCESS:
-                overview.setJsonString(contestData.obtainJsonString());
+                overview.setJsonString(contestData.jsonString);
                 problemViewPager.setProblemDataList(problemDataList);
                 statusView.setContestProblemIds(problemIDs);
                 break;
@@ -171,6 +194,7 @@ public class ContestView extends ViewPager implements ConvertNetData {
             case Result.DEFAULT:
                 break;
         }
+        refreshLayout.setRefreshing(false);
     }
 
     public ContestView refresh() {
@@ -184,6 +208,8 @@ public class ContestView extends ViewPager implements ConvertNetData {
             statusView.setContestInfo(contestId, null);
             statusView.refresh();
             rankView.refresh(contestId);
+        } else {
+            refreshLayout.setRefreshing(false);
         }
         return this;
     }

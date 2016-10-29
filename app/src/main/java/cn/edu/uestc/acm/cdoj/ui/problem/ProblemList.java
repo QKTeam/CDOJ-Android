@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.net.ConvertNetData;
@@ -77,25 +78,29 @@ public class ProblemList extends ListViewWithGestureLoad implements ConvertNetDa
     @Override
     public Result onConvertNetData(String jsonString, Result result) {
         ListReceive<ProblemData> listReceive = JSON.parseObject(jsonString, new TypeReference<ListReceive<ProblemData>>() {});
-
+        if (!listReceive.getResult().equals("success")) {
+            result.setStatus(Result.FALSE);
+            return result;
+        }
         mPageInfo = listReceive.getPageInfo();
-        problemDataList.addAll(listReceive.getList());
+        result.setContent(listReceive.getList());
 
         if (mPageInfo.totalItems == 0) {
             result.setStatus(Result.DATAISNULL);
         } else if (mPageInfo.currentPage == mPageInfo.totalPages) {
             result.setStatus(Result.FINISH);
-        } else if (listReceive.getResult().equals("success")) {
-            result.setStatus(Result.SUCCESS);
         } else {
-            result.setStatus(Result.FALSE);
+            result.setStatus(Result.SUCCESS);
         }
         return result;
     }
 
     @Override
     public void onNetDataConverted(Result result) {
-        mListAdapter.notifyDataSetChanged();
+        if (result.getContent() != null) {
+            problemDataList.addAll((List<ProblemData>) result.getContent());
+            mListAdapter.notifyDataSetChanged();
+        }
         noticeLoadOrRefreshComplete();
         switch (result.getStatus()) {
             case Result.SUCCESS:

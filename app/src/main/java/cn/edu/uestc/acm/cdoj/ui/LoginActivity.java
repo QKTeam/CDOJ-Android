@@ -85,6 +85,7 @@ public class LoginActivity extends AppCompatActivity implements ConvertNetData{
                             finish();
                         }
                     });
+                Global.setUser(new User(username,passwordSHA1));
                 break;
 
             case Result.FALSE:

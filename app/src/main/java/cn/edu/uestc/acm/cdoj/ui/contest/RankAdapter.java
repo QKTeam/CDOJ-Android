@@ -12,8 +12,8 @@ import android.widget.TextView;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.net.data.RankCompactor;
-import cn.edu.uestc.acm.cdoj.net.data.RankCompactorProblem;
+import cn.edu.uestc.acm.cdoj.net.data.RankCompactorData;
+import cn.edu.uestc.acm.cdoj.net.data.RankCompactorProblemData;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 
 /**
@@ -24,9 +24,10 @@ public class RankAdapter extends BaseAdapter {
 
     private static final String TAG = "Rank适配器";
     private LayoutInflater mInflater;
-    private List<RankCompactor> compactorList;
+    private List<RankCompactorData> compactorList;
+    private boolean isInvitedContest;
 
-    RankAdapter(Context context, List<RankCompactor> compactorList) {
+    RankAdapter(Context context, List<RankCompactorData> compactorList) {
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.compactorList = compactorList;
     }
@@ -48,11 +49,14 @@ public class RankAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        RankCompactor compactor = compactorList.get(position);
+        RankCompactorData compactor = compactorList.get(position);
         View v = convertView;
         if (convertView == null) {
             v = mInflater.inflate(R.layout.contest_rank_list_item, parent, false);
             LinearLayout problemsLayout = (LinearLayout) v.findViewById(R.id.contestRank_problemsStatus);
+            if (isInvitedContest) {
+                v.findViewById(R.id.contestRank_header).setVisibility(View.GONE);
+            }
             for (int i = 0; i < 9 && i < compactor.getItemList().size(); i++) {
                 problemsLayout.getChildAt(i).setVisibility(View.VISIBLE);
             }
@@ -61,19 +65,24 @@ public class RankAdapter extends BaseAdapter {
             }
         }
 
-        ((ImageView) v.findViewById(R.id.contestRank_header))
-                .setImageDrawable(compactor.avatar);
-        ((TextView) v.findViewById(R.id.contestRank_nickName))
-                .setText(compactor.getNickName());
-        ((TextView) v.findViewById(R.id.contestRank_account))
+        if (!isInvitedContest) {
+            ((ImageView) v.findViewById(R.id.contestRank_header))
+                    .setImageDrawable(compactor.avatar);
+            ((TextView) v.findViewById(R.id.contestRank_nickName))
+                    .setText(compactor.getNickName());
+        } else {
+            ((TextView) v.findViewById(R.id.contestRank_nickName))
+                    .setText(compactor.temUsersName);
+        }
+        ((TextView) v.findViewById(R.id.contestRank_name))
                 .setText(compactor.getName());
         ((TextView) v.findViewById(R.id.contestRank_rank))
                 .setText(compactor.rankString);
 
         LinearLayout problemsLayout = (LinearLayout) v.findViewById(R.id.contestRank_problemsStatus);
-        List<RankCompactorProblem> problemList = compactor.getItemList();
+        List<RankCompactorProblemData> problemList = compactor.getItemList();
         for (int i = 0; i < problemList.size() && i < 9; ++i) {
-            RankCompactorProblem problem = problemList.get(i);
+            RankCompactorProblemData problem = problemList.get(i);
             TextView orderText = (TextView) problemsLayout.getChildAt(i);
             switch (problem.solvedStatus) {
                 case RankView.THEFIRSTSOLVED:
@@ -91,5 +100,9 @@ public class RankAdapter extends BaseAdapter {
         }
         v.setTag(position);
         return v;
+    }
+
+    public void setInvitedContest(boolean invitedContest) {
+        isInvitedContest = invitedContest;
     }
 }

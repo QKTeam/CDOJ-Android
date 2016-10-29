@@ -3,14 +3,13 @@ package cn.edu.uestc.acm.cdoj.ui.contest;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -29,7 +28,7 @@ import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
 public class StatusView extends ListViewWithGestureLoad implements ConvertNetData {
     private static final String TAG = "状态";
 
-    private List<StatusData> statusDataList = new ArrayList<>();
+    private List<StatusData> statusDataList;
     private int contestId;
     private int[] contestProblemIds;
     private int problemId;
@@ -69,8 +68,10 @@ public class StatusView extends ListViewWithGestureLoad implements ConvertNetDat
     }
 
     private void init() {
+        statusDataList = new ArrayList<>();
         mListAdapter = new StatusAdapter(context, statusDataList);
         setListAdapter(mListAdapter);
+        setOnItemClickEnable(false);
     }
 
     @Override
@@ -85,23 +86,18 @@ public class StatusView extends ListViewWithGestureLoad implements ConvertNetDat
         }
     }
 
-    @Override
-    public void onListItemClick(AdapterView<?> parent, View view, int position, long id) {
-        super.onListItemClick(parent, view, position, id);
-    }
-
     @NonNull
     @Override
     public Result onConvertNetData(String jsonString, Result result) {
-        ListReceive<StatusData> listReceive = JSON.parseObject(jsonString, new TypeReference<ListReceive<StatusData>>() {
-        });
+        ListReceive<StatusData> listReceive = JSON.parseObject(jsonString, new TypeReference<ListReceive<StatusData>>() {});
+
         if (!listReceive.getResult().equals("success")) {
             result.setStatus(Result.FALSE);
             return result;
         }
 
         mPageInfo = listReceive.getPageInfo();
-        statusDataList.addAll(convertNetData(listReceive.getList()));
+        result.setContent(convertNetData(listReceive.getList()));
 
         if (mPageInfo.totalItems == 0) {
             result.setStatus(Result.DATAISNULL);
@@ -149,24 +145,12 @@ public class StatusView extends ListViewWithGestureLoad implements ConvertNetDat
         return statusDataListTem;
     }
 
-    private void updateProblemIdString() {
-        if (contestProblemIds != null && statusDataList.size() > 0) {
-            int i = 0;
-            while (i < contestProblemIds.length && statusDataList.get(i).getProblemId() != contestProblemIds[i]) {
-                ++i;
-            }
-            if (i < contestProblemIds.length) {
-                statusDataList.get(i).problemIdString = String.valueOf((char) ('A' + i));
-            } else {
-                statusDataList.get(i).problemIdString = "?";
-            }
-        }
-        mListAdapter.notifyDataSetChanged();
-    }
-
     @Override
     public void onNetDataConverted(Result result) {
-        mListAdapter.notifyDataSetChanged();
+        if (result.getContent() != null) {
+            statusDataList.addAll((List<StatusData>) result.getContent());
+            mListAdapter.notifyDataSetChanged();
+        }
         noticeLoadOrRefreshComplete();
         switch (result.getStatus()) {
             case Result.SUCCESS:
@@ -191,15 +175,30 @@ public class StatusView extends ListViewWithGestureLoad implements ConvertNetDat
         }
     }
 
-    public void setContestInfo(int contestId, int[] contestProblemIds) {
-        this.contestId = contestId;
-        this.contestProblemIds = contestProblemIds;
-    }
-
     public void setContestProblemIds(int[] contestProblemIds) {
         if (contestProblemIds == null) return;
         this.contestProblemIds = contestProblemIds;
-        updateProblemIdString();
+        updateContestProblemIds();
+    }
+
+    private void updateContestProblemIds() {
+        if (contestProblemIds != null && statusDataList.size() > 0) {
+            int i = 0;
+            while (i < contestProblemIds.length && statusDataList.get(i).getProblemId() != contestProblemIds[i]) {
+                ++i;
+            }
+            if (i < contestProblemIds.length) {
+                statusDataList.get(i).problemIdString = String.valueOf((char) ('A' + i));
+            } else {
+                statusDataList.get(i).problemIdString = "?";
+            }
+            mListAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public void setContestInfo(int contestId, int[] contestProblemIds) {
+        this.contestId = contestId;
+        this.contestProblemIds = contestProblemIds;
     }
 
     public void setUserName(String userName) {

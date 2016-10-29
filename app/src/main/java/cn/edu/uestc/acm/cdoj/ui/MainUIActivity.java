@@ -1,6 +1,5 @@
 package cn.edu.uestc.acm.cdoj.ui;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -8,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.design.widget.NavigationView;
-import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
@@ -39,12 +37,11 @@ import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.tools.DrawImage;
 import cn.edu.uestc.acm.cdoj.net.NetDataPlus;
-import cn.edu.uestc.acm.cdoj.tools.RGBAColor;
 import cn.edu.uestc.acm.cdoj.ui.contest.ContestList;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchHistory;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchHistoryManager;
-import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchResult;
+import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchResultActivity;
 import cn.edu.uestc.acm.cdoj.ui.notice.NoticeList;
 import cn.edu.uestc.acm.cdoj.ui.problem.ProblemList;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.FlyMeUtils;
@@ -303,7 +300,7 @@ public class MainUIActivity extends AppCompatActivity {
     }
 
     private void showSearchResult(String str) {
-        Intent intent = new Intent(MainUIActivity.this, SearchResult.class);
+        Intent intent = new Intent(MainUIActivity.this, SearchResultActivity.class);
         intent.putExtra("key", str);
         switch (mViewPager.getCurrentItem()) {
             case 1:

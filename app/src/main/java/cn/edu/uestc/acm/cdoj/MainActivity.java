@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -147,7 +148,8 @@ public class MainActivity extends Activity implements ConvertNetData{
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        NetDataPlus.login(this, Global.getUser().getUserName(), Global.getUser().getPasswordSHA1(), this);
+        Log.d(TAG, "loadLocalUser: "+Global.getUser().getUserName()+"  "+Global.getUser().getPasswordSHA1());
+        NetDataPlus.login(this, Global.getUser().getUserName(), Global.getUser().getPasswordSHA1(), true, this);
     }
 
     @NonNull

@@ -8,8 +8,8 @@ import java.util.List;
 
 public class RankData {
     private long lastFetched;
-    private List<RankProblem> problemList;
-    private List<RankCompactor> rankList;
+    private List<RankProblemData> problemList;
+    private List<RankCompactorData> rankList;
 
     public long getLastFetched() {
         return lastFetched;
@@ -19,19 +19,19 @@ public class RankData {
         this.lastFetched = lastFetched;
     }
 
-    public List<RankProblem> getProblemList() {
+    public List<RankProblemData> getProblemList() {
         return problemList;
     }
 
-    public void setProblemList(List<RankProblem> problemList) {
+    public void setProblemList(List<RankProblemData> problemList) {
         this.problemList = problemList;
     }
 
-    public List<RankCompactor> getRankList() {
+    public List<RankCompactorData> getRankList() {
         return rankList;
     }
 
-    public void setRankList(List<RankCompactor> rankList) {
+    public void setRankList(List<RankCompactorData> rankList) {
         this.rankList = rankList;
     }
 }

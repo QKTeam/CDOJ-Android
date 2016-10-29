@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.net.ConvertNetData;
@@ -80,19 +81,21 @@ public class NoticeList extends ListViewWithGestureLoad implements ConvertNetDat
     public Result onConvertNetData(String jsonString, Result result) {
         ListReceive<ArticleData> listReceive = JSON.parseObject(jsonString, new TypeReference<ListReceive<ArticleData>>() {
         });
+        if (!listReceive.getResult().equals("success")) {
+            result.setStatus(Result.FALSE);
+            return result;
+        }
 
-        Log.d(TAG, "onConvertNetData: "+listReceive.getResult()+" "+jsonString);
         mPageInfo = listReceive.getPageInfo();
-        articleDataList.addAll(convertNetData(listReceive.getList()));
+        result.setContent(convertNetData(listReceive.getList()));
+        Log.d(TAG, "onNetDataConverted: "+ ((List<ArticleData>) result.getContent()).size());
 
         if (mPageInfo.totalItems == 0) {
             result.setStatus(Result.DATAISNULL);
         } else if (mPageInfo.currentPage == mPageInfo.totalPages) {
             result.setStatus(Result.FINISH);
-        } else if (listReceive.getResult().equals("success")) {
-            result.setStatus(Result.SUCCESS);
         } else {
-            result.setStatus(Result.FALSE);
+            result.setStatus(Result.SUCCESS);
         }
         return result;
     }
@@ -103,7 +106,6 @@ public class NoticeList extends ListViewWithGestureLoad implements ConvertNetDat
             if (!articleData.isHasMore()) {
                 articleData.jsonString = JSON.toJSONString(articleData);
             }
-            Log.d(TAG, "convertNetData: "+articleData.getContent());
             if (articleData.getContent().equals("")) {
                 articleData.setContent(articleData.getTitle());
             }
@@ -115,7 +117,10 @@ public class NoticeList extends ListViewWithGestureLoad implements ConvertNetDat
 
     @Override
     public void onNetDataConverted(Result result) {
-        mListAdapter.notifyDataSetChanged();
+        if (result.getContent() != null) {
+            articleDataList.addAll((List<ArticleData>) result.getContent());
+            mListAdapter.notifyDataSetChanged();
+        }
         noticeLoadOrRefreshComplete();
         switch (result.getStatus()) {
             case Result.SUCCESS:

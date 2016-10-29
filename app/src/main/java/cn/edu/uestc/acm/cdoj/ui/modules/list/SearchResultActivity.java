@@ -26,7 +26,7 @@ import cn.edu.uestc.acm.cdoj.ui.statusBar.StatusBarUtil;
  * Created by Great on 2016/10/12.
  */
 
-public class SearchResult extends AppCompatActivity {
+public class SearchResultActivity extends AppCompatActivity {
     Intent intent;
 
     @Override
@@ -66,6 +66,9 @@ public class SearchResult extends AppCompatActivity {
                 result = new ContestList(this);
                 NetDataPlus.getContestList(this, 1, key, result);
                 break;
+        }
+        if (result != null) {
+            ((ListViewWithGestureLoad)result).setRefreshEnable(false);
         }
         ((ViewGroup)findViewById(R.id.searchResult_container))
                 .addView((View) result);

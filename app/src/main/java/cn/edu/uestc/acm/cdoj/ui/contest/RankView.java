@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -20,10 +21,11 @@ import cn.edu.uestc.acm.cdoj.net.ConvertNetData;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.NetDataPlus;
 import cn.edu.uestc.acm.cdoj.net.Result;
-import cn.edu.uestc.acm.cdoj.net.data.RankCompactor;
-import cn.edu.uestc.acm.cdoj.net.data.RankCompactorProblem;
-import cn.edu.uestc.acm.cdoj.net.data.RankProblem;
+import cn.edu.uestc.acm.cdoj.net.data.RankCompactorData;
+import cn.edu.uestc.acm.cdoj.net.data.RankCompactorProblemData;
+import cn.edu.uestc.acm.cdoj.net.data.RankProblemData;
 import cn.edu.uestc.acm.cdoj.net.data.RankReceive;
+import cn.edu.uestc.acm.cdoj.net.data.RankTeamUserData;
 import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
 import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
@@ -39,12 +41,13 @@ public class RankView extends ListViewWithGestureLoad implements ConvertNetData 
 
     private static final String TAG = "排名";
 
-    private List<RankCompactor> compactorList = new ArrayList<>();
-    private List<String> solvedPercent = new ArrayList<>();
+    private List<RankCompactorData> compactorList;
+    private List<String> solvedPercentList;
     private int compactorCount = 0;
-    private BaseAdapter mListAdapter;
+    private RankAdapter mListAdapter;
     private RankAlert detailAlert;
     private Context context;
+    private boolean isInvitedContest;
     private int contestId;
 
     public RankView(Context context) {
@@ -67,10 +70,11 @@ public class RankView extends ListViewWithGestureLoad implements ConvertNetData 
     }
 
     public void init() {
+        compactorList = new ArrayList<>();
+        solvedPercentList = new ArrayList<>();
         mListAdapter = new RankAdapter(context, compactorList);
         setListAdapter(mListAdapter);
         setPullUpLoadEnable(false);
-        detailAlert = new RankAlert(context);
     }
 
     @Override
@@ -80,6 +84,9 @@ public class RankView extends ListViewWithGestureLoad implements ConvertNetData 
 
     @Override
     public void onListItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (detailAlert == null) {
+            detailAlert = new RankAlert(context, isInvitedContest);
+        }
         detailAlert.show(compactorList.get(position), compactorList.get(position).getItemList());
     }
 
@@ -92,13 +99,17 @@ public class RankView extends ListViewWithGestureLoad implements ConvertNetData 
             return result;
         }
 
-        List<RankProblem> problemList = rankReceived.getRankList().getProblemList();
-        List<RankCompactor> compactorListTem = rankReceived.getRankList().getRankList();
+        if (rankReceived.getRankList().getRankList().get(0).getTeamUsers() != null) {
+            isInvitedContest = true;
+            mListAdapter.setInvitedContest(true);
+        }
+        List<RankProblemData> problemList = rankReceived.getRankList().getProblemList();
+        List<RankCompactorData> compactorListTem = rankReceived.getRankList().getRankList();
         compactorCount = compactorListTem.size();
         convertProblemsInfo(problemList);
-        compactorList.addAll(convertCompactorsInfo(compactorListTem));
+        result.setContent(convertCompactorsInfo(compactorListTem));
 
-        if (compactorList.size() == 0) {
+        if (compactorCount == 0) {
             result.setStatus(Result.DATAISNULL);
         } else {
             result.setStatus(Result.FINISH);
@@ -106,32 +117,40 @@ public class RankView extends ListViewWithGestureLoad implements ConvertNetData 
         return result;
     }
 
-    private void convertProblemsInfo(List<RankProblem> problemList) {
-        for (RankProblem rankProblem : problemList) {
-            double solved = (double) (int) rankProblem.getSolved();
-            double tried = (double) (int) rankProblem.getTried();
+    private void convertProblemsInfo(List<RankProblemData> problemList) {
+        for (RankProblemData rankProblemData : problemList) {
+            double solved = (double) (int) rankProblemData.getSolved();
+            double tried = (double) (int) rankProblemData.getTried();
             double percent = 0;
             if (tried != 0) {
                 percent = (solved / tried) * 100.0;
             }
-            solvedPercent.add(String.format(Locale.CHINA,
+            solvedPercentList.add(String.format(Locale.CHINA,
                     "%.2f%%(%.0f/%.0f/%d)", percent, solved, tried, compactorCount));
         }
     }
 
-    private List<RankCompactor> convertCompactorsInfo(List<RankCompactor> compactorListItem) {
-        for (RankCompactor compactor : compactorListItem) {
-            compactor.avatar = Global.getDefaultLogo();
+    private List<RankCompactorData> convertCompactorsInfo(List<RankCompactorData> compactorListItem) {
+        for (RankCompactorData compactor : compactorListItem) {
+            if (isInvitedContest) {
+                compactor.temUsersName = "队员:";
+                for (RankTeamUserData teamUserData : compactor.getTeamUsers())
+                    compactor.temUsersName = compactor.temUsersName + teamUserData.getName() + "; ";
+            } else {
+                compactor.avatar = Global.getDefaultLogo();
+            }
+            compactor.solvedString = "solved:  " + compactor.getSolved();
+            compactor.triedString = "tried:  " + compactor.getTried();
             convertCompactorProblemsInfo((compactor.getItemList()));
         }
         return compactorListItem;
     }
 
-    private void convertCompactorProblemsInfo(List<RankCompactorProblem> problemList) {
+    private void convertCompactorProblemsInfo(List<RankCompactorProblemData> problemList) {
         for (int j = 0; j < problemList.size(); ++j) {
-            RankCompactorProblem problem = problemList.get(j);
+            RankCompactorProblemData problem = problemList.get(j);
             problem.order = String.valueOf((char) ('A' + j));
-            problem.solvedPercent = solvedPercent.get(j);
+            problem.solvedPercent = solvedPercentList.get(j);
             problem.solvedTimeString = TimeFormat.getFormatTime(problem.getSolvedTime());
             problem.triedString = String.valueOf(problem.getTried());
 
@@ -151,11 +170,15 @@ public class RankView extends ListViewWithGestureLoad implements ConvertNetData 
     public void onNetDataConverted(Result result) {
         switch (result.getDataType()) {
             case NetData.CONTEST_RANK:
-                mListAdapter.notifyDataSetChanged();
+                if (result.getContent() != null) {
+                    compactorList.clear();
+                    compactorList.addAll((List<RankCompactorData>) result.getContent());
+                    mListAdapter.notifyDataSetChanged();
+                    getAvatar();
+                }
                 noticeLoadOrRefreshComplete();
                 switch (result.getStatus()) {
                     case Result.SUCCESS:
-                        getAvatar();
                         break;
                     case Result.DATAISNULL:
                         noticeDataIsNull();
@@ -193,7 +216,7 @@ public class RankView extends ListViewWithGestureLoad implements ConvertNetData 
 
     private void getAvatar() {
         for (int i = 0; i < compactorList.size(); ++i) {
-            RankCompactor compactor = compactorList.get(i);
+            RankCompactorData compactor = compactorList.get(i);
             NetDataPlus.getAvatar(context, compactor.getEmail(), i, this);
         }
     }
@@ -211,11 +234,9 @@ public class RankView extends ListViewWithGestureLoad implements ConvertNetData 
         if (contestId > 0) {
             clear();
             NetDataPlus.getContestRank(context, contestId, this);
+        } else {
+            noticeRefreshComplete();
         }
         return this;
-    }
-
-    public void setContestId(int contestId) {
-        this.contestId = contestId;
     }
 }

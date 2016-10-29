@@ -11,7 +11,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.net.data.RankCompactorProblem;
+import cn.edu.uestc.acm.cdoj.net.data.RankCompactorProblemData;
 
 /**
  * Created by Grea on 2016/10/27.
@@ -20,10 +20,10 @@ import cn.edu.uestc.acm.cdoj.net.data.RankCompactorProblem;
 public class RankAlertAdapter extends BaseAdapter {
 
     private LayoutInflater mInflater;
-    private List<RankCompactorProblem> problemList;
+    private List<RankCompactorProblemData> problemList;
     private Context context;
 
-    RankAlertAdapter(Context context, List<RankCompactorProblem> problemList) {
+    RankAlertAdapter(Context context, List<RankCompactorProblemData> problemList) {
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.context = context;
         this.problemList = problemList;
@@ -49,10 +49,10 @@ public class RankAlertAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (problemList == null) return null;
-        RankCompactorProblem problem = problemList.get(position);
+        RankCompactorProblemData problem = problemList.get(position);
         View v = convertView;
         if (convertView == null) {
-            v = mInflater.inflate(R.layout.contest_rank_list_item_alert, parent, false);
+            v = mInflater.inflate(R.layout.contest_rank_detail_list_item, parent, false);
         }
         ((TextView) v.findViewById(R.id.contestRankItem_ProblemOrder))
                 .setText(problem.order);
@@ -79,7 +79,7 @@ public class RankAlertAdapter extends BaseAdapter {
         return v;
     }
 
-    void setProblemList(List<RankCompactorProblem> problemList) {
+    void setProblemList(List<RankCompactorProblemData> problemList) {
         this.problemList = problemList;
     }
 }

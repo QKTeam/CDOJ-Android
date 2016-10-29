@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.R;
@@ -36,10 +37,11 @@ import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
 public class ClarificationView extends ListViewWithGestureLoad implements ConvertNetData {
 
     private static final String TAG = "讨论";
-    private List<ClarificationData> clarificationDataList = new ArrayList<>();
+
+    private List<ClarificationData> clarificationDataList;
+    private BaseAdapter mListAdapter;
     private DetailWebView clarificationDetail;
     private AlertDialog detailAlert;
-    private BaseAdapter mListAdapter;
     private PageInfo mPageInfo;
     private Context context;
     private int contestId;
@@ -60,22 +62,13 @@ public class ClarificationView extends ListViewWithGestureLoad implements Conver
         super(context, attrs);
         this.context = context;
         this.contestId = contestId;
-        mListAdapter = new ClarificationAdapter(context, clarificationDataList);
-        setListAdapter(mListAdapter);
-        setupDetailView();
+        init();
     }
 
-    public void setupDetailView() {
-        clarificationDetail = new DetailWebView(context, NetData.ARTICLE_DETAIL);
-        detailAlert = new AlertDialog.Builder(getContext())
-                .setView(clarificationDetail)
-                .setNegativeButton(context.getString(R.string.confirm), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        detailAlert.cancel();
-                    }
-                })
-                .create();
+    private void init() {
+        clarificationDataList = new ArrayList<>();
+        mListAdapter = new ClarificationAdapter(context, clarificationDataList);
+        setListAdapter(mListAdapter);
     }
 
     @Override
@@ -92,28 +85,42 @@ public class ClarificationView extends ListViewWithGestureLoad implements Conver
 
     @Override
     public void onListItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (detailAlert == null) {
+            setupDetailAlert();
+        }
         clarificationDetail.setJsonString(clarificationDataList.get(position).jsonString);
         detailAlert.show();
+    }
+
+    public void setupDetailAlert() {
+        clarificationDetail = new DetailWebView(context, NetData.ARTICLE_DETAIL);
+        detailAlert = new AlertDialog.Builder(getContext())
+                .setView(clarificationDetail)
+                .setNegativeButton(context.getString(R.string.confirm), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        detailAlert.cancel();
+                    }
+                })
+                .create();
     }
 
     @NonNull
     @Override
     public Result onConvertNetData(String jsonString, Result result) {
-        ListReceive<ClarificationData> listReceive = JSON.parseObject(jsonString,
-                new TypeReference<ListReceive<ClarificationData>>() {
-                });
+        ListReceive<ClarificationData> listReceive = JSON.parseObject(jsonString, new TypeReference<ListReceive<ClarificationData>>() {});
 
         if (!listReceive.getResult().equals("success")) {
             result.setStatus(Result.FALSE);
             return result;
         }
         mPageInfo = listReceive.getPageInfo();
-        clarificationDataList.addAll(convertNetData(listReceive.getList()));
+        result.setContent(convertNetData(listReceive.getList()));
 
-        if (mPageInfo.totalItems == 0) {
-            result.setStatus(Result.DATAISNULL);
-        } else if (mPageInfo.currentPage == mPageInfo.totalPages) {
+        if (mPageInfo.currentPage == mPageInfo.totalPages) {
             result.setStatus(Result.FINISH);
+        } else if (mPageInfo.totalItems == 0) {
+            result.setStatus(Result.DATAISNULL);
         } else {
             result.setStatus(Result.SUCCESS);
         }
@@ -134,17 +141,20 @@ public class ClarificationView extends ListViewWithGestureLoad implements Conver
     public void onNetDataConverted(Result result) {
         switch (result.getDataType()) {
             case NetData.CONTEST_COMMENT:
-                mListAdapter.notifyDataSetChanged();
+                if (result.getContent() != null) {
+                    int lastCount = clarificationDataList.size();
+                    clarificationDataList.addAll((List<ClarificationData>) result.getContent());
+                    mListAdapter.notifyDataSetChanged();
+                    getAvatar(lastCount);
+                }
                 noticeLoadOrRefreshComplete();
                 switch (result.getStatus()) {
                     case Result.SUCCESS:
-                        getAvatar();
                         break;
                     case Result.DATAISNULL:
                         noticeDataIsNull();
                         break;
                     case Result.FINISH:
-                        getAvatar();
                         noticeLoadFinish();
                         break;
                     case Result.NETNOTCONECT:
@@ -172,8 +182,8 @@ public class ClarificationView extends ListViewWithGestureLoad implements Conver
         }
     }
 
-    private void getAvatar() {
-        for (int i = 0; i < clarificationDataList.size(); i++) {
+    private void getAvatar(int lastCount) {
+        for (int i = lastCount; i < clarificationDataList.size(); i++) {
             NetDataPlus.getAvatar(context, clarificationDataList.get(i).getOwnerEmail(), i, this);
         }
     }
@@ -186,6 +196,8 @@ public class ClarificationView extends ListViewWithGestureLoad implements Conver
         if (contestId > 0) {
             clear();
             NetDataPlus.getContestComment(context, contestId, 1, ClarificationView.this);
+        } else {
+            noticeRefreshComplete();
         }
         return this;
     }

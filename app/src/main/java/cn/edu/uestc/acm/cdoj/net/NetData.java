@@ -120,6 +120,10 @@ public class NetData {
             } catch (RuntimeException e) {
                 Log.d(TAG, "has prepared");
             }
+            Log.d(TAG, "getAvatar: "+email);
+            if (email == null) {
+                return;
+            }
             NetHandler handler = new NetHandler(context, AVATAR, avatarUrl.replace("%@", md(email, "md5")), extra, convertNetData);
             AvatarTaskManager.addTask(handler, email);
         }
@@ -293,6 +297,7 @@ public class NetData {
     }
 
     public static String md(String s, String algorithm) {
+        if (s == null) return null;
         try {
             MessageDigest md = MessageDigest.getInstance(algorithm);
             byte[] bytes = s.getBytes();

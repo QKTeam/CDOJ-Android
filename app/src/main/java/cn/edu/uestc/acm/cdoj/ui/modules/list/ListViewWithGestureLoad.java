@@ -79,7 +79,12 @@ public class ListViewWithGestureLoad extends LinearLayout {
 
     private void setupListView() {
         mListView.addFooterView(mListViewFooter, null, false);
-
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                onListItemClick(parent, view, position, id);
+            }
+        });
         mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -115,12 +120,7 @@ public class ListViewWithGestureLoad extends LinearLayout {
             }
         });
 
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                onListItemClick(parent, view, position, id);
-            }
-        });
+
     }
 
     public void setListAdapter(BaseAdapter adapter) {
@@ -146,6 +146,19 @@ public class ListViewWithGestureLoad extends LinearLayout {
 
     public void setPullUpLoadEnable(boolean enable) {
         pullUpLoadEnable = enable;
+    }
+
+    public void setOnItemClickEnable(boolean enable) {
+        if (enable && mListView.getOnItemClickListener() == null) {
+            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    onListItemClick(parent, view, position, id);
+                }
+            });
+        } else {
+            mListView.setOnItemClickListener(null);
+        }
     }
 
     public void noticeLoadFinish() {

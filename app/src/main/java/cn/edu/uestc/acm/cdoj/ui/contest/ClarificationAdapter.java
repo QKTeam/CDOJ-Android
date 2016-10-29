@@ -46,7 +46,7 @@ public class ClarificationAdapter extends BaseAdapter {
         ClarificationData clarificationData = clarificationDataList.get(position);
         View v = convertView;
         if (convertView == null) {
-            v = mInflater.inflate(R.layout.contest_clarification_item_list, parent, false);
+            v = mInflater.inflate(R.layout.contest_clarification_list_item, parent, false);
         }
         ((ImageView) v.findViewById(R.id.contestClarification_header))
                 .setImageDrawable(clarificationData.avatar);

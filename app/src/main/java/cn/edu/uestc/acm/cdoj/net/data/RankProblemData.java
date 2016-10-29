@@ -4,7 +4,7 @@ package cn.edu.uestc.acm.cdoj.net.data;
  * Created by Grea on 2016/10/26.
  */
 
-public class RankProblem {
+public class RankProblemData {
     private Integer tried;
     private Integer title;
     private Integer solved;
