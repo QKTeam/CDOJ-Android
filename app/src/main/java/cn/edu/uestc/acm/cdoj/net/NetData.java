@@ -6,6 +6,8 @@ import android.os.Looper;
 import android.support.annotation.IntDef;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,20 +17,21 @@ import java.lang.annotation.RetentionPolicy;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.net.utils.AvatarTaskManager;
 import cn.edu.uestc.acm.cdoj.net.utils.NetThread;
-import cn.edu.uestc.acm.cdoj.net.utils.NetWorkUtils;
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.Resource;
 
 /**
  * Created by Grea on 16-10-22.
  */
 public class NetData {
 
-    public final static int PROBLEM_LIST = 0;
-    public final static int CONTEST_LIST = 1;
-    public final static int ARTICLE_LIST = 2;
+    public final static int ARTICLE_LIST = 0;
+    public final static int PROBLEM_LIST = 1;
+    public final static int CONTEST_LIST = 2;
     public final static int PROBLEM_DETAIL = 3;
     public final static int CONTEST_DETAIL = 4;
     public final static int ARTICLE_DETAIL = 5;
@@ -107,7 +110,7 @@ public class NetData {
                 nickName, email, motto, name, sex,
                 size, phone, school, departmentId,
                 grade, studentId};
-        post(context, REGISTER, constructJson(key, o), registerUrl, extra, convertNetData);
+        post(context, REGISTER, getJsonString(key, o), registerUrl, extra, convertNetData);
     }
 
     static void getAvatar(final Context context, final String email, final Object extra, final ConvertNetData convertNetData) {
@@ -133,7 +136,7 @@ public class NetData {
                            int contestId, int problemId, Object extra, ConvertNetData convertNetData) {
         String key[] = new String[]{"codeContent", "languageId", "contestId", "problemId"};
         Object o[] = new Object[]{codeContent, languageId, contestId == -1 ? "" : contestId, problemId};
-        post(context, STATUS_SUBMIT, constructJson(key, o), codeSubmitUrl, extra, convertNetData);
+        post(context, STATUS_SUBMIT, getJsonString(key, o), codeSubmitUrl, extra, convertNetData);
     }
 
     static void getStatusInfo(Context context, int statusId, Object extra, ConvertNetData convertNetData) {
@@ -144,14 +147,14 @@ public class NetData {
                               int contestId, int page, Object extra, ConvertNetData convertNetData) {
         String key[] = new String[]{"problemId", "userName", "contestId", "currentPage", "orderAsc", "orderFields", "result"};
         Object[] o = new Object[]{problemId == -1 ? "" : problemId, userName, contestId, page, false, "statusId", 0};
-        Log.d(TAG, "getStatusList:" + statusListUrl + "  " + constructJson(key, o));
-        post(context, STATUS_LIST, constructJson(key, o), statusListUrl, extra, convertNetData);
+        Log.d(TAG, "getStatusList:" + statusListUrl + "  " + getJsonString(key, o));
+        post(context, STATUS_LIST, getJsonString(key, o), statusListUrl, extra, convertNetData);
     }
 
     static void getContestComment(Context context, int contestId, int page, Object extra, ConvertNetData convertNetData) {
         String key[] = new String[]{"contestId", "currentPage", "orderAsc", "orderFields"};
         Object[] o = new Object[]{contestId, page, false, "id"};
-        post(context, CONTEST_COMMENT, constructJson(key, o), contestCommentUrl, extra, convertNetData);
+        post(context, CONTEST_COMMENT, getJsonString(key, o), contestCommentUrl, extra, convertNetData);
     }
 
     static void getContestRank(Context context, int contestId, Object extra, ConvertNetData convertNetData) {
@@ -190,49 +193,27 @@ public class NetData {
     }
 
     static void getArticleList(Context context, final int page, Object extra, final ConvertNetData convertNetData) {
-        String postJsonString = "";
-        try {
-            postJsonString = new JSONObject()
-                    .put("currentPage", page)
-                    .put("orderAsc", "true")
-                    .put("orderFields", "order")
-                    .put("type", 0)
-                    .toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        post(context, ARTICLE_LIST, postJsonString, articleListUrl, extra, convertNetData);
+        String[] key = new String[]{"currentPage", "orderAsc", "orderFields", "type"};
+        Object[] value = new Object[]{page, false, "time", 0};
+        post(context, ARTICLE_LIST, getJsonString(key, value), articleListUrl, extra, convertNetData);
     }
 
     static void getProblemList(Context context, final int page, String keyword, int startId, Object extra, final ConvertNetData convertNetData) {
-        String postJsonString = "";
-        try {
-            postJsonString = new JSONObject()
-                    .put("currentPage", page)
-                    .put("orderAsc", "true")
-                    .put("orderFields", "id")
-                    .put("keyword", keyword)
-                    .put("startId", startId)
-                    .toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        post(context, PROBLEM_LIST, postJsonString, problemListUrl, extra, convertNetData);
+        String[] key = new String[]{"currentPage", "orderAsc", "orderFields", "keyword", "startId"};
+        Object[] value = new Object[]{page, true, "id", keyword, startId};
+        post(context, PROBLEM_LIST, getJsonString(key, value), problemListUrl, extra, convertNetData);
     }
 
-    static void getContestList(Context context, int page, String keyword, Object extra, ConvertNetData convertNetData) {
-        String postJsonString = "";
-        try {
-            postJsonString = new JSONObject()
-                    .put("currentPage", page)
-                    .put("orderAsc", "false")
-                    .put("orderFields", "time")
-                    .put("keyword", keyword)
-                    .toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
+    static void getContestList(Context context, int page, String keyword, int startId, Object extra, ConvertNetData convertNetData) {
+        String orderFields = "time";
+        boolean orderAsc = false;
+        if (startId > 1) {
+            orderFields = "id";
+            orderAsc = true;
         }
-        post(context, CONTEST_LIST, postJsonString, contestListUrl, extra, convertNetData);
+        String[] key = new String[]{"currentPage", "orderAsc", "orderFields", "keyword", "startId"};
+        Object[] value = new Object[]{page, orderAsc, orderFields, keyword, startId};
+        post(context, CONTEST_LIST, getJsonString(key, value), contestListUrl, extra, convertNetData);
     }
 
     static void getArticleDetail(Context context, final int id, Object extra, final ConvertNetData convertNetData) {
@@ -272,7 +253,7 @@ public class NetData {
     }
 
     private static BitmapDrawable readAvatarFromLocal(String email) {
-        File avatarFile = new File(Global.getCacheDirPath() + email);
+        File avatarFile = new File(Resource.getCacheDirPath() + email);
         if (!avatarFile.exists()) {
             return null;
         } else {
@@ -280,16 +261,14 @@ public class NetData {
         }
     }
 
-    private static String constructJson(String key[], Object o[]) {
-        JSONObject temp = new JSONObject();
-        try {
+    private static String getJsonString(String key[], Object value[]) {
+        Map<String, Object> map = new HashMap<>();
+        if (key != null && value != null && value.length <= key.length) {
             for (int i = 0; i < key.length; i++) {
-                temp.put(key[i], o[i]);
+                map.put(key[i], value[i]);
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
-        return temp.toString();
+        return JSON.toJSONString(map);
     }
 
     public static String sha1(String s) {

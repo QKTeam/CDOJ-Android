@@ -95,6 +95,13 @@ public class NetDataPlus {
         submitCode(context, codeContent, languageId, contestId, problemId, null, convertNetData);
     }
 
+    public static void submitCode(Context context, String codeContent, int languageId, int problemId, ConvertNetData convertNetData) {
+        submitCode(context, codeContent, languageId, -1, problemId, null, convertNetData);
+    }
+    public static void submitCode(Context context, String codeContent, int languageId, int problemId, Object extra, ConvertNetData convertNetData) {
+        submitCode(context, codeContent, languageId, -1, problemId, extra, convertNetData);
+    }
+
     public static void submitCode(Context context, String codeContent, int languageId, int contestId, int problemId, Object extra, ConvertNetData convertNetData) {
         NetData.submitCode(context, codeContent, languageId, contestId, problemId, extra, convertNetData);
     }
@@ -199,25 +206,44 @@ public class NetDataPlus {
         getProblemList(context, page, keyword, 0, null, convertNetData);
     }
 
+    public static void getProblemList(Context context, int page, String keyword, int startId, ConvertNetData convertNetData) {
+        getProblemList(context, page, keyword, startId, null, convertNetData);
+    }
+
     public static void getProblemList(Context context, int page, String keyword, int startId, Object extra, ConvertNetData convertNetData) {
         NetData.getProblemList(context, page, keyword, startId, extra, convertNetData);
     }
 
-
     public static void getContestList(Context context, int page, ConvertNetData convertNetData) {
-        getContestList(context, page, "", null, convertNetData);
+        getContestList(context, page, "", 1, null, convertNetData);
     }
 
     public static void getContestList(Context context, int page, Object extra, ConvertNetData convertNetData) {
-        getContestList(context, page, "", extra, convertNetData);
+        getContestList(context, page, "", 1, extra, convertNetData);
     }
 
     public static void getContestList(Context context, int page, String keyword, ConvertNetData convertNetData) {
-        getContestList(context, page, keyword, null, convertNetData);
+        getContestList(context, page, keyword, 1, null, convertNetData);
     }
 
     public static void getContestList(Context context, int page, String keyword, Object extra, ConvertNetData convertNetData) {
-        NetData.getContestList(context, page, keyword, extra, convertNetData);
+        getContestList(context, page, keyword, 1, extra, convertNetData);
+    }
+
+    public static void getContestList(Context context, int page, int startId, ConvertNetData convertNetData) {
+        getContestList(context, page, "", startId, null, convertNetData);
+    }
+
+    public static void getContestList(Context context, int page, int startId, Object extra, ConvertNetData convertNetData) {
+        getContestList(context, page, "", startId, extra, convertNetData);
+    }
+
+    public static void getContestList(Context context, int page, String keyword, int startId, ConvertNetData convertNetData) {
+        getContestList(context, page, keyword, startId, null, convertNetData);
+    }
+
+    public static void getContestList(Context context, int page, String keyword, int startId, Object extra, ConvertNetData convertNetData) {
+        NetData.getContestList(context, page, keyword, startId, extra, convertNetData);
     }
 
     public static void getArticleDetail(Context context, int id, ConvertNetData convertNetData) {

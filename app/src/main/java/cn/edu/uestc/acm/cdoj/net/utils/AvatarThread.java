@@ -8,9 +8,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.NetHandler;
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.Resource;
 
 /**
  * Created by Grea on 2016/10/27.
@@ -52,7 +51,7 @@ public class AvatarThread extends Thread {
     }
 
     private void saveAvatar(byte[] avatarBytes, String email) {
-        File file = new File(Global.getCacheDirPath() + email);
+        File file = new File(Resource.getCacheDirPath() + email);
         if (file.exists()) {
             file.delete();
         }

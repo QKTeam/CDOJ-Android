@@ -15,15 +15,18 @@ import java.util.List;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.data.ProblemData;
 import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebView;
+import cn.edu.uestc.acm.cdoj.ui.problem.ProblemView;
 
 /**
  * Created by great on 2016/8/25.
  */
 public class ProblemViewPager extends ViewPager{
     private TabLayout mTabLayout;
-    private List<DetailWebView> problemViewList;
+    private List<ProblemView> problemViewList;
     private PagerAdapter mAdapter;
     private List<ProblemData> problemDataList;
+    private ViewPager contestPager;
+    private int contestId = -1;
 
     public ProblemViewPager(Context context) {
         super(context);
@@ -65,8 +68,11 @@ public class ProblemViewPager extends ViewPager{
     public void setProblemDataList(List<ProblemData> problemDataList) {
         if (problemDataList == null) return;
         for (ProblemData problemData : problemDataList) {
-            DetailWebView problemView = new DetailWebView(getContext(), NetData.PROBLEM_DETAIL);
-            problemView.setJsonString(problemData.jsonString);
+            ProblemView problemView = new ProblemView(getContext());
+            problemView.setProblemData(problemData);
+            problemView.setTitleVisibility(View.GONE);
+            problemView.setContestId(contestId);
+            problemView.setContestPager(contestPager);
             problemViewList.add(problemView);
         }
         mAdapter.notifyDataSetChanged();
@@ -105,5 +111,16 @@ public class ProblemViewPager extends ViewPager{
                 container.removeView(problemViewList.get(position));
             }
         };
+    }
+
+    public void setContestPager(ViewPager contestPager) {
+        this.contestPager = contestPager;
+    }
+
+    public void setContestId(int contestId) {
+        this.contestId = contestId;
+        for (ProblemView problemView : problemViewList) {
+            problemView.setContestId(contestId);
+        }
     }
 }

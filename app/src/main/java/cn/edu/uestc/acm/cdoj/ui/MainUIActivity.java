@@ -1,12 +1,11 @@
 package cn.edu.uestc.acm.cdoj.ui;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.IntDef;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
@@ -19,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,18 +25,13 @@ import com.arlib.floatingsearchview.FloatingSearchView;
 import com.arlib.floatingsearchview.suggestions.SearchSuggestionsAdapter;
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.regex.Pattern;
+import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.net.NetData;
-import cn.edu.uestc.acm.cdoj.tools.DrawImage;
+import cn.edu.uestc.acm.cdoj.Resource;
 import cn.edu.uestc.acm.cdoj.net.NetDataPlus;
 import cn.edu.uestc.acm.cdoj.ui.contest.ContestList;
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchHistory;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchHistoryManager;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchResultActivity;
@@ -53,117 +46,34 @@ import cn.edu.uestc.acm.cdoj.ui.statusBar.StatusBarUtil;
  * Created by Grea on 2016/10/3.
  */
 
-public class MainUIActivity extends AppCompatActivity {
+public class  MainUIActivity extends AppCompatActivity {
 
     public static final int NOTICELIST = 0;
     public static final int PROBLEMLIST = 1;
     public static final int CONTESTLIST = 2;
-    public static final int SELECT = 0;
-    public static final int NOTSELECT = 1;
+    private static final String TAG = "主界面";
 
-    public void loginOrExit(View view) {
-        /*if (Global.userManager.isLogin()) {
-            Global.userManager.logout(new UserInfoManager());
-            ((ImageView) view).setImageResource(R.drawable.logo_orange);
-            ((TextView) findViewById(R.id.main_ui_nav_view_nickName)).setText("");
-            ((TextView) findViewById(R.id.main_ui_nav_view_userName)).setText("");
-            new AlertDialog.Builder(this)
-                    .setTitle("已退出登录")
-                    .setNeutralButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    })
-                    .show();
-        }else{
-            Intent intent = new Intent(MainUIActivity.this, LoginActivity.class);
-            startActivity(intent);
-        }
-        mDrawerLayout.closeDrawer(GravityCompat.START);*/
-    }
-
-    @IntDef({NOTICELIST, PROBLEMLIST, CONTESTLIST})
-    @Retention(RetentionPolicy.SOURCE)
-    @interface list {}
-    @IntDef({SELECT, NOTSELECT})
-    @Retention(RetentionPolicy.SOURCE)
-    @interface selectStatus {
-
-    }
-    private int[] listInts = new int[]{NOTICELIST, PROBLEMLIST, CONTESTLIST};
-
-    private NoticeList noticeList;
-    private ProblemList problemList;
-    private ContestList contestList;
     private Toolbar mToolbar;
-    private ImageButton[] bottomButtons = new ImageButton[4];
     private FloatingSearchView mSearchView;
+    private TabLayout mTabLayout;
     private ViewPager mViewPager;
+    private View[] listViews;
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
-    private FrameLayout mSearchFrameLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ui_main);
+        setupSystemBar();
         mToolbar = (Toolbar) findViewById(R.id.ui_main_toolbar);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.ui_main_drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.ui_main_nav_view);
         mSearchView = (FloatingSearchView) findViewById(R.id.ui_main_floating_search_view);
-        mSearchFrameLayout = (FrameLayout) findViewById(R.id.ui_main_search_frame);
         mViewPager = (ViewPager) findViewById(R.id.ui_main_list_ViewPager);
-        Global.setCurrentMainUIActivity(this);
-        Global.setIsTwoPane(false);
+        mTabLayout = (TabLayout) findViewById(R.id.ui_main_tabLayout);
+        Resource.setIsTwoPane(false);
         initViews();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        setupNavigationView();
-    }
-
-    @Override
-    protected void onRestart() {
-//        Global.userManager.keepLogin();
-        super.onRestart();
-    }
-
-    @Override
-    protected void onDestroy() {
-        SearchHistoryManager.addSuggestion("problem", Global.getProblemSearchHistory(), true);
-        SearchHistoryManager.addSuggestion("contest_button_container", Global.getContestSearchHistory(), true);
-        super.onDestroy();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    private void initViews() {
-        mSearchFrameLayout.setVisibility(View.GONE);
-        mToolbar.setTitle(getString(R.string.notice));
-        setupList();
-        setupSystemBar();
-        setupSearchView();
-        setupViewPager();
-        if (Global.isTwoPane()) setupTwoPane();
-    }
-
-    private void setupList() {
-        noticeList = new NoticeList(this);
-        problemList = new ProblemList(this);
-        contestList = new ContestList(this);
-
-        NetDataPlus.getArticleList(this, 1, noticeList);
-        NetDataPlus.getProblemList(this, 1, problemList);
-        NetDataPlus.getContestList(this, 1, contestList);
     }
 
     private void setupSystemBar() {
@@ -190,27 +100,93 @@ public class MainUIActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        SearchHistoryManager.addSuggestion("problem", Resource.getProblemSearchHistory(), true);
+        SearchHistoryManager.addSuggestion("contest_button_container", Resource.getContestSearchHistory(), true);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void initViews() {
+        mSearchView.setVisibility(View.GONE);
+        mToolbar.setTitle(getString(R.string.notice));
+        setupList();
+        setupSearchView();
+        setupViewPager();
+        setupNavigationView();
+        setupTabLayout();
+    }
+
+    private void setupList() {
+        NoticeList noticeList = new NoticeList(this);
+        ProblemList problemList = new ProblemList(this);
+        ContestList contestList = new ContestList(this);
+
+        listViews = new View[]{noticeList, problemList, contestList};
+        NetDataPlus.getArticleList(this, 1, noticeList);
+        NetDataPlus.getProblemList(this, 1, problemList);
+        NetDataPlus.getContestList(this, 1, contestList);
+    }
+
+    private void setupTabLayout() {
+        mTabLayout.setupWithViewPager(mViewPager);
+        mTabLayout.getTabAt(0).setIcon(Resource.getNoticeListIcon_selected());
+        mTabLayout.getTabAt(1).setIcon(Resource.getProblemListIcon_unselect());
+        mTabLayout.getTabAt(2).setIcon(Resource.getContestListIcon_unselect());
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 0:
+                        tab.setIcon(Resource.getNoticeListIcon_selected());
+                        break;
+                    case 1:
+                        tab.setIcon(Resource.getProblemListIcon_selected());
+                        break;
+                    case 2:
+                        tab.setIcon(Resource.getContestListIcon_selected());
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 0:
+                        tab.setIcon(Resource.getNoticeListIcon_unselect());
+                        break;
+                    case 1:
+                        tab.setIcon(Resource.getProblemListIcon_unselect());
+                        break;
+                    case 2:
+                        tab.setIcon(Resource.getContestListIcon_unselect());
+                }
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+
     private void setupNavigationView() {
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                /*if (UserInfoManager.hasUserInfo()) {
-                    UserInfo userInfo = UserInfoManager.getUserInfo();
-                    ((TextView) findViewById(R.id.main_ui_nav_view_nickName)).setText(userInfo.getNickName());
-                    ((TextView) findViewById(R.id.main_ui_nav_view_userName)).setText(userInfo.getUserName());
-                    ((ImageView) findViewById(R.id.main_ui_nav_view_header)).setImageBitmap(userInfo.getHeader());
-                }*/
-            }
-        };
+                this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         toggle.syncState();
         mDrawerLayout.addDrawerListener(toggle);
-
-        NavigationView a;
     }
 
     private void setupSearchView() {
+        mSearchView.setSearchHint(getString(R.string.searchWithId));
 
         mSearchView.attachNavigationDrawerToMenuButton(mDrawerLayout);
 
@@ -219,12 +195,12 @@ public class MainUIActivity extends AppCompatActivity {
             public void onFocus() {
                 switch (mViewPager.getCurrentItem()) {
                     case 1:
-                        Collections.reverse(Global.getProblemSearchHistory());
-                        mSearchView.swapSuggestions(Global.getProblemSearchHistory());
+                        Collections.reverse(Resource.getProblemSearchHistory());
+                        mSearchView.swapSuggestions(Resource.getProblemSearchHistory());
                         break;
                     case 2:
-                        Collections.reverse(Global.getContestSearchHistory());
-                        mSearchView.swapSuggestions(Global.getContestSearchHistory());
+                        Collections.reverse(Resource.getContestSearchHistory());
+                        mSearchView.swapSuggestions(Resource.getContestSearchHistory());
                 }
             }
 
@@ -240,25 +216,25 @@ public class MainUIActivity extends AppCompatActivity {
                 if (!oldQuery.equals("") && newQuery.equals("")) {
                     switch (mViewPager.getCurrentItem()) {
                         case 1:
-                            Collections.reverse(Global.getProblemSearchHistory());
-                            mSearchView.swapSuggestions(Global.getProblemSearchHistory());
+                            Collections.reverse(Resource.getProblemSearchHistory());
+                            mSearchView.swapSuggestions(Resource.getProblemSearchHistory());
                             break;
                         case 2:
-                            Collections.reverse(Global.getContestSearchHistory());
-                            mSearchView.swapSuggestions(Global.getContestSearchHistory());
+                            Collections.reverse(Resource.getContestSearchHistory());
+                            mSearchView.swapSuggestions(Resource.getContestSearchHistory());
                     }
                 }else {
-                    ArrayList<SearchHistory> histories = null;
+                    List<SearchSuggestion> histories = null;
                     switch (mViewPager.getCurrentItem()) {
                         case 1:
-                            histories = Global.getProblemSearchHistory();
+                            histories = Resource.getProblemSearchHistory();
                             break;
                         case 2:
-                            histories = Global.getContestSearchHistory();
+                            histories = Resource.getContestSearchHistory();
                     }
                     SearchHistoryManager.findMatchHistories(histories, newQuery, 5, new SearchHistoryManager.OnFindHistoriesListener() {
                         @Override
-                        public void onResults(ArrayList<SearchHistory> results) {
+                        public void onResults(List<SearchSuggestion> results) {
                             Collections.reverse(results);
                             mSearchView.swapSuggestions(results);
                         }
@@ -269,18 +245,20 @@ public class MainUIActivity extends AppCompatActivity {
 
         mSearchView.setOnSearchListener(new FloatingSearchView.OnSearchListener() {
             @Override
-            public void onSuggestionClicked(SearchSuggestion searchSuggestion) {
+            public void onSuggestionClicked(com.arlib.floatingsearchview.suggestions.model.SearchSuggestion searchSuggestion) {
                 showSearchResult(searchSuggestion.getBody());
             }
 
             @Override
             public void onSearchAction(String currentQuery) {
                 switch (mViewPager.getCurrentItem()) {
-                    case 1:
-                        Global.getProblemSearchHistory().add(new SearchHistory(currentQuery));
+                    case PROBLEMLIST:
+                        Resource.getProblemSearchHistory().add(new SearchHistory(currentQuery));
+                        SearchHistoryManager.addSuggestion("problem", currentQuery);
                         break;
-                    case 2:
-                        Global.getContestSearchHistory().add(new SearchHistory(currentQuery));
+                    case CONTESTLIST:
+                        Resource.getContestSearchHistory().add(new SearchHistory(currentQuery));
+                        SearchHistoryManager.addSuggestion("contest", currentQuery);
                 }
                 showSearchResult(currentQuery);
             }
@@ -289,7 +267,7 @@ public class MainUIActivity extends AppCompatActivity {
         mSearchView.setOnBindSuggestionCallback(new SearchSuggestionsAdapter.OnBindSuggestionCallback() {
             @Override
             public void onBindSuggestion(View suggestionView, ImageView leftIcon,
-                                         TextView textView, SearchSuggestion item, int itemPosition) {
+                                         TextView textView, com.arlib.floatingsearchview.suggestions.model.SearchSuggestion item, int itemPosition) {
                 leftIcon.setImageDrawable(ResourcesCompat.getDrawable(getResources(),
                         R.drawable.ic_history_black_24dp, null));
                 leftIcon.setAlpha(.36f);
@@ -301,30 +279,15 @@ public class MainUIActivity extends AppCompatActivity {
 
     private void showSearchResult(String str) {
         Intent intent = new Intent(MainUIActivity.this, SearchResultActivity.class);
-        intent.putExtra("key", str);
-        switch (mViewPager.getCurrentItem()) {
-            case 1:
-                if (isId(str)) {
-                    intent.putExtra("problemId", Integer.valueOf(str.replaceFirst("#", "")));
-                }
-                intent.putExtra("type", NetData.PROBLEM_LIST);
-                break;
-            case 2:
-                intent.putExtra("type", NetData.CONTEST_LIST);
-        }
+        intent.putExtra("keyword", str);
+        intent.putExtra("page", mViewPager.getCurrentItem());
         startActivity(intent);
-    }
-
-    private boolean isId(String string) {
-        Pattern pattern = Pattern.compile("^#[0-9]*");
-        return pattern.matcher(string).matches();
     }
 
     private void setupViewPager() {
         mViewPager.setOffscreenPageLimit(2);
         setViewPagerAdapter();
         addViewPagerOnPageChangeListener();
-        setupBottomButton();
     }
 
     private void setViewPagerAdapter() {
@@ -341,35 +304,13 @@ public class MainUIActivity extends AppCompatActivity {
 
             @Override
             public Object instantiateItem(ViewGroup container, int position) {
-                View v = null;
-                switch (position) {
-                    case 0:
-                        v = noticeList;
-                        break;
-                    case 1:
-                        v = problemList;
-                        break;
-                    case 2:
-                        v = contestList;
-                }
-                container.addView(v);
-                return v;
+                container.addView(listViews[position]);
+                return listViews[position];
             }
 
             @Override
             public void destroyItem(ViewGroup container, int position, Object object) {
-                View v = null;
-                switch (position) {
-                    case 0:
-                        v = noticeList;
-                        break;
-                    case 1:
-                        v = problemList;
-                        break;
-                    case 2:
-                        v = contestList;
-                }
-                container.removeView(v);
+                container.removeView(listViews[position]);
             }
         });
     }
@@ -385,18 +326,13 @@ public class MainUIActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 switch (position) {
                     case 0:
-                        mSearchFrameLayout.setVisibility(View.INVISIBLE);
-                        changeButtonColor(NOTICELIST);
+                        mSearchView.setVisibility(View.INVISIBLE);
                         break;
                     case 1:
-                        mSearchFrameLayout.setVisibility(View.VISIBLE);
-                        mSearchView.setSearchHint(getString(R.string.searchWithId));
-                        changeButtonColor(PROBLEMLIST);
+                        mSearchView.setVisibility(View.VISIBLE);
                         break;
                     case 2:
-                        mSearchFrameLayout.setVisibility(View.VISIBLE);
-                        mSearchView.setSearchHint(getString(R.string.search));
-                        changeButtonColor(CONTESTLIST);
+                        mSearchView.setVisibility(View.VISIBLE);
                         break;
                     case 3:
                 }
@@ -413,82 +349,5 @@ public class MainUIActivity extends AppCompatActivity {
         /*ImageView bgImageView = (ImageView) findViewById(R.id.main_detail_bg);
         float[] colorMatrix = RGBAColor.getColorMatrixWithPercentAlpha(0, 0, 0, 0.7f, true);
         bgImageView.setImageBitmap(DrawImage.draw(this, R.drawable.logo_orange, colorMatrix));*/
-    }
-
-    private void setupBottomButton() {
-        ImageButton buttonNotice = (ImageButton) findViewById(R.id.ui_main_button_notice);
-        bottomButtons[0] = buttonNotice;
-        buttonNotice.setImageBitmap(getIcon(NOTICELIST, SELECT));
-        buttonNotice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeButtonColor(NOTICELIST);
-                mViewPager.setCurrentItem(NOTICELIST);
-            }
-        });
-
-        ImageButton buttonProblem = (ImageButton) findViewById(R.id.ui_main_button_problem);
-        bottomButtons[1] = buttonProblem;
-        buttonProblem.setImageBitmap(getIcon(PROBLEMLIST, NOTSELECT));
-        buttonProblem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeButtonColor(PROBLEMLIST);
-                mViewPager.setCurrentItem(PROBLEMLIST);
-            }
-        });
-
-        ImageButton buttonContest = (ImageButton) findViewById(R.id.ui_main_button_contest);
-        bottomButtons[2] = buttonContest;
-        buttonContest.setImageBitmap(getIcon(CONTESTLIST, NOTSELECT));
-        buttonContest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeButtonColor(CONTESTLIST);
-                mViewPager.setCurrentItem(CONTESTLIST);
-            }
-        });
-    }
-
-    private void changeButtonColor(@list int currentPage) {
-        for (int page : listInts) {
-            if (page == currentPage) {
-                bottomButtons[page].setImageBitmap(getIcon(page, SELECT));
-                continue;
-            }
-            bottomButtons[page].setImageBitmap(getIcon(page, NOTSELECT));
-        }
-    }
-
-    private Bitmap getIcon(@list int whichButton, @selectStatus int selectStatus) {
-        switch (whichButton) {
-            case NOTICELIST:
-                switch (selectStatus) {
-                    case SELECT:
-                        return DrawImage.draw(this, R.drawable.ic_list_notice_selected, true);
-                    case NOTSELECT:
-                        return DrawImage.draw(this, R.drawable.ic_list_notice, true);
-                }
-                break;
-
-            case PROBLEMLIST:
-                switch (selectStatus) {
-                    case SELECT:
-                        return DrawImage.draw(this, R.drawable.ic_list_problem_selected, true);
-                    case NOTSELECT:
-                        return DrawImage.draw(this, R.drawable.ic_list_problem, true);
-                }
-                break;
-
-            case CONTESTLIST:
-                switch (selectStatus) {
-                    case SELECT:
-                        return DrawImage.draw(this, R.drawable.ic_list_contestt_selected, true);
-                    case NOTSELECT:
-                        return DrawImage.draw(this, R.drawable.ic_list_contest, true);
-                }
-                break;
-        }
-        return null;
     }
 }

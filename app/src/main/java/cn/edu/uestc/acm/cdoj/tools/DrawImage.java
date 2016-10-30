@@ -7,9 +7,10 @@ import android.graphics.Canvas;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.DrawableRes;
 
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.Resource;
 
 /**
  * Created by Great on 2016/10/8.
@@ -17,64 +18,26 @@ import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 
 public class DrawImage {
 
-    private int imageResource = -1;
-    private float[] colorMatrix;
-    private Context context;
-
-    public DrawImage(Context context) {
-        this.context = context;
+    public static BitmapDrawable draw(Context context, @DrawableRes int imageResource) {
+        return draw(context, imageResource, null);
     }
 
-    public DrawImage(Context context, @DrawableRes int imageResource) {
-        this.context = context;
-        this.imageResource = imageResource;
-    }
-
-    public DrawImage(Context context, @DrawableRes int imageResource, float[] colorMatrix) {
-        this.context = context;
-        this.colorMatrix = colorMatrix;
-        this.imageResource = imageResource;
-    }
-
-    public Bitmap draw(boolean themeRender) {
-        if (imageResource == -1) return null;
-        return draw(context, imageResource, null, themeRender);
-    }
-
-    public Bitmap draw(@DrawableRes int imageResource, boolean themeRender) {
-        return draw(context, imageResource, null, themeRender);
-    }
-
-    public Bitmap draw(@DrawableRes int imageResource, float[] colorMatrix) {
-        return draw(context, imageResource, colorMatrix, true);
-    }
-
-    public static Bitmap draw(Context context, @DrawableRes int imageResource, boolean themeRender) {
-        return draw(context, imageResource, null, themeRender);
-    }
-
-    public static Bitmap draw(Context context, @DrawableRes int imageResource, float[] colorMatrix) {
-        return draw(context, imageResource, colorMatrix, true);
-    }
-
-    public static Bitmap draw(Context context, @DrawableRes int imageResource, float[] colorMatrix, boolean themeRender) {
-        if (colorMatrix == null) colorMatrix = Global.getMainColorMatrix();
+    public static BitmapDrawable draw(Context context, @DrawableRes int imageResource, float[] colorMatrix) {
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), imageResource);
-        if (themeRender) {
-            return render(bitmap, colorMatrix);
-        }
-        return bitmap;
+        return draw(context, bitmap, colorMatrix);
     }
 
-    public static Bitmap render(Bitmap bitmap, float[] colorMatrix) {
+    public static BitmapDrawable draw(Context context, Bitmap bitmap) {
+        return draw(context, bitmap, null);
+    }
+
+    public static BitmapDrawable draw(Context context, Bitmap bitmap, float[] colorMatrix) {
+        if (colorMatrix == null) colorMatrix = Resource.getMainColorMatrix();
         Bitmap afterBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
         Canvas canvas = new Canvas(afterBitmap);
         Paint paint = new Paint();
-        if (colorMatrix == null) {
-            colorMatrix = RGBAColor.getColorMatrix(0, 0, 0, 0, true);
-        }
         paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
         canvas.drawBitmap(bitmap, new Matrix(), paint);
-        return afterBitmap;
+        return new BitmapDrawable(context.getResources(), afterBitmap);
     }
 }
