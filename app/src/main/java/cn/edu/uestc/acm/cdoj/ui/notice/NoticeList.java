@@ -13,7 +13,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.net.ConvertNetData;
@@ -25,7 +24,7 @@ import cn.edu.uestc.acm.cdoj.net.data.ListReceive;
 import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
 import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
 import cn.edu.uestc.acm.cdoj.ui.ItemDetailActivity;
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.Resource;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
 
 /**
@@ -33,7 +32,7 @@ import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
  */
 public class NoticeList extends ListViewWithGestureLoad implements ConvertNetData {
     private static final String TAG = "文章列表";
-    private List<ArticleData> articleDataList = new ArrayList<>();
+    private List<ArticleData> articleDataList;
     private BaseAdapter mListAdapter;
     private PageInfo mPageInfo;
 
@@ -43,8 +42,8 @@ public class NoticeList extends ListViewWithGestureLoad implements ConvertNetDat
 
     public NoticeList(Context context, AttributeSet attrs) {
         super(context, attrs);
+        articleDataList = new ArrayList<>();
         mListAdapter = new NoticeAdapter(context, articleDataList);
-        setListAdapter(mListAdapter);
     }
 
     @Override
@@ -56,22 +55,19 @@ public class NoticeList extends ListViewWithGestureLoad implements ConvertNetDat
 
     @Override
     public void onListRefresh() {
-        resetPullUpLoad();
-        articleDataList.clear();
-        mListAdapter.notifyDataSetChanged();
-        NetDataPlus.getArticleList(getContext(), 1, NoticeList.this);
+       refresh();
     }
 
     @Override
     public void onListItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (!Global.isTwoPane()) {
+        if (!Resource.isTwoPane()) {
             showDetailOnActivity(position);
         }
     }
 
     private void showDetailOnActivity(int position) {
         Intent intent = new Intent(getContext(), ItemDetailActivity.class);
-        intent.putExtra("article", articleDataList.get(position));
+        intent.putExtra("id", articleDataList.get(position).getArticleId());
         intent.putExtra("type", NetData.ARTICLE_DETAIL);
         getContext().startActivity(intent);
     }
@@ -88,7 +84,6 @@ public class NoticeList extends ListViewWithGestureLoad implements ConvertNetDat
 
         mPageInfo = listReceive.getPageInfo();
         result.setContent(convertNetData(listReceive.getList()));
-        Log.d(TAG, "onNetDataConverted: "+ ((List<ArticleData>) result.getContent()).size());
 
         if (mPageInfo.totalItems == 0) {
             result.setStatus(Result.DATAISNULL);
@@ -109,14 +104,19 @@ public class NoticeList extends ListViewWithGestureLoad implements ConvertNetDat
             if (articleData.getContent().equals("")) {
                 articleData.setContent(articleData.getTitle());
             }
-            articleData.contentWithoutLink = articleData.getContent().replaceAll("!\\[title].*\\)", "[图片]");
-            articleData.contentWithoutLink = articleData.contentWithoutLink.replace("\n", " ");
+            int summaryLength = 50 < articleData.getContent().length() ? 50 : articleData.getContent().length();
+            articleData.summary = articleData.getContent().substring(0, summaryLength);
+            articleData.summary = articleData.summary.replaceAll("!\\[title].*\\)", "[图片]");
+            articleData.summary = articleData.summary.replace("\n", " ");
         }
         return list;
     }
 
     @Override
     public void onNetDataConverted(Result result) {
+        if (!hasAdapter()) {
+            setListAdapter(mListAdapter);
+        }
         if (result.getContent() != null) {
             articleDataList.addAll((List<ArticleData>) result.getContent());
             mListAdapter.notifyDataSetChanged();
@@ -143,5 +143,17 @@ public class NoticeList extends ListViewWithGestureLoad implements ConvertNetDat
             case Result.DEFAULT:
                 break;
         }
+    }
+
+    public void clear() {
+        resetPullUpLoad();
+        articleDataList.clear();
+        mListAdapter.notifyDataSetChanged();
+    }
+
+    public void refresh() {
+        clear();
+        setRefreshing(true);
+        NetDataPlus.getArticleList(getContext(), 1, NoticeList.this);
     }
 }

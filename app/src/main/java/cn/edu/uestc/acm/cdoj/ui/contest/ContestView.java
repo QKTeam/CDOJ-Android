@@ -32,6 +32,8 @@ public class ContestView extends ViewPager implements ConvertNetData {
 
     private static final String TAG = "比赛";
 
+    public static final int STATUS = 3;
+
     private SwipeRefreshLayout refreshLayout;
     private TabLayout mTabLayout;
     private DetailWebView overview;
@@ -67,12 +69,15 @@ public class ContestView extends ViewPager implements ConvertNetData {
     }
 
     private void init() {
+        setOffscreenPageLimit(2);
         overview = new DetailWebView(context, NetData.CONTEST_DETAIL);
-        setupRefreshLayout();
         problemViewPager = new ProblemViewPager(context);
+        problemViewPager.setContestPager(this);
+        problemViewPager.setContestId(contestId);
         clarificationView = new ClarificationView(context, contestId);
         statusView = new StatusView(context, contestId, null);
         rankView = new RankView(context, contestId);
+        setupRefreshLayout();
         contentViews = new View[]{refreshLayout, problemViewPager, clarificationView, statusView, rankView};
 
         setupViewPagerAdapter();
@@ -204,6 +209,7 @@ public class ContestView extends ViewPager implements ConvertNetData {
     public ContestView refresh(int contestId) {
         if (contestId > 0) {
             NetDataPlus.getContestDetail(context, contestId, this);
+            problemViewPager.setContestId(contestId);
             clarificationView.refresh(contestId);
             statusView.setContestInfo(contestId, null);
             statusView.refresh();

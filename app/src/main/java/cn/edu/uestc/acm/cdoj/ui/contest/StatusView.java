@@ -46,7 +46,7 @@ public class StatusView extends ListViewWithGestureLoad implements ConvertNetDat
     }
 
     public StatusView(Context context, String userName) {
-        this(context,userName, -1, null, -1, null);
+        this(context, userName, -1, null, -1, null);
     }
 
     public StatusView(Context context, int problemId) {
@@ -55,7 +55,6 @@ public class StatusView extends ListViewWithGestureLoad implements ConvertNetDat
 
     public StatusView(Context context, int contestId, int[] contestProblemIds) {
         this(context, null, contestId, contestProblemIds, -1, null);
-        init();
     }
 
     public StatusView(Context context, String userName, int contestId, int[] contestProblemIds, int problemId, AttributeSet attrs) {
@@ -65,12 +64,12 @@ public class StatusView extends ListViewWithGestureLoad implements ConvertNetDat
         this.contestId = contestId;
         this.contestProblemIds = contestProblemIds;
         this.problemId = problemId;
+        init();
     }
 
     private void init() {
         statusDataList = new ArrayList<>();
         mListAdapter = new StatusAdapter(context, statusDataList);
-        setListAdapter(mListAdapter);
         setOnItemClickEnable(false);
     }
 
@@ -147,6 +146,9 @@ public class StatusView extends ListViewWithGestureLoad implements ConvertNetDat
 
     @Override
     public void onNetDataConverted(Result result) {
+        if (!hasAdapter()) {
+            setListAdapter(mListAdapter);
+        }
         if (result.getContent() != null) {
             statusDataList.addAll((List<StatusData>) result.getContent());
             mListAdapter.notifyDataSetChanged();
@@ -217,6 +219,7 @@ public class StatusView extends ListViewWithGestureLoad implements ConvertNetDat
     }
 
     public StatusView refresh() {
+        setRefreshing(true);
         clear();
         NetDataPlus.getStatusList(context, problemId, userName, contestId, 1, this);
         return this;

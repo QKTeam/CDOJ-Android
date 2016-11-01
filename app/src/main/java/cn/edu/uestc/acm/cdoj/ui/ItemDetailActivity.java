@@ -1,6 +1,5 @@
 package cn.edu.uestc.acm.cdoj.ui;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -8,13 +7,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.TextView;
+
+import java.util.Locale;
 
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.NetData;
-import cn.edu.uestc.acm.cdoj.net.data.ArticleData;
-import cn.edu.uestc.acm.cdoj.ui.notice.ArticleFragment;
+import cn.edu.uestc.acm.cdoj.ui.contest.StatusView;
+import cn.edu.uestc.acm.cdoj.ui.notice.ArticleView;
 import cn.edu.uestc.acm.cdoj.ui.contest.ContestView;
-import cn.edu.uestc.acm.cdoj.ui.problem.ProblemFragment;
+import cn.edu.uestc.acm.cdoj.ui.problem.ProblemView;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.FlyMeUtils;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.MIUIUtils;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.StatusBarUtil;
@@ -48,31 +50,26 @@ public class ItemDetailActivity extends AppCompatActivity {
         intent = getIntent();
         int type = intent.getIntExtra("type", 0);
         int id = intent.getIntExtra("id", 1);
-        Fragment detail = null;
+        View detail = null;
         switch (type) {
             case NetData.ARTICLE_DETAIL:
-                ArticleData articleData = (ArticleData) intent.getSerializableExtra("article");
-                ArticleFragment articleFragment = new ArticleFragment();
-                articleFragment.setTitle(articleData.getTitle());
-                if (articleData.isHasMore()) {
-                    articleFragment.refresh(this, articleData.getArticleId());
-                } else {
-                    articleFragment.setJsonString(articleData.jsonString);
-                }
-                detail = articleFragment;
+                detail = new ArticleView(this).refresh(id);
                 break;
             case NetData.PROBLEM_DETAIL:
-                detail = new ProblemFragment();
-                ((ProblemFragment) detail).setTitle(intent.getStringExtra("title"))
-                        .refresh(this, id);
+                detail = new ProblemView(this).refresh(id);
                 break;
             case NetData.CONTEST_DETAIL:
-                View detailView = new ContestView(this, id).refresh();
-                ((ViewGroup) findViewById(R.id.detail_activity)).addView(detailView);
-                return;
+                detail = new ContestView(this).refresh(id);
+                break;
+            case NetData.STATUS_LIST:
+                TextView title = (TextView) findViewById(R.id.activity_detail_title);
+                String probTitle = intent.getStringExtra("title");
+                title.setVisibility(View.VISIBLE);
+                title.setText(String.format(Locale.CHINA, "\"%s\"提交结果", probTitle));
+                detail = new StatusView(this);
+                ((StatusView) detail).setProblemId(id);
+                ((StatusView) detail).refresh();
         }
-        getFragmentManager().beginTransaction()
-                .replace(R.id.detail_activity, detail)
-                .commit();
+        ((ViewGroup) findViewById(R.id.activity_detail_content_container)).addView(detail);
     }
 }

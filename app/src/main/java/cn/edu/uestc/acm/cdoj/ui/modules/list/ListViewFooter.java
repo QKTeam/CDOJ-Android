@@ -2,6 +2,8 @@ package cn.edu.uestc.acm.cdoj.ui.modules.list;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.util.AttributeSet;
@@ -15,7 +17,7 @@ import java.lang.annotation.RetentionPolicy;
 
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.tools.DrawImage;
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.Resource;
 
 
 public class ListViewFooter extends LinearLayout {
@@ -31,7 +33,8 @@ public class ListViewFooter extends LinearLayout {
     @IntDef({LOADING, LOADCOMPLETE, LOADPROBLEM, BLANK,
             DATAISNULL, NETNOTCONNECT, CONNECTOVERTIME})
     @Retention(RetentionPolicy.SOURCE)
-    @interface pullUpLoadListViewFooterStatus {}
+    @interface pullUpLoadListViewFooterStatus {
+    }
 
     private LinearLayout mLoadingLayout;
     private LinearLayout mLoadCompleteLayout;
@@ -67,23 +70,23 @@ public class ListViewFooter extends LinearLayout {
                 mLoadCompleteLayout.setVisibility(View.GONE);
                 return;
             case LOADCOMPLETE:
-                mImageView.setImageDrawable(Global.getListFooterIcon_done());
+                mImageView.setImageDrawable(Resource.getListFooterIcon_done());
                 mTextView.setText(getContext().getString(R.string.loadComplete));
                 break;
             case LOADPROBLEM:
-                mImageView.setImageDrawable(Global.getListFooterIcon_problem());
+                mImageView.setImageDrawable(Resource.getListFooterIcon_problem());
                 mTextView.setText(getContext().getString(R.string.loadProblem));
                 break;
             case DATAISNULL:
-                mImageView.setImageDrawable(Global.getListFooterIcon_noData());
+                mImageView.setImageDrawable(Resource.getListFooterIcon_noData());
                 mTextView.setText(getContext().getString(R.string.noData));
                 break;
             case NETNOTCONNECT:
-                mImageView.setImageDrawable(Global.getListFooterIcon_netProblem());
+                mImageView.setImageDrawable(Resource.getListFooterIcon_netProblem());
                 mTextView.setText(getContext().getString(R.string.netNotConnect));
                 break;
             case CONNECTOVERTIME:
-                mImageView.setImageDrawable(Global.getListFooterIcon_netProblem());
+                mImageView.setImageDrawable(Resource.getListFooterIcon_netProblem());
                 mTextView.setText(getContext().getString(R.string.connectOvertime));
                 break;
         }
@@ -91,18 +94,28 @@ public class ListViewFooter extends LinearLayout {
         mLoadCompleteLayout.setVisibility(View.VISIBLE);
     }
 
-    public void updateContent(@DrawableRes int imageResource, String text, boolean themeRenderImage ) {
-        mLoadingLayout.setVisibility(View.GONE);
-        mLoadCompleteLayout.setVisibility(View.VISIBLE);
-        mTextView.setText(text);
-        mImageView.setImageBitmap(DrawImage.draw(getContext(), imageResource, themeRenderImage));
+    public void updateContent(@DrawableRes int imageResource, String text, boolean needRender) {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), imageResource);
+        updateContent(bitmap, text, needRender);
     }
 
-    public void updateContent(Bitmap imageBitmap, String text, boolean themeRenderImage) {
+    public void updateContent(Bitmap bitmap, String text, boolean needRender) {
+        BitmapDrawable bitmapDrawable;
+        if (needRender) {
+            bitmapDrawable = DrawImage.draw(getContext(), bitmap);
+        } else {
+            bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
+        }
+        updateContent(bitmapDrawable, text, false);
+    }
+
+    public void updateContent(BitmapDrawable bitmapDrawable, String text, boolean needRender) {
         mLoadingLayout.setVisibility(View.GONE);
         mLoadCompleteLayout.setVisibility(View.VISIBLE);
         mTextView.setText(text);
-        if (themeRenderImage) imageBitmap = DrawImage.render(imageBitmap, Global.getMainColorMatrix());
-        mImageView.setImageBitmap(imageBitmap);
+        if (needRender) {
+            bitmapDrawable = DrawImage.draw(getContext(), bitmapDrawable.getBitmap());
+        }
+        mImageView.setImageDrawable(bitmapDrawable);
     }
 }

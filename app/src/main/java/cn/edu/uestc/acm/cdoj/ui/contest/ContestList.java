@@ -16,7 +16,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.R;
@@ -31,14 +30,14 @@ import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
 import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
 import cn.edu.uestc.acm.cdoj.ui.ItemDetailActivity;
 import cn.edu.uestc.acm.cdoj.ui.LoginActivity;
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.Resource;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
 
 /**
  * Created by great on 2016/8/17.
  */
 public class ContestList extends ListViewWithGestureLoad implements ConvertNetData {
-    private List<ContestListItemData> contestListItemDataList = new ArrayList<>();
+    private List<ContestListItemData> contestListItemDataList;
     private int clickPosition = -1;
     private int clickContestID = -1;
     private ProgressDialog contestLoginProgress;
@@ -49,6 +48,8 @@ public class ContestList extends ListViewWithGestureLoad implements ConvertNetDa
     private BaseAdapter mListAdapter;
     private PageInfo mPageInfo;
     private Context context;
+    private String key = "";
+    private int startId = 1;
 
     public ContestList(Context context) {
         this(context, null);
@@ -57,22 +58,19 @@ public class ContestList extends ListViewWithGestureLoad implements ConvertNetDa
     public ContestList(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
+        contestListItemDataList = new ArrayList<>();
         mListAdapter = new ContestListAdapter(context, contestListItemDataList);
-        setListAdapter(mListAdapter);
     }
 
     @Override
     public void onListRefresh() {
-        resetPullUpLoad();
-        contestListItemDataList.clear();
-        mListAdapter.notifyDataSetChanged();
-        NetDataPlus.getContestList(context, 1, ContestList.this);
+        refresh();
     }
 
     @Override
     public void onPullUpLoad() {
         if (mPageInfo != null) {
-            NetDataPlus.getContestList(context, mPageInfo.currentPage + 1, ContestList.this);
+            NetDataPlus.getContestList(context, mPageInfo.currentPage + 1, key, startId, ContestList.this);
         }
     }
 
@@ -90,7 +88,7 @@ public class ContestList extends ListViewWithGestureLoad implements ConvertNetDa
             showDetail();
             return;
         }
-        if (Global.getUser() == null) {
+        if (Resource.getUser() == null) {
             reminderUnLogin();
         } else {
             if (contestListItemDataList.get(position).getTypeName().equals("Private")) {
@@ -201,6 +199,9 @@ public class ContestList extends ListViewWithGestureLoad implements ConvertNetDa
     public void onNetDataConverted(Result result) {
         switch (result.getDataType()) {
             case NetData.CONTEST_LIST:
+                if (!hasAdapter()) {
+                    setListAdapter(mListAdapter);
+                }
                 if (result.getContent() != null) {
                     contestListItemDataList.addAll((List<ContestListItemData>) result.getContent());
                     mListAdapter.notifyDataSetChanged();
@@ -261,7 +262,7 @@ public class ContestList extends ListViewWithGestureLoad implements ConvertNetDa
     }
 
     private void showDetail() {
-        if (!Global.isTwoPane()) {
+        if (!Resource.isTwoPane()) {
             showDetailOnActivity();
         }
     }
@@ -294,5 +295,25 @@ public class ContestList extends ListViewWithGestureLoad implements ConvertNetDa
                     .create();
         }
         errorDialog.show();
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public void setStartId(int startId) {
+        this.startId = startId;
+    }
+
+    public void clear() {
+        resetPullUpLoad();
+        contestListItemDataList.clear();
+        mListAdapter.notifyDataSetChanged();
+    }
+
+    public void refresh() {
+        setRefreshing(true);
+        clear();
+        NetDataPlus.getContestList(context, 1, key, startId, ContestList.this);
     }
 }

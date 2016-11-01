@@ -16,7 +16,7 @@ import cn.edu.uestc.acm.cdoj.net.data.ArticleData;
  * Created by Grea on 2016/10/27.
  */
 
-public class NoticeAdapter extends BaseAdapter {
+class NoticeAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private List<ArticleData> articleDataList;
 
@@ -50,7 +50,7 @@ public class NoticeAdapter extends BaseAdapter {
         ((TextView) v.findViewById(R.id.notice_list_item_author))
                 .setText(articleData.getOwnerName());
         ((TextView) v.findViewById(R.id.notice_list_item_content))
-                .setText(articleData.contentWithoutLink);
+                .setText(articleData.summary);
         ((TextView) v.findViewById(R.id.notice_list_item_date))
                 .setText(articleData.timeString);
         ((TextView) v.findViewById(R.id.notice_list_item_title))

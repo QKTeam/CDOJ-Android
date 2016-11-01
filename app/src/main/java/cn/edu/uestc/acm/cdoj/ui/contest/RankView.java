@@ -6,13 +6,11 @@ import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -27,7 +25,7 @@ import cn.edu.uestc.acm.cdoj.net.data.RankProblemData;
 import cn.edu.uestc.acm.cdoj.net.data.RankReceive;
 import cn.edu.uestc.acm.cdoj.net.data.RankTeamUserData;
 import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.Resource;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
 
 /**
@@ -73,7 +71,6 @@ public class RankView extends ListViewWithGestureLoad implements ConvertNetData 
         compactorList = new ArrayList<>();
         solvedPercentList = new ArrayList<>();
         mListAdapter = new RankAdapter(context, compactorList);
-        setListAdapter(mListAdapter);
         setPullUpLoadEnable(false);
     }
 
@@ -137,7 +134,7 @@ public class RankView extends ListViewWithGestureLoad implements ConvertNetData 
                 for (RankTeamUserData teamUserData : compactor.getTeamUsers())
                     compactor.temUsersName = compactor.temUsersName + teamUserData.getName() + "; ";
             } else {
-                compactor.avatar = Global.getDefaultLogo();
+                compactor.avatar = Resource.getDefaultLogo();
             }
             compactor.solvedString = "solved:  " + compactor.getSolved();
             compactor.triedString = "tried:  " + compactor.getTried();
@@ -170,6 +167,9 @@ public class RankView extends ListViewWithGestureLoad implements ConvertNetData 
     public void onNetDataConverted(Result result) {
         switch (result.getDataType()) {
             case NetData.CONTEST_RANK:
+                if (!hasAdapter()) {
+                    setListAdapter(mListAdapter);
+                }
                 if (result.getContent() != null) {
                     compactorList.clear();
                     compactorList.addAll((List<RankCompactorData>) result.getContent());
@@ -232,6 +232,7 @@ public class RankView extends ListViewWithGestureLoad implements ConvertNetData 
 
     public RankView refresh(int contestId) {
         if (contestId > 0) {
+            setRefreshing(true);
             clear();
             NetDataPlus.getContestRank(context, contestId, this);
         } else {

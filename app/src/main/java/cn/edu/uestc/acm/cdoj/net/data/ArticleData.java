@@ -18,7 +18,7 @@ public class ArticleData implements Serializable{
     private String title;
 
     public String jsonString;
-    public String contentWithoutLink;
+    public String summary;
     public String timeString;
 
     public int getArticleId() {
