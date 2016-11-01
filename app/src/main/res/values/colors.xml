@@ -36,4 +36,6 @@
     <color name="contestStatus_Running">#00FF00</color>
     <color name="transparent">#00000000</color>
     <color name="transparentHalf">#30000000</color>
+
+    <color name="user_info_item_divider">#E0E0E0</color>
 </resources>

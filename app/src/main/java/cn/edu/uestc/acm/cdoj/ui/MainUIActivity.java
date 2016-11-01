@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.res.ResourcesCompat;
@@ -14,9 +15,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -183,6 +187,18 @@ public class  MainUIActivity extends AppCompatActivity {
                 this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         toggle.syncState();
         mDrawerLayout.addDrawerListener(toggle);
+
+        NavigationView a;
+        mNavigationView.setNavigationItemSelectedListener( new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if (item.getItemId() == R.id.nav_user){
+                    Log.d("nav_item", "onNavigationItemSelected: ");
+                    startUserActivity();
+                }
+                return true;
+            }
+        });
     }
 
     private void setupSearchView() {
@@ -349,5 +365,9 @@ public class  MainUIActivity extends AppCompatActivity {
         /*ImageView bgImageView = (ImageView) findViewById(R.id.main_detail_bg);
         float[] colorMatrix = RGBAColor.getColorMatrixWithPercentAlpha(0, 0, 0, 0.7f, true);
         bgImageView.setImageBitmap(DrawImage.draw(this, R.drawable.logo_orange, colorMatrix));*/
+    }
+    private void startUserActivity(){
+        Intent intent = new Intent(this,AboutMeActivity.class);
+        startActivity(intent);
     }
 }
