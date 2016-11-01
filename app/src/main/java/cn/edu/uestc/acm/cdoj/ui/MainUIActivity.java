@@ -6,7 +6,9 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
@@ -15,9 +17,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -208,6 +213,16 @@ public class MainUIActivity extends AppCompatActivity {
         mDrawerLayout.addDrawerListener(toggle);
 
         NavigationView a;
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if (item.getItemId() == R.id.nav_user){
+                    Log.d("nav_item", "onNavigationItemSelected: ");
+                    startUserActivity();
+                }
+                return true;
+            }
+        });
     }
 
     private void setupSearchView() {
@@ -491,4 +506,9 @@ public class MainUIActivity extends AppCompatActivity {
         }
         return null;
     }
+    private void startUserActivity(){
+        Intent intent = new Intent(this,AboutMeActivity.class);
+        startActivity(intent);
+    }
+
 }
