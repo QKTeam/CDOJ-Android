@@ -6,11 +6,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-<<<<<<< HEAD
 import android.support.design.widget.Snackbar;
 import android.util.Log;
-=======
->>>>>>> 045a8b9f794724df03b3b470135b280400ed5180
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;

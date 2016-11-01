@@ -4,15 +4,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-<<<<<<< HEAD
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-=======
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
->>>>>>> 045a8b9f794724df03b3b470135b280400ed5180
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
@@ -193,10 +187,9 @@ public class  MainUIActivity extends AppCompatActivity {
                 this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         toggle.syncState();
         mDrawerLayout.addDrawerListener(toggle);
-<<<<<<< HEAD
 
         NavigationView a;
-        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        mNavigationView.setNavigationItemSelectedListener( new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if (item.getItemId() == R.id.nav_user){
@@ -206,8 +199,6 @@ public class  MainUIActivity extends AppCompatActivity {
                 return true;
             }
         });
-=======
->>>>>>> 045a8b9f794724df03b3b470135b280400ed5180
     }
 
     private void setupSearchView() {
@@ -375,89 +366,8 @@ public class  MainUIActivity extends AppCompatActivity {
         float[] colorMatrix = RGBAColor.getColorMatrixWithPercentAlpha(0, 0, 0, 0.7f, true);
         bgImageView.setImageBitmap(DrawImage.draw(this, R.drawable.logo_orange, colorMatrix));*/
     }
-<<<<<<< HEAD
-
-    private void setupBottomButton() {
-        ImageButton buttonNotice = (ImageButton) findViewById(R.id.ui_main_button_notice);
-        bottomButtons[0] = buttonNotice;
-        buttonNotice.setImageBitmap(getIcon(NOTICELIST, SELECT));
-        buttonNotice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeButtonColor(NOTICELIST);
-                mViewPager.setCurrentItem(NOTICELIST);
-            }
-        });
-
-        ImageButton buttonProblem = (ImageButton) findViewById(R.id.ui_main_button_problem);
-        bottomButtons[1] = buttonProblem;
-        buttonProblem.setImageBitmap(getIcon(PROBLEMLIST, NOTSELECT));
-        buttonProblem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeButtonColor(PROBLEMLIST);
-                mViewPager.setCurrentItem(PROBLEMLIST);
-            }
-        });
-
-        ImageButton buttonContest = (ImageButton) findViewById(R.id.ui_main_button_contest);
-        bottomButtons[2] = buttonContest;
-        buttonContest.setImageBitmap(getIcon(CONTESTLIST, NOTSELECT));
-        buttonContest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeButtonColor(CONTESTLIST);
-                mViewPager.setCurrentItem(CONTESTLIST);
-            }
-        });
-    }
-
-    private void changeButtonColor(@list int currentPage) {
-        for (int page : listInts) {
-            if (page == currentPage) {
-                bottomButtons[page].setImageBitmap(getIcon(page, SELECT));
-                continue;
-            }
-            bottomButtons[page].setImageBitmap(getIcon(page, NOTSELECT));
-        }
-    }
-
-    private Bitmap getIcon(@list int whichButton, @selectStatus int selectStatus) {
-        switch (whichButton) {
-            case NOTICELIST:
-                switch (selectStatus) {
-                    case SELECT:
-                        return DrawImage.draw(this, R.drawable.ic_list_notice_selected, true);
-                    case NOTSELECT:
-                        return DrawImage.draw(this, R.drawable.ic_list_notice, true);
-                }
-                break;
-
-            case PROBLEMLIST:
-                switch (selectStatus) {
-                    case SELECT:
-                        return DrawImage.draw(this, R.drawable.ic_list_problem_selected, true);
-                    case NOTSELECT:
-                        return DrawImage.draw(this, R.drawable.ic_list_problem, true);
-                }
-                break;
-
-            case CONTESTLIST:
-                switch (selectStatus) {
-                    case SELECT:
-                        return DrawImage.draw(this, R.drawable.ic_list_contestt_selected, true);
-                    case NOTSELECT:
-                        return DrawImage.draw(this, R.drawable.ic_list_contest, true);
-                }
-                break;
-        }
-        return null;
-    }
     private void startUserActivity(){
         Intent intent = new Intent(this,AboutMeActivity.class);
         startActivity(intent);
     }
-
-=======
->>>>>>> 045a8b9f794724df03b3b470135b280400ed5180
 }
