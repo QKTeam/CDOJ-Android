@@ -2,11 +2,13 @@ package cn.edu.uestc.acm.cdoj.ui.modules.list;
 
 import android.os.Parcel;
 
+import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
+
 /**
  * Created by Grea on 2016/10/13.
  */
 
-public class SearchHistory implements com.arlib.floatingsearchview.suggestions.model.SearchSuggestion {
+public class SearchHistory implements SearchSuggestion {
 
     private String mSearchSuggestion;
     private boolean mIsHistory = false;

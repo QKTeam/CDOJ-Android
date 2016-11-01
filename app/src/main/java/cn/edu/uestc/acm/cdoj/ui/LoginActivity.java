@@ -21,9 +21,8 @@ import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.ConvertNetData;
 import cn.edu.uestc.acm.cdoj.net.NetData;
 import cn.edu.uestc.acm.cdoj.net.NetDataPlus;
-import cn.edu.uestc.acm.cdoj.net.NetHandler;
 import cn.edu.uestc.acm.cdoj.net.Result;
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.Resource;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.FlyMeUtils;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.MIUIUtils;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.StatusBarUtil;
@@ -85,7 +84,7 @@ public class LoginActivity extends AppCompatActivity implements ConvertNetData{
                             finish();
                         }
                     });
-                Global.setUser(new User(username,passwordSHA1));
+                Resource.setUser(new User(username,passwordSHA1));
                 break;
 
             case Result.FALSE:
@@ -102,7 +101,7 @@ public class LoginActivity extends AppCompatActivity implements ConvertNetData{
     }
 
     private void saveUserInfo() {
-        File file = new File(Global.getFilesDirPath() + "user");
+        File file = new File(Resource.getFilesDirPath() + "user");
         if (file.exists()) file.delete();
         try {
             file.createNewFile();

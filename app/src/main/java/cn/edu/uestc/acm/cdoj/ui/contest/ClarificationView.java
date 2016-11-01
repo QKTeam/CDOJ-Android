@@ -15,7 +15,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.R;
@@ -27,7 +26,7 @@ import cn.edu.uestc.acm.cdoj.net.data.ClarificationData;
 import cn.edu.uestc.acm.cdoj.net.data.ListReceive;
 import cn.edu.uestc.acm.cdoj.net.data.PageInfo;
 import cn.edu.uestc.acm.cdoj.tools.TimeFormat;
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.Resource;
 import cn.edu.uestc.acm.cdoj.ui.modules.detail.DetailWebView;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.ListViewWithGestureLoad;
 
@@ -68,7 +67,6 @@ public class ClarificationView extends ListViewWithGestureLoad implements Conver
     private void init() {
         clarificationDataList = new ArrayList<>();
         mListAdapter = new ClarificationAdapter(context, clarificationDataList);
-        setListAdapter(mListAdapter);
     }
 
     @Override
@@ -132,7 +130,7 @@ public class ClarificationView extends ListViewWithGestureLoad implements Conver
             clarificationData.jsonString = JSON.toJSONString(clarificationData);
             clarificationData.contentWithoutLink = clarificationData.getContent().replaceAll("!\\[title].*\\)", "[图片]");
             clarificationData.timeString = TimeFormat.getFormatDate(clarificationData.getTime());
-            clarificationData.avatar = Global.getDefaultLogo();
+            clarificationData.avatar = Resource.getDefaultLogo();
         }
         return clarificationDataListTem;
     }
@@ -141,6 +139,9 @@ public class ClarificationView extends ListViewWithGestureLoad implements Conver
     public void onNetDataConverted(Result result) {
         switch (result.getDataType()) {
             case NetData.CONTEST_COMMENT:
+                if (!hasAdapter()) {
+                    setListAdapter(mListAdapter);
+                }
                 if (result.getContent() != null) {
                     int lastCount = clarificationDataList.size();
                     clarificationDataList.addAll((List<ClarificationData>) result.getContent());
@@ -194,6 +195,7 @@ public class ClarificationView extends ListViewWithGestureLoad implements Conver
 
     public ClarificationView refresh(int contestId) {
         if (contestId > 0) {
+            setRefreshing(true);
             clear();
             NetDataPlus.getContestComment(context, contestId, 1, ClarificationView.this);
         } else {

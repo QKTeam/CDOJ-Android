@@ -14,7 +14,7 @@ import java.util.List;
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.data.RankCompactorData;
 import cn.edu.uestc.acm.cdoj.net.data.RankCompactorProblemData;
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.Resource;
 
 /**
  * Created by Grea on 2016/10/27.
@@ -86,16 +86,16 @@ public class RankAdapter extends BaseAdapter {
             TextView orderText = (TextView) problemsLayout.getChildAt(i);
             switch (problem.solvedStatus) {
                 case RankView.THEFIRSTSOLVED:
-                    orderText.setBackground(Global.getRankIcon_theFirstSolved());
+                    orderText.setBackground(Resource.getRankIcon_theFirstSolved());
                     break;
                 case RankView.SOLVED:
-                    orderText.setBackground(Global.getRankIcon_solved());
+                    orderText.setBackground(Resource.getRankIcon_solved());
                     break;
                 case RankView.TRIED:
-                    orderText.setBackground(Global.getRankIcon_tried());
+                    orderText.setBackground(Resource.getRankIcon_tried());
                     break;
                 default:
-                    orderText.setBackground(Global.getRankIcon_didNothing());
+                    orderText.setBackground(Resource.getRankIcon_didNothing());
             }
         }
         v.setTag(position);

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
@@ -13,9 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.tools.DrawImage;
-import cn.edu.uestc.acm.cdoj.tools.RGBAColor;
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.Resource;
 
 /**
  * Created by Grea on 2016/10/7.
@@ -28,6 +25,7 @@ public class ListViewWithGestureLoad extends LinearLayout {
     private boolean pullUpLoadEnable = true;
     private LinearLayout mProgressContainer;
     private ListView mListView;
+    private BaseAdapter mAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ListViewFooter mListViewFooter;
     private ImageButton upButton;
@@ -58,7 +56,7 @@ public class ListViewWithGestureLoad extends LinearLayout {
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.list_view_with_gesture_load_swipeRefresh);
 
         upButton = (ImageButton) findViewById(R.id.list_view_with_gesture_up);
-        upButton.setImageDrawable(Global.getListIcon_up());
+        upButton.setImageDrawable(Resource.getListIcon_up());
         upButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,6 +122,8 @@ public class ListViewWithGestureLoad extends LinearLayout {
     }
 
     public void setListAdapter(BaseAdapter adapter) {
+        if (adapter == null) return;
+        this.mAdapter = adapter;
         mProgressContainer.setVisibility(GONE);
         mListView.setAdapter(adapter);
     }
@@ -140,12 +140,20 @@ public class ListViewWithGestureLoad extends LinearLayout {
         this.onItemClickListener = listener;
     }
 
+    public void setRefreshing(boolean refreshing) {
+        mSwipeRefreshLayout.setRefreshing(refreshing);
+    }
+
     public void setRefreshEnable(boolean enable) {
         mSwipeRefreshLayout.setEnabled(enable);
     }
 
     public void setPullUpLoadEnable(boolean enable) {
         pullUpLoadEnable = enable;
+    }
+
+    public boolean hasAdapter() {
+        return mAdapter != null;
     }
 
     public void setOnItemClickEnable(boolean enable) {

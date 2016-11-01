@@ -36,7 +36,7 @@
     <string name="yes">是</string>
     <string name="no">否</string>
     <string name="search">搜索…</string>
-    <string name="searchWithId">搜索(可使用\"#\"+题号)…</string>
+    <string name="searchWithId">搜索(可使用\"#\"+ID)…</string>
     <string name="reminderLoginError">密码错误或者您无权查看该比赛！</string>
     <string name="passwordIsWrong">密码错误，请重新输入！</string>
     <string name="noPermission">您无查看该比赛的相关权限！</string>

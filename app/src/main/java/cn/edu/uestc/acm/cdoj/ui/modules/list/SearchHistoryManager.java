@@ -1,18 +1,21 @@
 package cn.edu.uestc.acm.cdoj.ui.modules.list;
 
-import android.content.Context;
-import android.provider.Settings;
 import android.util.Log;
 import android.widget.Filter;
+
+import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
+import cn.edu.uestc.acm.cdoj.Resource;
+
 
 /**
  * Created by Grea on 2016/10/13.
@@ -20,13 +23,15 @@ import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 
 public class SearchHistoryManager {
 
+    static String TAG = "历史记录";
+
     public static void deleteSuggestionFile(String type) {
-        File file = new File(Global.getFilesDirPath() + type + "Suggestion");
+        File file = new File(Resource.getFilesDirPath() + type + "Suggestion");
         file.delete();
     }
 
-    public static void addSuggestion(String type, ArrayList<SearchHistory> searchHistoryList, boolean clearHistory) {
-        File file = new File(Global.getFilesDirPath() + type + "Suggestion");
+    public static void addSuggestion(String type, List<SearchSuggestion> searchHistoryList, boolean clearHistory) {
+        File file = new File(Resource.getFilesDirPath() + type + "Suggestion");
         if (clearHistory) {
             file.delete();
         }
@@ -35,9 +40,9 @@ public class SearchHistoryManager {
                 if (!file.createNewFile()) return;
             }
             FileWriter writer = new FileWriter(file);
-            for (SearchHistory searchHistory : searchHistoryList) {
+            for (SearchSuggestion searchHistory : searchHistoryList) {
                 writer.write(searchHistory.getBody() + "\n");
-                writer.flush();
+                writer.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -45,33 +50,38 @@ public class SearchHistoryManager {
     }
 
     public static void addSuggestion(String type, String searchString) {
-        File file = new File(Global.getFilesDirPath() + type + "Suggestion");
+        File file = new File(Resource.getFilesDirPath() + type + "Suggestion");
         try {
             if (!file.exists()) {
                 if (!file.createNewFile()) return;
             }
             FileWriter writer = new FileWriter(file);
             writer.write(searchString + "\n");
-            writer.flush();
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
-    public static ArrayList<SearchHistory> getAllHistories(String type) {
-        return getHistories(type, 10);
-    }
-
-    public static ArrayList<SearchHistory> getHistories(String type, int count) {
-        if (count > 10) count = 10;
-        ArrayList<SearchHistory> suggestionList = new ArrayList<>();
-        File file = new File(Global.getFilesDirPath() + type + "Suggestion");
+    public static List<SearchSuggestion> getAllHistories(String type) {
+        List<SearchSuggestion> suggestionList = new ArrayList<>();
+        File file = new File(Resource.getFilesDirPath() + type + "Suggestion");
         if (!file.exists()) return suggestionList;
         try {
             Scanner input = new Scanner(file);
-            for (int i = 0; i < count && input.hasNextLine(); ++i) {
-                suggestionList.add(new SearchHistory(input.nextLine()));
+            while (input.hasNextLine()) {
+                String tem = input.nextLine();
+                Log.d(TAG, "getAllHistories: " + tem);
+                suggestionList.add(new SearchHistory(tem));
+            }
+            input.close();
+            if (suggestionList.size() > 10) {
+                List<SearchSuggestion> tem = suggestionList;
+                suggestionList = new ArrayList<>();
+                for (int i = tem.size()-10; i < tem.size(); i++) {
+                    suggestionList.add(tem.get(i));
+                }
+                addSuggestion(type, suggestionList, true);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -79,7 +89,7 @@ public class SearchHistoryManager {
         return suggestionList;
     }
 
-    public static void findMatchHistories(final ArrayList<SearchHistory> searchHistories, final String str,
+    public static void findMatchHistories(final List<SearchSuggestion> searchHistories, final String str,
                                           final int maxCount, final OnFindHistoriesListener listener) {
         new Filter() {
             @Override
@@ -89,8 +99,8 @@ public class SearchHistoryManager {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                ArrayList<SearchHistory> result = new ArrayList<>();
-                for (SearchHistory searchHistory : searchHistories) {
+                List<SearchSuggestion> result = new ArrayList<>();
+                for (SearchSuggestion searchHistory : searchHistories) {
                     if (searchHistory.getBody().startsWith(str)) {
                         result.add(searchHistory);
                         if (result.size() >= maxCount) {
@@ -107,13 +117,13 @@ public class SearchHistoryManager {
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 if (listener != null) {
-                    listener.onResults((ArrayList<SearchHistory>)results.values);
+                    listener.onResults((List<SearchSuggestion>)results.values);
                 }
             }
         }.filter(str);
     }
 
     public interface OnFindHistoriesListener {
-        void onResults(ArrayList<SearchHistory> results);
+        void onResults(List<SearchSuggestion> results);
     }
 }

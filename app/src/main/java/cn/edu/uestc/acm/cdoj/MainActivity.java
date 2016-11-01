@@ -6,8 +6,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+<<<<<<< HEAD
 import android.support.design.widget.Snackbar;
 import android.util.Log;
+=======
+>>>>>>> 045a8b9f794724df03b3b470135b280400ed5180
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -26,11 +29,10 @@ import cn.edu.uestc.acm.cdoj.net.Result;
 import cn.edu.uestc.acm.cdoj.tools.DrawImage;
 import cn.edu.uestc.acm.cdoj.tools.RGBAColor;
 import cn.edu.uestc.acm.cdoj.ui.MainUIActivity;
-import cn.edu.uestc.acm.cdoj.ui.modules.Global;
 import cn.edu.uestc.acm.cdoj.ui.modules.list.SearchHistoryManager;
 import cn.edu.uestc.acm.cdoj.ui.user.User;
 
-public class MainActivity extends Activity implements ConvertNetData{
+public class MainActivity extends Activity implements ConvertNetData {
 
     String TAG = "MainActivity";
 
@@ -42,13 +44,12 @@ public class MainActivity extends Activity implements ConvertNetData{
 //        setupLaunchCartoon();
         setupDefaultColorMatrix();
         readHTMLFile();
-        setupRankProblemIcons();
-        setupListFooterIcons();
+        setupIcon();
         readSearchHistoriesFile();
-        Global.setDefaultLogo(new BitmapDrawable(getResources(),
+        Resource.setDefaultLogo(new BitmapDrawable(getResources(),
                 BitmapFactory.decodeResource(getResources(), R.drawable.logo)));
-        Global.setFilesDirPath(getFilesDir() + File.separator);
-        Global.setCacheDirPath(getCacheDir() + File.separator);
+        Resource.setFilesDirPath(getFilesDir() + File.separator);
+        Resource.setCacheDirPath(getCacheDir() + File.separator);
         loadLocalUser();
     }
 
@@ -71,87 +72,95 @@ public class MainActivity extends Activity implements ConvertNetData{
             input = getResources().getAssets().open("articleRender.html");
             in = new byte[input.available()];
             input.read(in);
-            Global.setHtmldataArticle(new String(in));
+            Resource.setHtmlData_article(new String(in));
 
             input = getResources().getAssets().open("problemRender.html");
             in = new byte[input.available()];
             input.read(in);
-            Global.setHtmldataProblem(new String(in));
+            Resource.setHtmlData_problem(new String(in));
 
             input = getResources().getAssets().open("contestOverviewRender.html");
             in = new byte[input.available()];
             input.read(in);
-            Global.setHtmldataContest(new String(in));
+            Resource.setHtmlData_contest(new String(in));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void setupDefaultColorMatrix() {
-        Global.setMainColorMatrix(new float[]{
+        Resource.setMainColorMatrix(new float[]{
                 0, 0, 0, 0, 255,
                 0, 0, 0, 0, 166,
                 0, 0, 0, 0, 0,
                 0, 0, 0, 1, 0});
     }
 
-    private void setupRankProblemIcons() {
-        Global.setRankIcon_didNothing(new BitmapDrawable(getResources(),
-                DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
-                        RGBAColor.getColorMatrix(this, R.color.rank_didNothing, false))));
-
-        Global.setRankIcon_tried(new BitmapDrawable(getResources(),
-                DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
-                        RGBAColor.getColorMatrix(this, R.color.rank_tried, false))));
-
-        Global.setRankIcon_solved(new BitmapDrawable(getResources(),
-                DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
-                        RGBAColor.getColorMatrix(this, R.color.rank_solved, false))));
-
-        Global.setRankIcon_theFirstSolved(new BitmapDrawable(getResources(),
-                DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
-                        RGBAColor.getColorMatrix(this, R.color.rank_theFirstSolved, false))));
+    private void setupIcon() {
+        setupMainListTabIcons();
+        setupGestureLoadListIcons();
+        setupRankProblemIcons();
+        setupProblemButtonIcons();
     }
 
-    private void setupListFooterIcons() {
-        Global.setListIcon_up(new BitmapDrawable(getResources(),
-                DrawImage.draw(this, R.drawable.ic_arrow_upward_white_48dp,
-                RGBAColor.getColorMatrixWithPercentAlpha(this, R.color.main_yellow, 0.5f, false))));
+    private void setupMainListTabIcons() {
+        Resource.setNoticeListIcon_selected(DrawImage.draw(this, R.drawable.ic_list_notice_selected));
+        Resource.setNoticeListIcon_unselect(DrawImage.draw(this, R.drawable.ic_list_notice_unselect));
+        Resource.setProblemListIcon_selected(DrawImage.draw(this, R.drawable.ic_list_problem_selected));
+        Resource.setProblemListIcon_unselect(DrawImage.draw(this, R.drawable.ic_list_problem_unselect));
+        Resource.setContestListIcon_selected(DrawImage.draw(this, R.drawable.ic_list_contestt_selected));
+        Resource.setContestListIcon_unselect(DrawImage.draw(this, R.drawable.ic_list_contest_unselect));
+    }
 
-        Global.setListFooterIcon_noData(new BitmapDrawable(getResources(),
-                DrawImage.draw(this, R.drawable.ic_notifications_none_white_36dp, true)));
+    private void setupRankProblemIcons() {
+        Resource.setRankIcon_didNothing(DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
+                RGBAColor.getColorMatrix(this, R.color.rank_didNothing, false)));
 
-        Global.setListFooterIcon_problem(new BitmapDrawable(getResources(),
-                DrawImage.draw(this, R.drawable.ic_sync_problem_white, true)));
+        Resource.setRankIcon_tried(DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
+                RGBAColor.getColorMatrix(this, R.color.rank_tried, false)));
 
-        Global.setListFooterIcon_done(new BitmapDrawable(getResources(),
-                DrawImage.draw(this, R.drawable.ic_done_white, true)));
+        Resource.setRankIcon_solved(DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
+                RGBAColor.getColorMatrix(this, R.color.rank_solved, false)));
 
-        Global.setListFooterIcon_netProblem(new BitmapDrawable(getResources(),
-                DrawImage.draw(this, R.drawable.ic_sync_disabled_white, true)));
+        Resource.setRankIcon_theFirstSolved(DrawImage.draw(this, R.drawable.contest_rank_mark_bg_white,
+                RGBAColor.getColorMatrix(this, R.color.rank_theFirstSolved, false)));
+    }
+
+    private void setupGestureLoadListIcons() {
+        Resource.setListIcon_up(DrawImage.draw(this, R.drawable.ic_arrow_upward_white_48dp,
+                RGBAColor.getColorMatrixWithPercentAlpha(this, R.color.main_yellow, 0.5f, false)));
+
+        Resource.setListFooterIcon_noData(DrawImage.draw(this, R.drawable.ic_notifications_none_white_36dp));
+        Resource.setListFooterIcon_problem(DrawImage.draw(this, R.drawable.ic_sync_problem_white));
+        Resource.setListFooterIcon_done(DrawImage.draw(this, R.drawable.ic_done_white));
+        Resource.setListFooterIcon_netProblem(DrawImage.draw(this, R.drawable.ic_sync_disabled_white));
+    }
+
+    private void setupProblemButtonIcons() {
+        Resource.setProblemIcon_addCode(DrawImage.draw(this, R.drawable.ic_create_white_48dp));
+        Resource.setProblemIcon_checkResult(DrawImage.draw(this, R.drawable.ic_flag_white_48dp));
     }
 
     private void readSearchHistoriesFile() {
-        Global.setProblemSearchHistory(SearchHistoryManager.getAllHistories("problem"));
+        Resource.setProblemSearchHistory(SearchHistoryManager.getAllHistories("problem"));
 
-        Global.setContestSearchHistory(SearchHistoryManager.getAllHistories("contest_button_container"));
+        Resource.setContestSearchHistory(SearchHistoryManager.getAllHistories("contest"));
     }
 
     private void loadLocalUser() {
-        File file = new File(Global.getFilesDirPath() + "user");
+        File file = new File(Resource.getFilesDirPath() + "user");
         if (!file.exists()) {
             finish();
             return;
         }
         try {
             Scanner input = new Scanner(file);
-            Global.setUser(new User(input.nextLine(), input.nextLine()));
+            Resource.setUser(new User(input.nextLine(), input.nextLine()));
             input.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        Log.d(TAG, "loadLocalUser: "+Global.getUser().getUserName()+"  "+Global.getUser().getPasswordSHA1());
-        NetDataPlus.login(this, Global.getUser().getUserName(), Global.getUser().getPasswordSHA1(), true, this);
+        NetDataPlus.login(this, Resource.getUser().getUserName(), Resource.getUser().getPasswordSHA1(), true, this);
     }
 
     @NonNull
