@@ -105,7 +105,7 @@ public class MainActivity extends Activity implements ConvertNetData {
         Resource.setNoticeListIcon_unselect(DrawImage.draw(this, R.drawable.ic_list_notice_unselect));
         Resource.setProblemListIcon_selected(DrawImage.draw(this, R.drawable.ic_list_problem_selected));
         Resource.setProblemListIcon_unselect(DrawImage.draw(this, R.drawable.ic_list_problem_unselect));
-        Resource.setContestListIcon_selected(DrawImage.draw(this, R.drawable.ic_list_contestt_selected));
+        Resource.setContestListIcon_selected(DrawImage.draw(this, R.drawable.ic_list_contest_selected));
         Resource.setContestListIcon_unselect(DrawImage.draw(this, R.drawable.ic_list_contest_unselect));
     }
 

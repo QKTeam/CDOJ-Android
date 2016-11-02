@@ -1,7 +1,5 @@
 package cn.edu.uestc.acm.cdoj.net.data;
 
-import org.json.JSONObject;
-
 import java.util.Map;
 
 /**

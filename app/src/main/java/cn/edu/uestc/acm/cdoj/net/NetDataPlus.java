@@ -2,12 +2,8 @@ package cn.edu.uestc.acm.cdoj.net;
 
 import android.content.Context;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 /**
- * CObject extra, reated by Grea on 2016/10/21.
+ * CObject extra, created by Grea on 2016/10/21.
  */
 
 public class NetDataPlus {

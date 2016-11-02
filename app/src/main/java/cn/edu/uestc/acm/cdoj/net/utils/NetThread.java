@@ -1,12 +1,7 @@
 package cn.edu.uestc.acm.cdoj.net.utils;
 
-import android.os.Looper;
-import android.util.Log;
-
-import java.security.PublicKey;
 import java.util.ArrayList;
-import java.util.Objects;
-import java.util.logging.Handler;
+import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.net.NetHandler;
 
@@ -15,17 +10,16 @@ import cn.edu.uestc.acm.cdoj.net.NetHandler;
  */
 
 public class NetThread extends Thread {
-    private ArrayList<NetHandler> taskList = new ArrayList<>();
-    public final static Object lock = new Object();
+    private final List<NetHandler> taskList = new ArrayList<>();
 
     String TAG = "网络线程";
     @Override
     public void run() {
         while (true) {
             if (taskList.size() == 0) {
-                synchronized (lock) {
+                synchronized (taskList) {
                     try {
-                        lock.wait();
+                        taskList.wait();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -40,8 +34,8 @@ public class NetThread extends Thread {
 
     public void addTask(NetHandler handler) {
         taskList.add(handler);
-        synchronized (lock) {
-            lock.notify();
+        synchronized (taskList) {
+            taskList.notify();
         }
     }
 }

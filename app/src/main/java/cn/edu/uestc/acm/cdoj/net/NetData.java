@@ -100,17 +100,12 @@ public class NetData {
                          String school, int departmentId, int grade,
                          String studentId, Object extra, ConvertNetData convertNetData) {
 
-        String key[] = new String[]{
-                "userName", "password", "passwordRepeat",
-                "nickName", "email", "motto", "name", "sex",
-                "size", "phone", "school", "departmentId",
+        String key[] = new String[]{"userName", "password", "passwordRepeat", "nickName",
+                "email", "motto", "name", "sex", "size", "phone", "school", "departmentId",
                 "grade", "studentId"};
-        Object o[] = new Object[]{
-                userName, password, passwordRepeat,
-                nickName, email, motto, name, sex,
-                size, phone, school, departmentId,
-                grade, studentId};
-        post(context, REGISTER, getJsonString(key, o), registerUrl, extra, convertNetData);
+        Object value[] = new Object[]{userName, password, passwordRepeat, nickName, email,
+                motto, name, sex, size, phone, school, departmentId, grade, studentId};
+        post(context, REGISTER, getJsonString(key, value), registerUrl, extra, convertNetData);
     }
 
     static void getAvatar(final Context context, final String email, final Object extra, final ConvertNetData convertNetData) {
