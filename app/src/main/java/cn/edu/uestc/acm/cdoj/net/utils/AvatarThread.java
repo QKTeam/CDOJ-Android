@@ -33,9 +33,8 @@ public class AvatarThread extends Thread {
         BitmapDrawable avatar = new BitmapDrawable(handler.getContext().getResources(),
                 new ByteArrayInputStream(avatarBytes));
         handler.setContent(avatar);
-        handler.sendEmptyMessage(NetHandler.AFTERCONVERT); //没起作用
+        handler.sendEmptyMessage(NetHandler.AFTERCONVERT);
 
-        Log.d(TAG, "run: 获取头像完成  " + handler.getUrlString());
         saveAvatar(avatarBytes, email);
 
         if (AvatarTaskManager.avatarThreadList_wait.size() != 0) {
@@ -47,7 +46,6 @@ public class AvatarThread extends Thread {
             }
         }
         AvatarTaskManager.avatarThreadList_run.remove(this);
-        Log.d(TAG, "run: 线程结束");
     }
 
     private void saveAvatar(byte[] avatarBytes, String email) {

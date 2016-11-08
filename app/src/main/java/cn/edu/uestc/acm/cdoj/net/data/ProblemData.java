@@ -1,7 +1,5 @@
 package cn.edu.uestc.acm.cdoj.net.data;
 
-import java.util.Map;
-
 /**
  * Created by Grea on 2016/10/25.
  */

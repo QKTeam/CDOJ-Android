@@ -1,23 +1,17 @@
 package cn.edu.uestc.acm.cdoj.net.utils;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Scanner;
 
 /**
  * Created by Grea on 2016/10/23.
