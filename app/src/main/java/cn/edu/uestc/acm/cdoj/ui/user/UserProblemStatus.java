@@ -42,7 +42,7 @@ public class UserProblemStatus extends LinearLayout {
 
         recyclerView = (RecyclerView) findViewById(R.id.RecyclerView_status);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(),5));
-        recyclerView.setAdapter(new UserProlemStatusAdapter(getContext(), (ArrayList<String>) mData));
+        recyclerView.setAdapter(new UserProblemStatusAdapter(getContext(), (ArrayList<String>) mData));
     }
     private void initData() {
         mData = new ArrayList<String>();

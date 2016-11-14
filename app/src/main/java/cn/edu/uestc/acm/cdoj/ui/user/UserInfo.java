@@ -31,7 +31,7 @@ public class UserInfo extends LinearLayout {
     private AppBarLayout appBarLayout;
     private CollapsingToolbarLayout collapsingToolbarLayout;
 
-    public UserInfo(Context context) {
+    public UserInfo(Context context,User user) {
         super(context);
         initView();
     }

@@ -14,6 +14,7 @@ import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.FlyMeUtils;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.MIUIUtils;
 import cn.edu.uestc.acm.cdoj.ui.statusBar.StatusBarUtil;
+import cn.edu.uestc.acm.cdoj.ui.user.User;
 import cn.edu.uestc.acm.cdoj.ui.user.UserInfo;
 
 /**
@@ -22,6 +23,7 @@ import cn.edu.uestc.acm.cdoj.ui.user.UserInfo;
 
 public class AboutMeActivity extends AppCompatActivity {
     private LinearLayout container;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,14 +31,9 @@ public class AboutMeActivity extends AppCompatActivity {
         setContentView(R.layout.user_info_container);
         setupSystemBar();
         container = (LinearLayout) findViewById(R.id.container_user_info);
-        container.addView(new UserInfo(this));
+        container.addView(new UserInfo(this,user));
     }
 
-
-    public void showProblemStatus(View view) {
-        Intent intent = new Intent(this,UserProblemStatusActivity.class);
-        startActivity(intent);
-    }
     private void setupSystemBar() {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 

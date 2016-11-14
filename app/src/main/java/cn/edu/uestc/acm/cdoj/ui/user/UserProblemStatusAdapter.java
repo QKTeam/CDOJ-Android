@@ -18,12 +18,12 @@ import cn.edu.uestc.acm.cdoj.R;
  * Created by 13662 on 2016/11/1.
  */
 
-public class UserProlemStatusAdapter extends RecyclerView.Adapter<UserProlemStatusAdapter.VH> {
+public class UserProblemStatusAdapter extends RecyclerView.Adapter<UserProblemStatusAdapter.VH> {
     private List<String> dataList;
     private Context context;
 
-    public UserProlemStatusAdapter(Context context, ArrayList<String> datas) {
-        this.dataList = datas;
+    public UserProblemStatusAdapter(Context context, ArrayList<String> data) {
+        this.dataList = data;
         this.context = context;
     }
 

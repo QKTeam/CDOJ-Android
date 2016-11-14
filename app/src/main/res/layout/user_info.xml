@@ -3,10 +3,12 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:fitsSystemWindows="true">
 
         <android.support.design.widget.AppBarLayout
@@ -14,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:fitsSystemWindows="true"
-            android:background="#FFFFFF"
+            android:background="@color/colorPrimary"
             android:translationZ="2dp">
 
             <android.support.design.widget.CollapsingToolbarLayout
@@ -22,8 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
-                app:contentScrim="#FFFFFF"
-                app:statusBarScrim="?attr/colorAccent"
+                app:contentScrim="@color/colorPrimary"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -58,6 +59,7 @@
 
             </android.support.design.widget.CollapsingToolbarLayout>
         </android.support.design.widget.AppBarLayout>
+
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -65,24 +67,24 @@
             android:id="@+id/cv_item"
             app:cardCornerRadius="4dp"
             android:background="@color/colorPrimary"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"            >
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/RecyclerView_2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
             </android.support.v7.widget.RecyclerView>
+
         </android.support.v7.widget.CardView>
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_dialog_email"
-            app:layout_anchor="@id/app_bar_2"
-            app:layout_anchorGravity="bottom|end"
-            android:onClick="showProblemStatus"/>
 
 
     </android.support.design.widget.CoordinatorLayout>
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/fab"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:src="@android:drawable/ic_dialog_email"-->
+        <!--android:onClick="showProblemStatus"-->
+        <!--android:layout_gravity="right"/>-->
 
 </LinearLayout>
