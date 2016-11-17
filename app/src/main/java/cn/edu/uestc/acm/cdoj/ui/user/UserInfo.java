@@ -1,12 +1,15 @@
 package cn.edu.uestc.acm.cdoj.ui.user;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -14,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.R;
+import cn.edu.uestc.acm.cdoj.ui.UserProblemStatusActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -30,8 +34,9 @@ public class UserInfo extends LinearLayout {
     private List<String> mData;
     private AppBarLayout appBarLayout;
     private CollapsingToolbarLayout collapsingToolbarLayout;
+    private UserInfoAdapter userInfoAdapter;
 
-    public UserInfo(Context context) {
+    public UserInfo(Context context,User user) {
         super(context);
         initView();
     }
@@ -49,15 +54,15 @@ public class UserInfo extends LinearLayout {
         appBarLayout = (AppBarLayout) findViewById(R.id.app_bar_2);
         userName = (TextView) findViewById(R.id.userName_2);
         nickName = (TextView) findViewById(R.id.nickName_2);
+        userInfoAdapter = new UserInfoAdapter(getContext(),user);
         initData();
         setUp();
     }
     private void setUp(){
         userName.setText(user.getUserName());
         nickName.setText(user.getNickName());
-
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(new UserInfoAdapter(getContext(),user));
+        recyclerView.setAdapter(userInfoAdapter);
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
@@ -72,13 +77,13 @@ public class UserInfo extends LinearLayout {
                 else if (Math.abs(verticalOffset) >= appBarLayout.getTotalScrollRange()){
                     if (state != CollapsingToolbarLayoutState.COLLAPSED){
                         state = CollapsingToolbarLayoutState.COLLAPSED;
-                        collapsingToolbarLayout.setTitle("CDOJ");
+                        collapsingToolbarLayout.setTitle("用户中心");
                     }
                 }
                 //appBarLayout展开过程中
                 else {
                     if (state != CollapsingToolbarLayoutState.INTERMEDIATES){
-                        collapsingToolbarLayout.setTitle("ING");
+                        collapsingToolbarLayout.setTitle(" ");
                         state = CollapsingToolbarLayoutState.INTERMEDIATES;
                     }
                 }

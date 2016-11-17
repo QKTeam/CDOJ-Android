@@ -19,7 +19,8 @@ import cn.edu.uestc.acm.cdoj.R;
 public class UserProblemStatus extends LinearLayout {
     private Toolbar toolbar;
     private RecyclerView recyclerView;
-    private List<String> mData;
+    private List<Integer> mData;
+    private UserProblemsStatus status;
 
     public UserProblemStatus(Context context) {
         super(context);
@@ -34,6 +35,7 @@ public class UserProblemStatus extends LinearLayout {
     private void initView(){
         inflate(getContext(), R.layout.user_problem_status,this);
         toolbar = (Toolbar) findViewById(R.id.toolbar_status);
+        status = new UserProblemsStatus();
         recyclerView = (RecyclerView) findViewById(R.id.RecyclerView_status);
         setUp();
     }
@@ -42,12 +44,12 @@ public class UserProblemStatus extends LinearLayout {
 
         recyclerView = (RecyclerView) findViewById(R.id.RecyclerView_status);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(),5));
-        recyclerView.setAdapter(new UserProlemStatusAdapter(getContext(), (ArrayList<String>) mData));
+        recyclerView.setAdapter(new UserProblemStatusAdapter(getContext(), (ArrayList<Integer>) mData,status));
     }
     private void initData() {
-        mData = new ArrayList<String>();
+        mData = new ArrayList<Integer>();
         for (int i = 1;i < 1494;i++){
-            mData.add(i+"");
+            mData.add(i);
         }
     }
 }

@@ -12,16 +12,16 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <TextView android:layout_height="wrap_content"
-            android:layout_width="80dp"
-            android:id="@+id/userInfoHint"
+            android:layout_width="160dp"
             android:textSize="18sp"
+            android:text="Nick Name:"
             />
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="20sp"
-            android:id="@+id/userInfoDetail"
+            android:id="@+id/nick_name_detail"
             />
     </LinearLayout>
 
@@ -29,5 +29,142 @@
         android:layout_width="match_parent"
         android:layout_height="2px"
         android:background="@color/user_info_item_divider"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView android:layout_height="wrap_content"
+            android:layout_width="160dp"
+            android:textSize="18sp"
+            android:text="Email:"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:id="@+id/email_detail"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/user_info_item_divider"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView android:layout_height="wrap_content"
+            android:layout_width="160dp"
+            android:textSize="18sp"
+            android:text="Motto:"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:id="@+id/motto_detail"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/user_info_item_divider"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView android:layout_height="wrap_content"
+            android:layout_width="160dp"
+            android:textSize="18sp"
+            android:text="Name:"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:id="@+id/name_detail"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/user_info_item_divider"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView android:layout_height="wrap_content"
+            android:layout_width="160dp"
+            android:textSize="18sp"
+            android:text="Phone Number:"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:id="@+id/phone_number_detail"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/user_info_item_divider"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView android:layout_height="wrap_content"
+            android:layout_width="160dp"
+            android:textSize="18sp"
+            android:text="School:"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:id="@+id/school_detail"
+            />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="@color/user_info_item_divider"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView android:layout_height="wrap_content"
+                android:layout_width="160dp"
+                android:textSize="18sp"
+                android:text="Student Id:"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="20sp"
+                android:id="@+id/student_id_detail"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="@color/user_info_item_divider"/>
+    <Button
+        android:id="@+id/show_problems_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="题目完成情况"/>
 
 </LinearLayout>
