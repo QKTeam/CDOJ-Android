@@ -33,6 +33,7 @@ public class UserInfoAdapter extends RecyclerView.Adapter<UserInfoAdapter.VH> {
     @Override
     public UserInfoAdapter.VH onCreateViewHolder(final ViewGroup parent, int viewType) {
         UserInfoAdapter.VH vh = new VH(LayoutInflater.from(context).inflate(R.layout.user_info_list_item,parent,false));
+
         vh.showProblemsStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

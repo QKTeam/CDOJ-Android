@@ -14,7 +14,7 @@
         <TextView android:layout_height="wrap_content"
             android:layout_width="160dp"
             android:textSize="18sp"
-            android:text="Nick Name"
+            android:text="Nick Name:"
             />
         <TextView
             android:layout_width="0dp"
@@ -36,7 +36,7 @@
         <TextView android:layout_height="wrap_content"
             android:layout_width="160dp"
             android:textSize="18sp"
-            android:text="Email"
+            android:text="Email:"
             />
         <TextView
             android:layout_width="0dp"
@@ -58,7 +58,7 @@
         <TextView android:layout_height="wrap_content"
             android:layout_width="160dp"
             android:textSize="18sp"
-            android:text="Motto"
+            android:text="Motto:"
             />
         <TextView
             android:layout_width="0dp"
@@ -80,7 +80,7 @@
         <TextView android:layout_height="wrap_content"
             android:layout_width="160dp"
             android:textSize="18sp"
-            android:text="Name"
+            android:text="Name:"
             />
         <TextView
             android:layout_width="0dp"
@@ -102,7 +102,7 @@
         <TextView android:layout_height="wrap_content"
             android:layout_width="160dp"
             android:textSize="18sp"
-            android:text="Phone Number"
+            android:text="Phone Number:"
             />
         <TextView
             android:layout_width="0dp"
@@ -124,7 +124,7 @@
         <TextView android:layout_height="wrap_content"
             android:layout_width="160dp"
             android:textSize="18sp"
-            android:text="School"
+            android:text="School:"
             />
         <TextView
             android:layout_width="0dp"
@@ -146,7 +146,7 @@
             <TextView android:layout_height="wrap_content"
                 android:layout_width="160dp"
                 android:textSize="18sp"
-                android:text="Student Id"
+                android:text="Student Id:"
                 />
             <TextView
                 android:layout_width="0dp"
