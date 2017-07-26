@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">CDOJ</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="login_error">用户名或密码错误</string>
+
+
+</resources>

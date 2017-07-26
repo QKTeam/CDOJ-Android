@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="6dp">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="A+B problem"
+        android:textSize="16dp"
+        android:textStyle="bold"
+        android:id="@+id/problem_title"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="content"
+        android:id="@+id/problem_content"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="ID:1"
+            android:textSize="10dp"
+            android:id="@+id/problem_id"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Solved:999"
+            android:textSize="10dp"
+            android:textColor="@color/green_primary"
+            android:gravity="right"
+            android:id="@+id/problem_solved"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:text="Tried:1000"
+            android:textSize="10dp"
+            android:id="@+id/problem_tried"/>
+    </LinearLayout>
+
+
+</LinearLayout>
