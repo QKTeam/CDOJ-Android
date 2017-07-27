@@ -62,6 +62,9 @@ public class ContestConnection {
         return handleContentJson(getContentJson(id)).getProblemList();
     }
 
+    public ContestReceived getContestReceived(int id){
+        return handleContentJson(getContentJson(id));
+    }
     public ListReceived<ContestListItem> getSearch(int currentPage, String orderFields, boolean orderAsc, String keyword, int startId){
         return handleSearchJson(getSearchJson(currentPage, orderFields, orderAsc, keyword, startId));
     }

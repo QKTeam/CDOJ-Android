@@ -49,7 +49,7 @@ public class ContestListData extends AbsDataList<ContestListItem>{
     public void onLoadMore() {
         if (mPageInfo.currentPage < mPageInfo.getTotalPages()){
             Connection.instance.searchContest(mPageInfo.currentPage+1, "time", this);
-            Toast.makeText(context, "刷新成功", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "加载成功", Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(context, "无更多内容", Toast.LENGTH_LONG).show();
         }
@@ -57,5 +57,7 @@ public class ContestListData extends AbsDataList<ContestListItem>{
 
     @Override
     public void onRefresh() {
+        Connection.instance.searchContest(1, this);
+        isfreshing = true;
     }
 }

@@ -12,9 +12,9 @@ import java.util.List;
 
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private List<Fragment> tabList;
-    private String [] tab_item;
+    private List<String> tab_item;
 
-    public ViewPagerAdapter(FragmentManager fm, List<Fragment> tabList, String[] tab_item) {
+    public ViewPagerAdapter(FragmentManager fm, List<Fragment> tabList, List<String> tab_item) {
         super(fm);
         this.tabList = tabList;
         this.tab_item = tab_item;
@@ -28,7 +28,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return tab_item[position%tab_item.length];
+        return tab_item.get(position%tab_item.size());
     }
 
     @Override

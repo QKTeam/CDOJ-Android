@@ -19,7 +19,7 @@ import java.util.List;
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.Connection;
 import cn.edu.uestc.acm.cdoj.net.ReceivedCallback;
-import cn.edu.uestc.acm.cdoj.net.contest.Contest;
+import cn.edu.uestc.acm.cdoj.net.contest.ContestReceived;
 import cn.edu.uestc.acm.cdoj.ui.ViewPagerAdapter;
 import cn.edu.uestc.acm.cdoj.ui.data.ContestListData;
 
@@ -27,14 +27,13 @@ import cn.edu.uestc.acm.cdoj.ui.data.ContestListData;
  * Created by 14779 on 2017-7-24.
  */
 
-public class ContestDetailFrg extends Fragment implements ReceivedCallback<Contest> {
+public class ContestDetailFrg extends Fragment implements ReceivedCallback<ContestReceived> {
     private static final String TAG = "ContestDetailFrg";
-    public static Contest contest;
+    public ContestReceived contestReceived;
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private List<Fragment> fragmentList;
-    private Bundle bundle = new Bundle();
-    private String[] tab_title = {"概览","题目","讨论","记录","排名"};
+    private List<String> tab_title = new ArrayList<>();
 
     @Nullable
     @Override
@@ -47,7 +46,12 @@ public class ContestDetailFrg extends Fragment implements ReceivedCallback<Conte
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             fragmentList.add(initOverView());
-//            fragmentList.add(initProblemList());
+            fragmentList.add(initProblemList());
+            tab_title.add("概览");
+            tab_title.add("题目");
+            tab_title.add("讨论");
+            tab_title.add("记录");
+            tab_title.add("排名");
 
             ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager(), fragmentList, tab_title);
             viewPager.setOffscreenPageLimit(4);
@@ -60,7 +64,7 @@ public class ContestDetailFrg extends Fragment implements ReceivedCallback<Conte
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         int id = ContestListData.getData().get(getArguments().getInt("contest")).getContestId();
-        Connection.instance.getContestContent(id, this);
+        Connection.instance.getContestReceived(id, this);
         viewPager = view.findViewById(R.id.view_pager_contest_detail);
         tabLayout = view.findViewById(R.id.tab_layout_contest_detail);
         fragmentList = new ArrayList<>();
@@ -69,19 +73,23 @@ public class ContestDetailFrg extends Fragment implements ReceivedCallback<Conte
 
     private Fragment initOverView() {
         ContestOverViewFrg fragment = new ContestOverViewFrg();
+        Bundle bundle = new Bundle();
+        bundle.putString("contest_detail", JSON.toJSONString(contestReceived.getContest()));
         fragment.setArguments(bundle);
         return fragment;
     }
 
     private Fragment initProblemList() {
         ContestProblemListFrag fragment = new ContestProblemListFrag();
-        return null;
+        Bundle bundle = new Bundle();
+        bundle.putString("contest_detail", JSON.toJSONString(contestReceived.getProblemList()));
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
-    public void onDataReceived(Contest contest) {
-        ContestDetailFrg.contest = contest;
-        bundle.putString("contest_detail", JSON.toJSONString(contest));
-        handler.obtainMessage(1, bundle).sendToTarget();
+    public void onDataReceived(ContestReceived contestReceived) {
+        this.contestReceived = contestReceived;
+        handler.obtainMessage(1, contestReceived).sendToTarget();
     }
 }

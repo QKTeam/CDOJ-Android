@@ -12,6 +12,8 @@ import cn.edu.uestc.acm.cdoj.net.ReceivedCallback;
 public interface ObtainContest {
     void getContestContent(int id, ReceivedCallback<Contest> callback);
 
+    void getContestReceived(int id, ReceivedCallback<ContestReceived> callback);
+
     void getContestProblemList(int id, ReceivedCallback<List<ContestProblem>> callback);
 
     void getContestList(int page, ReceivedCallback<ListReceived<ContestListItem>> callback);

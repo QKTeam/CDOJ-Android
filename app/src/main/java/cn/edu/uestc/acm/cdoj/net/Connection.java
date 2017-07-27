@@ -13,6 +13,7 @@ import cn.edu.uestc.acm.cdoj.net.contest.Contest;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestConnection;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestListItem;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestProblem;
+import cn.edu.uestc.acm.cdoj.net.contest.ContestReceived;
 import cn.edu.uestc.acm.cdoj.net.contest.ObtainContest;
 import cn.edu.uestc.acm.cdoj.net.problem.ObtainProblem;
 import cn.edu.uestc.acm.cdoj.net.problem.Problem;
@@ -160,6 +161,23 @@ public class Connection implements ObtainArticle, ObtainProblem, ObtainContest {
             @Override
             public void run() {
                 Contest result = ContestConnection.getInstance().getContent(id);
+                Message msg = new Message();
+                Object[] obj = new Object[2];
+                obj[0] = callback;
+                obj[1] = result;
+                msg.obj = obj;
+                msg.what = 0x01012013;
+                handler.sendMessage(msg);
+            }
+        });
+    }
+
+    @Override
+    public void getContestReceived(final int id, final ReceivedCallback<ContestReceived> callback) {
+        ThreadUtil.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+                ContestReceived result = ContestConnection.getInstance().getContestReceived(id);
                 Message msg = new Message();
                 Object[] obj = new Object[2];
                 obj[0] = callback;

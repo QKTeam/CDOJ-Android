@@ -44,13 +44,14 @@ public abstract class AbsDataList<T> implements ReceivedCallback<ListReceived<T>
     @Override
     public void onDataReceived(ListReceived<T> tListReceived) {
         mPageInfo = tListReceived.getPageInfo();
+        if (isfreshing) {
+            data.clear();
+            isfreshing = false;
+        }
         data.addAll(tListReceived.getList());
         if (firstLoad) {
             list.setListAdapter(adapter);
             firstLoad = false;
-        }
-        if (isfreshing) {
-            data.clear();
         }
         adapter.notifyDataSetChanged();
     }
