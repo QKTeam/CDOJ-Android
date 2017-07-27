@@ -1,6 +1,9 @@
 package cn.edu.uestc.acm.cdoj.ui.data;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -31,10 +34,28 @@ public class ContestListData extends AbsDataList<ContestListItem>{
         contestAdapter.setItemClickListener(new RecyclerViewItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                transItemDataListener.onTranItemData(position, "contestFragment");
+                if (data.get(position).getType() == 0) {
+                    transItemDataListener.onTranItemData(position, "contestFragment");
+                } else if (data.get(position).getType() == 1){
+                    Toast.makeText(context, "请输入密码", Toast.LENGTH_SHORT).show();
+                    enterPassword();
+                } else {
+                    Toast.makeText(context, "请先登录", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         adapter = contestAdapter;
+    }
+
+    private void enterPassword() {
+        final EditText password = new EditText(context);
+        new AlertDialog.Builder(context).setTitle("请输入密码").setView(password)
+                .setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).show();
     }
 
     public static List<ContestListItem> getData(){
@@ -58,6 +79,6 @@ public class ContestListData extends AbsDataList<ContestListItem>{
     @Override
     public void onRefresh() {
         Connection.instance.searchContest(1, this);
-        isfreshing = true;
+        isRefreshing = true;
     }
 }

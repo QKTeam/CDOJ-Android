@@ -1,4 +1,4 @@
-package cn.edu.uestc.acm.cdoj.ui.detailFragment;
+package cn.edu.uestc.acm.cdoj.ui.detailFragment.contestDetail;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

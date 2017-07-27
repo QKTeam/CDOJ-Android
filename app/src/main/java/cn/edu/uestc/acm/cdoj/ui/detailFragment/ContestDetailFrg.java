@@ -22,6 +22,8 @@ import cn.edu.uestc.acm.cdoj.net.ReceivedCallback;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestReceived;
 import cn.edu.uestc.acm.cdoj.ui.ViewPagerAdapter;
 import cn.edu.uestc.acm.cdoj.ui.data.ContestListData;
+import cn.edu.uestc.acm.cdoj.ui.detailFragment.contestDetail.ContestOverViewFrg;
+import cn.edu.uestc.acm.cdoj.ui.detailFragment.contestDetail.ContestProblemListFrag;
 
 /**
  * Created by 14779 on 2017-7-24.

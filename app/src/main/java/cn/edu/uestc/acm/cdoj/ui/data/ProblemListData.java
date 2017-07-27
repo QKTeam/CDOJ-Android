@@ -58,6 +58,6 @@ public class ProblemListData extends AbsDataList<ProblemListItem> {
     @Override
     public void onRefresh() {
         Connection.instance.searchProblem(1, "id", this);
-        isfreshing = true;
+        isRefreshing = true;
     }
 }

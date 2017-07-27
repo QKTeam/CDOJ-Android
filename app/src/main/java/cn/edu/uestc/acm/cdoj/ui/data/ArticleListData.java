@@ -61,6 +61,6 @@ public class ArticleListData extends AbsDataList<ArticleListItem> {
     @Override
     public void onRefresh() {
         Connection.instance.searchArticle(1, "time", this);
-        isfreshing = true;
+        isRefreshing = true;
     }
 }

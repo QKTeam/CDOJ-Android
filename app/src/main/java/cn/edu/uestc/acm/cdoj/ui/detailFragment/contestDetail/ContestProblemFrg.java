@@ -1,4 +1,4 @@
-package cn.edu.uestc.acm.cdoj.ui.detailFragment;
+package cn.edu.uestc.acm.cdoj.ui.detailFragment.contestDetail;
 
 import android.content.res.Resources;
 import android.os.Bundle;
