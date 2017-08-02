@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         GeneralFragment.TransItemDataListener,UserInfoCallback {
 
     private static final String TAG = "MainActivity";
+    public static  boolean isLogin = false;
+    private static final String userName = "";
 
     private DrawerLayout drawer;
     private Toolbar toolbar;
@@ -126,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case 0:
                 if (resultCode==RESULT_OK){
                     String username = data.getStringExtra("username");
+                    isLogin = true;
                     UserConnection.getInstance().getUserInfo(MainActivity.this,username,this,120);
                 }
         }
