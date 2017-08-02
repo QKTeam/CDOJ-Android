@@ -27,27 +27,25 @@ public class UserConnection {
     private static final UserConnection instance = new UserConnection();
     private String baseUrl = "http://acm.uestc.edu.cn";
     private String loginUrl = "/user/login";
-    private String userinfoUrl = "/user/profile/";
-    Handler handler = new Handler() {
+    private String userInfoUrl = "/user/profile/";
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0x01012013:
-                    LoginCallBack loginCallBack = (LoginCallBack) msg.obj;
+                    UserInfoCallback login = (UserInfoCallback) msg.obj;
                     Bundle bundle = msg.getData();
-                    loginCallBack.loginStatus(bundle);
+                    login.loginStatus(bundle);
                     break;
                 case 0x01012017:
                     Object[] obj = (Object[]) msg.obj;
-                    UserInfoCallback userInfoCallback = (UserInfoCallback) obj[0];
+                    UserInfoCallback getUserInfo = (UserInfoCallback) obj[0];
                     UserInfoReceived.UserBean userBean = (UserInfoReceived.UserBean) obj[1];
-                    Bitmap bitmap = (Bitmap) obj[2];
-                    userInfoCallback.UserInfoChange(userBean,bitmap);
+                    getUserInfo.getUserInfo(userBean);
                     break;
             }
         }
     };
-
     private UserConnection() {
     }
 
@@ -55,7 +53,7 @@ public class UserConnection {
         return instance;
     }
 
-    public void login(final String request_json, final LoginCallBack loginCallBack) {
+    public void login(final String request_json, final UserInfoCallback userInfoCallback) {
         ThreadUtil.getInstance().execute(new Runnable() {
             @Override
             public void run() {
@@ -70,7 +68,7 @@ public class UserConnection {
                     data[0] = "error";
                 }
                 Message message = Message.obtain();
-                message.obj = loginCallBack;
+                message.obj = userInfoCallback;
                 Bundle bundle = new Bundle();
                 bundle.putStringArray("data", data);
                 message.setData(bundle);
@@ -80,31 +78,25 @@ public class UserConnection {
         });
     }
 
-    public void getUserInfo(final Context context, final String username, final UserInfoCallback userInfoCallback,final int size) {
+    public void getUserInfo(final Context context, final String username, final UserInfoCallback userInfoCallback, final int size) {
         ThreadUtil.getInstance().execute(new Runnable() {
             @Override
             public void run() {
                 Bitmap bitmap;
-                byte[] receivedData = Request.get(baseUrl, userinfoUrl + username);
-                Log.d(TAG, "response" + new String(receivedData));
+                byte[] receivedData = Request.get(baseUrl, userInfoUrl + username);
                 UserInfoReceived userInfoReceived = JSON.parseObject(new String(receivedData), UserInfoReceived.class);
 
                 String email = userInfoReceived.getUser().getEmail();
                 String url = String.format("http://cdn.v2ex.com/gravatar/%s.jpg?s=%d&&d=retro", DigestUtil.md5(email), size);
-                Log.d(TAG, "Url"+url);
-                String uri = context.getFilesDir() + "/images/" + DigestUtil.md5(url) + ".jpg";
-                Log.d(TAG, "Uri"+uri);
+                String uri = context.getFilesDir() + "/Images/" + DigestUtil.md5(url) + ".jpg";
                 if (!new File(uri).exists()) {
-                   bitmap= ImageUtil.downloadImage(url);
-                }else {
-                    bitmap = ImageUtil.readImage(uri);
+                    bitmap = ImageUtil.downloadImage(url);
+                    ImageUtil.saveImage(context, bitmap, url);
                 }
-
                 Message message = Message.obtain();
                 Object[] obj = new Object[3];
                 obj[0] = userInfoCallback;
                 obj[1] = userInfoReceived.getUser();
-                obj[2] = bitmap;
                 message.obj = obj;
                 message.what = 0x01012017;
                 handler.sendMessage(message);
