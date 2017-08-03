@@ -2,7 +2,6 @@ package cn.edu.uestc.acm.cdoj;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -15,6 +14,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,13 +22,13 @@ import android.webkit.CookieSyncManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.genaralData.GeneralFragment;
-import cn.edu.uestc.acm.cdoj.net.UserInfoCallback;
-import cn.edu.uestc.acm.cdoj.net.user.UserConnection;
-import cn.edu.uestc.acm.cdoj.net.user.UserInfoReceived;
 import cn.edu.uestc.acm.cdoj.ui.ViewPagerAdapter;
 import cn.edu.uestc.acm.cdoj.ui.data.ArticleListData;
 import cn.edu.uestc.acm.cdoj.ui.data.ContestListData;
@@ -37,35 +37,60 @@ import cn.edu.uestc.acm.cdoj.ui.detailFragment.ArticleDetailFrg;
 import cn.edu.uestc.acm.cdoj.ui.detailFragment.ContestDetailFrg;
 import cn.edu.uestc.acm.cdoj.ui.detailFragment.ProblemDetailFrg;
 import cn.edu.uestc.acm.cdoj.utils.DigestUtil;
+import cn.edu.uestc.acm.cdoj.utils.FileUtil;
 import cn.edu.uestc.acm.cdoj.utils.ImageUtil;
 
+import static cn.edu.uestc.acm.cdoj.net.user.UserInfoReceived.UserBean;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        GeneralFragment.TransItemDataListener,UserInfoCallback {
+        GeneralFragment.TransItemDataListener {
 
     private static final String TAG = "MainActivity";
+    public static boolean isLogin = false;
 
+    private String userName;
     private DrawerLayout drawer;
     private Toolbar toolbar;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
-    private List<Fragment> fragment_list;
 
     private List<String> tab_main_item = new ArrayList<>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         CookieSyncManager.createInstance(this);
-
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
-
-
         initDrawer();
         initViewPager();
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        userName = getIntent().getStringExtra("userName");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (new File(this.getFilesDir() + "/UserInfo/" + userName).exists()) {
+            isLogin = true;
+            UserBean userBean = JSON.parseObject(
+                    FileUtil.readFile(this, "UserInfo", userName),
+                    UserBean.class);
+            String url = String.format("http://cdn.v2ex.com/gravatar/%s.jpg?s=%d&&d=retro", DigestUtil.md5(userBean.getEmail()), 120);
+            String uri = this.getFilesDir() + "/Images/" + DigestUtil.md5(url) + ".jpg";
+            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_main);
+            View headerView = navigationView.getHeaderView(0);
+            TextView user_name = headerView.findViewById(R.id.user_name);
+            TextView user_motto = headerView.findViewById(R.id.user_motto);
+            ImageView avatar = headerView.findViewById(R.id.avatar);
+            user_name.setText(userBean.getName());
+            user_motto.setText(userBean.getMotto());
+            avatar.setImageBitmap(ImageUtil.readImage(uri));
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -114,54 +139,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivityForResult(intent,0);
+                startActivity(intent);
+//                startActivityForResult(intent,0);
             }
         });
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode){
-            case 0:
-                if (resultCode==RESULT_OK){
-                    String username = data.getStringExtra("username");
-                    UserConnection.getInstance().getUserInfo(MainActivity.this,username,this,120);
-                }
-        }
-    }
-
     private void initViewPager() {
-        tabLayout = (TabLayout) findViewById(R.id.tab_layout_main);
-        viewPager = (ViewPager) findViewById(R.id.view_pager_main);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout_main);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager_main);
         tab_main_item.add("公告");
         tab_main_item.add("题目");
         tab_main_item.add("比赛");
 
-        fragment_list = new ArrayList<>();
+        List<Fragment> fragment_list = new ArrayList<>();
         fragment_list.add(initArticleFragment(MainActivity.this));
         fragment_list.add(initProblemFragment(MainActivity.this));
         fragment_list.add(initContestFragment(MainActivity.this));
 
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(),fragment_list,tab_main_item);
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), fragment_list, tab_main_item);
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
     }
 
-    private GeneralFragment initArticleFragment(Context context){
+    private GeneralFragment initArticleFragment(Context context) {
         GeneralFragment articleFragment = new GeneralFragment(context, "article_fragment");
         new ArticleListData(context).setUpList(articleFragment);
         return articleFragment;
     }
 
-    private GeneralFragment initProblemFragment(Context context){
+    private GeneralFragment initProblemFragment(Context context) {
         GeneralFragment problemFragment = new GeneralFragment(context, "problem_fragment");
         new ProblemListData(context).setUpList(problemFragment);
         return problemFragment;
     }
 
-    private GeneralFragment initContestFragment(Context context){
+    private GeneralFragment initContestFragment(Context context) {
         GeneralFragment contestFragment = new GeneralFragment(context, "contest_fragment");
         new ContestListData(context).setUpList(contestFragment);
         return contestFragment;
@@ -171,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onTranItemData(int position, String type) {
         Bundle arg = new Bundle();
         Fragment detailFragment = null;
-        switch (type){
+        switch (type) {
             case "articleFragment":
                 arg.putInt("article", position);
                 detailFragment = new ArticleDetailFrg();
@@ -191,21 +206,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         transaction.addToBackStack(null);
         transaction.commit();
     }
-
-
-    @Override
-    public void UserInfoChange(UserInfoReceived.UserBean userBean,Bitmap bitmap) {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_main);
-        View headerView = navigationView.getHeaderView(0);
-        TextView user_name = headerView.findViewById(R.id.user_name);
-        TextView user_motto = headerView.findViewById(R.id.user_motto);
-        ImageView avatar = headerView.findViewById(R.id.avatar);
-        user_name.setText(userBean.getName());
-        user_motto.setText(userBean.getMotto());
-        avatar.setImageBitmap(bitmap);
-        String url = String.format("http://cdn.v2ex.com/gravatar/%s.jpg?s=%d&&d=retro", DigestUtil.md5(userBean.getEmail()), 120);
-        String uri = this.getFilesDir() + "/images/" + DigestUtil.md5(url) + ".jpg";
-        ImageUtil.saveImage(MainActivity.this,bitmap,uri);
-    }
-
 }

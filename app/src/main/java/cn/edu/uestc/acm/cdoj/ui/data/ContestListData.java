@@ -9,7 +9,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.edu.uestc.acm.cdoj.LoginActivity;
 import cn.edu.uestc.acm.cdoj.genaralData.RecyclerViewItemClickListener;
 import cn.edu.uestc.acm.cdoj.net.Connection;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestListItem;
@@ -36,17 +35,7 @@ public class ContestListData extends AbsDataList<ContestListItem>{
         contestAdapter.setItemClickListener(new RecyclerViewItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                if (!LoginActivity.isLogined){
-                    remindLogin();
-                } else {
-                    if (data.get(position).getType() == 0) {
-                        transItemDataListener.onTranItemData(position, "contestFragment");
-                    } else if (data.get(position).getType() == 1){
-                        enterPassword(position);
-                    } else {
-                        Toast.makeText(context, "功能暂未实现", Toast.LENGTH_SHORT).show();
-                    }
-                }
+                
             }
         });
         adapter = contestAdapter;

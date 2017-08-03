@@ -42,9 +42,9 @@ public class ImageUtil {
         }
     }
 
-    public static void saveImage(Context context, Bitmap bitmap, String Uri) {
-        File image_dir = new File(context.getFilesDir() + "/images");
-        File image = new File(image_dir, DigestUtil.md5(Uri) + ".jpg");
+    public static void saveImage(Context context, Bitmap bitmap, String Url) {
+        File image_dir = new File(context.getFilesDir() + "/Images");
+        File image = new File(image_dir, DigestUtil.md5(Url) + ".jpg");
         FileOutputStream fileOutputStream = null;
         if (!image_dir.exists()) {
             image_dir.mkdirs();

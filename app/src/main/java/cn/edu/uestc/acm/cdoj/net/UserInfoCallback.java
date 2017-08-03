@@ -1,6 +1,6 @@
 package cn.edu.uestc.acm.cdoj.net;
 
-import android.graphics.Bitmap;
+import android.os.Bundle;
 
 import cn.edu.uestc.acm.cdoj.net.user.UserInfoReceived;
 
@@ -9,5 +9,6 @@ import cn.edu.uestc.acm.cdoj.net.user.UserInfoReceived;
  */
 
 public interface UserInfoCallback {
-    public void UserInfoChange(UserInfoReceived.UserBean userBean,Bitmap bitmap);
+    void loginStatus(Bundle bundle);
+    void getUserInfo(UserInfoReceived.UserBean userBean);
 }
