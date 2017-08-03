@@ -20,7 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".UserInfoActivity"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.ActionBar">
 
         </activity>
     </application>

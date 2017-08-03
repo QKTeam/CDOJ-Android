@@ -2,6 +2,7 @@ package cn.edu.uestc.acm.cdoj.net.user;
 
 import android.app.Activity;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.app.Fragment;
 
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.utils.DigestUtil;
@@ -12,15 +13,15 @@ import cn.edu.uestc.acm.cdoj.utils.JsonUtil;
  */
 
 public class HandleUserData {
-    private Activity activity;
+    private Fragment fragment;
 
-    public HandleUserData(Activity activity) {
-        this.activity = activity;
+    public HandleUserData(Fragment fragment) {
+        this.fragment = fragment;
     }
 
     public  String handle_login_json() {
-        TextInputEditText input_username = activity.findViewById(R.id.input_username);
-        TextInputEditText input_password = activity.findViewById(R.id.input_password);
+        TextInputEditText input_username = fragment.getView().findViewById(R.id.input_username);
+        TextInputEditText input_password = fragment.getView().findViewById(R.id.input_password);
         String username = input_username.getText().toString();
 //        String password_encrypted = DigestUtil.sha1(input_password.getText().toString());
         String password_encrypted = "4afddabb3a1f7e8acde1eeec25ea06a77826f369";
