@@ -29,15 +29,16 @@ import cn.edu.uestc.acm.cdoj.utils.SharedPreferenceUtil;
  * Created by lagranmoon on 2017/8/3.
  */
 
-public class LoginFragment extends Fragment implements View.OnClickListener,UserInfoCallback{
+public class LoginFragment extends Fragment implements View.OnClickListener, UserInfoCallback {
     private static final String TAG = "LoginFragment";
 
     private final HandleUserData handleUserData = new HandleUserData(this);
-    String login_request =handleUserData.handle_login_json();
+    String login_request;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_login,container,false);
+        View view = inflater.inflate(R.layout.fragment_login, container, false);
         Button button_login = view.findViewById(R.id.button_login);
         Button button_register = view.findViewById(R.id.button_register);
         TextView text_forgot_password = view.findViewById(R.id.text_forgot_password);
@@ -49,12 +50,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener,User
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.button_register:
-
                 break;
             case R.id.button_login:
-                UserConnection.getInstance().login(login_request,LoginFragment.this);
+                login_request = handleUserData.handle_login_json();
+                UserConnection.getInstance().login(login_request, LoginFragment.this);
                 break;
             case R.id.text_forgot_password:
                 break;
@@ -64,32 +65,32 @@ public class LoginFragment extends Fragment implements View.OnClickListener,User
     @Override
     public void loginStatus(Bundle bundle) {
         String[] data = bundle.getStringArray("data");
-        if (data!=null&&data[0].equals("success")){
+        if (data != null && data[0].equals("success")) {
             String userName = data[1];
-            UserConnection.getInstance().getUserInfo(getActivity(), userName,this,120);
-        }else {
-            Toast.makeText(getActivity(),"登陆失败",Toast.LENGTH_SHORT).show();
+            UserConnection.getInstance().getUserInfo(getActivity(), userName, this, 120);
+        } else {
+            Toast.makeText(getActivity(), "登陆失败", Toast.LENGTH_SHORT).show();
         }
     }
 
 
     @Override
     public void getUserInfo(UserInfo userInfo) {
-        FileUtil.saveUserInfo(getActivity(),JSON.toJSONString(userInfo),userInfo.getUserName());
-        UserInfo user_password = JSON.parseObject(login_request,UserInfo.class);
+        FileUtil.saveUserInfo(getActivity(), JSON.toJSONString(userInfo), userInfo.getUserName());
+        UserInfo user_password = JSON.parseObject(login_request, UserInfo.class);
 
         save_user_password(user_password);
 
-        Log.d(TAG, "userName:"+userInfo.getUserName());
-        Intent intent  = new Intent(getActivity(),MainActivity.class);
-        intent.putExtra("userName",userInfo.getUserName());
+        Log.d(TAG, "userName:" + userInfo.getUserName());
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        intent.putExtra("userName", userInfo.getUserName());
         startActivity(intent);
     }
 
     private void save_user_password(UserInfo user_password) {
-        String[] key = {DigestUtil.md5(user_password.getUserName()),DigestUtil.md5(user_password.getPassword())};
-        String[] value = {user_password.getUserName(),DigestUtil.md5(user_password.getPassword())+"_password"};
-        SharedPreferenceUtil.saveSharedPreference(getActivity(),DigestUtil.md5("User"),key,value);
+        String[] key = {DigestUtil.md5(user_password.getUserName()), DigestUtil.md5(user_password.getPassword())};
+        String[] value = {user_password.getUserName(), DigestUtil.md5(user_password.getPassword()) + "_password"};
+        SharedPreferenceUtil.saveSharedPreference(getActivity(),"User", key, value);
     }
 
 

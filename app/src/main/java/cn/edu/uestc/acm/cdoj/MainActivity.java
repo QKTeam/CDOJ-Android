@@ -15,6 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -66,16 +67,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
         initDrawer();
         initViewPager();
-        SharedPreferences sharedPreferences = getSharedPreferences(DigestUtil.md5("User"),MODE_PRIVATE);
-        current_user = sharedPreferences.getString("current_user","user");
-        if (new File(this.getFilesDir() + "/UserInfo/" + current_user).exists()) {
-            UserInfo userInfo = JSON.parseObject(
-                    FileUtil.readFile(this, "UserInfo", current_user),
-                    UserInfo.class);
-            initLoginStatus();
-            isLogin = true;
-            initUserInfo(userInfo);
-        }
+        initLoginStatus();
+
     }
 
     @Override
@@ -92,11 +85,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             UserInfo userInfo = JSON.parseObject(
                     FileUtil.readFile(this, "UserInfo", userName),
                     UserInfo.class);
-
             current_user = userInfo.getUserName();
             isLogin = true;
             initUserInfo(userInfo);
-    }
+        }
     }
 
     private void initUserInfo(UserInfo userInfo) {
@@ -114,10 +106,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         if (current_user != null) {
-            SharedPreferenceUtil.save_single_sp(this, DigestUtil.md5("User"), "current_user", current_user);
+            SharedPreferenceUtil.save_single_sp(this,"User", "current_user", current_user);
         }
+        super.onDestroy();
     }
 
     @Override
@@ -192,16 +184,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tabLayout.setupWithViewPager(viewPager);
     }
 
-
     private void initLoginStatus() {
-        SharedPreferences sharedPreferences = this.getSharedPreferences(DigestUtil.md5("User"), MODE_PRIVATE);
-        if (sharedPreferences.getAll() != null) {
+        SharedPreferences sharedPreferences = this.getSharedPreferences(DigestUtil.md5("User"), MODE_APPEND);
+        if (sharedPreferences.contains("current_user")) {
             current_user = sharedPreferences.getString("current_user", null);
             String userName = sharedPreferences.getString(DigestUtil.md5(current_user), null);
             String password = sharedPreferences.getString(DigestUtil.md5(current_user), null);
             String[] key = new String[]{"userName", "password"};
             Object[] value = new Object[]{userName, password};
-            UserConnection.getInstance().login_background(JsonUtil.getJsonString(key,value));
+
+            UserConnection.getInstance().login_background(JsonUtil.getJsonString(key, value));
+            if (new File(this.getFilesDir() + "/UserInfo/" + current_user).exists()) {
+                UserInfo userInfo = JSON.parseObject(
+                        FileUtil.readFile(this, "UserInfo", current_user),
+                        UserInfo.class);
+                initLoginStatus();
+                isLogin = true;
+                initUserInfo(userInfo);
+
+            }
         }
     }
 

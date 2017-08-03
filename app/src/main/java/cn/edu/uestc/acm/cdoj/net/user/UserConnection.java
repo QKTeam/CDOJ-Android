@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 
@@ -92,7 +93,7 @@ public class UserConnection {
                 Bitmap bitmap;
                 byte[] receivedData = Request.get(baseUrl, userInfoUrl + username);
                 UserInfoReceived userInfoReceived = JSON.parseObject(new String(receivedData), UserInfoReceived.class);
-                UserInfo userInfo = userInfoReceived.getUserInfo();
+                UserInfo userInfo =  userInfoReceived.getUser();
                 String email = userInfo.getEmail();
                 String url = String.format("http://cdn.v2ex.com/gravatar/%s.jpg?s=%d&&d=retro", DigestUtil.md5(email), size);
                 String uri = context.getFilesDir() + "/Images/" + DigestUtil.md5(url) + ".jpg";
@@ -111,5 +112,23 @@ public class UserConnection {
         });
     }
 
+    public void saveAvatar(final Context context, final String email, final int size){
+        ThreadUtil.getInstance().avatarExecute(new Runnable() {
+            @Override
+            public void run() {
+                String url = String.format("http://cdn.v2ex.com/gravatar/%s.jpg?s=%d&&d=retro", DigestUtil.md5(email), size);
+                Bitmap bitmap = ImageUtil.downloadImage(url);
+                ImageUtil.saveImage(context, bitmap, url);
+            }
+        });
+    }
+    public Bitmap getAvatar(Context context,String email,int size){
+        String url = String.format("http://cdn.v2ex.com/gravatar/%s.jpg?s=%d&&d=retro", DigestUtil.md5(email), size);
+        String uri = context.getFilesDir() + "/Images/" + DigestUtil.md5(url) + ".jpg";
+        if (!new File(uri).exists()) {
+            saveAvatar(context,email,size);
+        }
+        return ImageUtil.readImage(uri);
+    }
 
 }
