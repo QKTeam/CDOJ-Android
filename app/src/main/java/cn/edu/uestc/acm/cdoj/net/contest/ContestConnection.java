@@ -21,7 +21,9 @@ public class ContestConnection {
     private String dataPath = "/contest/data/";
     private String searchPath = "/contest/search/";
     private String loginPath = "/contest/loginContest/";
+    private String commentPath = "/article/commentSearch/";
     private String[] key = {"currentPage", "orderFields", "orderAsc", "keyword", "starItd"};
+    private String[] commentKey = {"currentPage", "ContestId"};
 
     public static ContestConnection getInstance(){
         return instance;
@@ -45,6 +47,16 @@ public class ContestConnection {
         return "";
     }
 
+    private String getCommentJson(int currentPage, int contestId){
+        Object[] value = {currentPage, contestId};
+        String request = JsonUtil.getJsonString(commentKey, value);
+        byte[] dataReceived = Request.post(url, commentPath, request);
+        if (dataReceived != null){
+            return new String(dataReceived);
+        }
+        return "";
+    }
+
     private ContestReceived handleContentJson(String jsonString){
         ContestReceived contestReceived = JSON.parseObject(jsonString, new TypeReference<ContestReceived>(){});
         return contestReceived;
@@ -53,6 +65,10 @@ public class ContestConnection {
     private ListReceived<ContestListItem> handleSearchJson(String jsonString){
         ListReceived<ContestListItem> itemListReceived = JSON.parseObject(jsonString, new TypeReference<ListReceived<ContestListItem>>(){});
         return itemListReceived;
+    }
+
+    private ListReceived<ContestCommentListItem> handleCommentJson(String jsonString){
+        return JSON.parseObject(jsonString, new TypeReference<ListReceived<ContestCommentListItem>>(){});
     }
 
     public Contest getContent(int id){
@@ -68,6 +84,10 @@ public class ContestConnection {
     }
     public ListReceived<ContestListItem> getSearch(int currentPage, String orderFields, boolean orderAsc, String keyword, int startId){
         return handleSearchJson(getSearchJson(currentPage, orderFields, orderAsc, keyword, startId));
+    }
+
+    public ListReceived<ContestCommentListItem> getComment(int page, int ContestId){
+        return handleCommentJson(getCommentJson(page, ContestId));
     }
 
     public String loginContest(int contestId, String password){

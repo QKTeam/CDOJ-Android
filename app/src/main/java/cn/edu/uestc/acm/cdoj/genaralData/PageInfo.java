@@ -14,11 +14,11 @@ public class PageInfo {
      * totalPages : 1
      */
 
-    public int countPerPage;
+    private int countPerPage;
     public int currentPage;
-    public int displayDistance;
-    public int totalItems;
-    public int totalPages;
+    private int displayDistance;
+    private int totalItems;
+    private int totalPages;
 
     public int getCountPerPage() {
         return countPerPage;

@@ -27,4 +27,6 @@ public interface ObtainContest {
     void searchContest(int page, String orderFields, boolean orderAsc, String keyword, ReceivedCallback<ListReceived<ContestListItem>> callback);
 
     void searchContest(int page, String orderFields, boolean orderAsc, String keyword, int startId, ReceivedCallback<ListReceived<ContestListItem>> callback);
+
+    void getContestComment(int page, int ContestId, ReceivedCallback<ListReceived<ContestCommentListItem>> callback);
 }

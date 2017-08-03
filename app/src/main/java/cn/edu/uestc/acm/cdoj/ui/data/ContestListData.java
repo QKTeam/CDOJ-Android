@@ -35,7 +35,11 @@ public class ContestListData extends AbsDataList<ContestListItem>{
         contestAdapter.setItemClickListener(new RecyclerViewItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                
+                if (data.get(position).getType() == 0) {
+                    transItemDataListener.onTranItemData(position, "contestFragment");
+                } else {
+                    Toast.makeText(context, "进不去", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         adapter = contestAdapter;

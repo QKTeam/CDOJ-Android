@@ -21,7 +21,9 @@ import cn.edu.uestc.acm.cdoj.net.Connection;
 import cn.edu.uestc.acm.cdoj.net.ReceivedCallback;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestReceived;
 import cn.edu.uestc.acm.cdoj.ui.ViewPagerAdapter;
+import cn.edu.uestc.acm.cdoj.ui.data.ContestCommentListData;
 import cn.edu.uestc.acm.cdoj.ui.data.ContestListData;
+import cn.edu.uestc.acm.cdoj.ui.detailFragment.contestDetail.ContestCommentFrg;
 import cn.edu.uestc.acm.cdoj.ui.detailFragment.contestDetail.ContestOverViewFrg;
 import cn.edu.uestc.acm.cdoj.ui.detailFragment.contestDetail.ContestProblemListFrag;
 
@@ -49,6 +51,7 @@ public class ContestDetailFrg extends Fragment implements ReceivedCallback<Conte
             super.handleMessage(msg);
             fragmentList.add(initOverView());
             fragmentList.add(initProblemList());
+            fragmentList.add(initContestComment());
             tab_title.add("概览");
             tab_title.add("题目");
             tab_title.add("讨论");
@@ -86,6 +89,12 @@ public class ContestDetailFrg extends Fragment implements ReceivedCallback<Conte
         Bundle bundle = new Bundle();
         bundle.putString("contest_detail", JSON.toJSONString(contestReceived.getProblemList()));
         fragment.setArguments(bundle);
+        return fragment;
+    }
+
+    private Fragment initContestComment(){
+        ContestCommentFrg fragment = new ContestCommentFrg(getContext(), "contest_comment_fragment");
+        new ContestCommentListData(getContext(), contestReceived.getContest().getContestId()).setUpList(fragment);
         return fragment;
     }
 

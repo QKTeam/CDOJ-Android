@@ -10,6 +10,7 @@ import cn.edu.uestc.acm.cdoj.net.article.ArticleConnection;
 import cn.edu.uestc.acm.cdoj.net.article.ArticleListItem;
 import cn.edu.uestc.acm.cdoj.net.article.ObtainArticle;
 import cn.edu.uestc.acm.cdoj.net.contest.Contest;
+import cn.edu.uestc.acm.cdoj.net.contest.ContestCommentListItem;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestConnection;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestListItem;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestProblem;
@@ -237,6 +238,23 @@ public class Connection implements ObtainArticle, ObtainProblem, ObtainContest {
             @Override
             public void run() {
                 ListReceived<ContestListItem> result = ContestConnection.getInstance().getSearch(page, orderFields, orderAsc, keyword, startId);
+                Message msg = new Message();
+                Object[] obj = new Object[2];
+                obj[0] = callback;
+                obj[1] = result;
+                msg.obj = obj;
+                msg.what = 0x01012013;
+                handler.sendMessage(msg);
+            }
+        });
+    }
+
+    @Override
+    public void getContestComment(final int page, final int ContestId, final ReceivedCallback<ListReceived<ContestCommentListItem>> callback) {
+        ThreadUtil.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+                ListReceived<ContestCommentListItem> result = ContestConnection.getInstance().getComment(page, ContestId);
                 Message msg = new Message();
                 Object[] obj = new Object[2];
                 obj[0] = callback;
