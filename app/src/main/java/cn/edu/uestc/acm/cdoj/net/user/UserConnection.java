@@ -5,13 +5,11 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 
 import java.io.File;
 
-import cn.edu.uestc.acm.cdoj.net.LoginCallBack;
 import cn.edu.uestc.acm.cdoj.net.UserInfoCallback;
 import cn.edu.uestc.acm.cdoj.utils.DigestUtil;
 import cn.edu.uestc.acm.cdoj.utils.ImageUtil;
