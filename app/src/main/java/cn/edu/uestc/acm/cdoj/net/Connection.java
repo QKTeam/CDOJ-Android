@@ -218,7 +218,7 @@ public class Connection implements ObtainArticle, ObtainProblem, ObtainContest {
 
     @Override
     public void searchContest(int page, String orderFields, ReceivedCallback<ListReceived<ContestListItem>> callback) {
-        searchContest(page, orderFields, true, callback);
+        searchContest(page, orderFields, false, callback);
     }
 
     @Override

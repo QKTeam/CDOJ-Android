@@ -9,6 +9,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.edu.uestc.acm.cdoj.LoginActivity;
 import cn.edu.uestc.acm.cdoj.genaralData.RecyclerViewItemClickListener;
 import cn.edu.uestc.acm.cdoj.net.Connection;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestListItem;
@@ -21,6 +22,7 @@ import cn.edu.uestc.acm.cdoj.ui.adapter.ContestAdapter;
 public class ContestListData extends AbsDataList<ContestListItem>{
     private static final String TAG = "ContestListData";
     public static List<ContestListItem> data = new ArrayList<>();
+    public static boolean isPasswordTrue = false;
 
     public ContestListData(Context context){
         super(context);
@@ -34,29 +36,41 @@ public class ContestListData extends AbsDataList<ContestListItem>{
         contestAdapter.setItemClickListener(new RecyclerViewItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                if (data.get(position).getType() == 0) {
-                    transItemDataListener.onTranItemData(position, "contestFragment");
-                } else if (data.get(position).getType() == 1){
-                    Toast.makeText(context, "请输入密码", Toast.LENGTH_SHORT).show();
-                    enterPassword();
+                if (!LoginActivity.isLogined){
+                    remindLogin();
                 } else {
-                    Toast.makeText(context, "请先登录", Toast.LENGTH_SHORT).show();
+                    if (data.get(position).getType() == 0) {
+                        transItemDataListener.onTranItemData(position, "contestFragment");
+                    } else if (data.get(position).getType() == 1){
+                        enterPassword(position);
+                    } else {
+                        Toast.makeText(context, "功能暂未实现", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
         adapter = contestAdapter;
     }
 
-    private void enterPassword() {
-        final EditText password = new EditText(context);
-        new AlertDialog.Builder(context).setTitle("请输入密码").setView(password)
+    private void remindLogin() {
+        new AlertDialog.Builder(context).setTitle("请先登录").setNegativeButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        }).show();
+    }
+
+    private void enterPassword(final int position) {
+        final EditText passwordInput = new EditText(context);
+        new AlertDialog.Builder(context).setTitle("请输入密码").setView(passwordInput)
                 .setNegativeButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                     }
                 }).show();
-    }
+  }
 
     public static List<ContestListItem> getData(){
         return data;

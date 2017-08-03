@@ -1,6 +1,5 @@
 package cn.edu.uestc.acm.cdoj;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +15,7 @@ import cn.edu.uestc.acm.cdoj.net.user.UserConnection;
 public class LoginActivity extends AppCompatActivity implements LoginCallBack{
 
     private static final String TAG = "LoginActivity";
-
+    public static boolean isLogined = false;
     Button button_login;
 
 
@@ -50,6 +49,7 @@ public class LoginActivity extends AppCompatActivity implements LoginCallBack{
             String username = data[1];
             intent.putExtra("username",username);
             setResult(RESULT_OK,intent);
+            isLogined = true;
             finish();
         }else {
             Toast.makeText(this,"登陆失败",Toast.LENGTH_SHORT).show();

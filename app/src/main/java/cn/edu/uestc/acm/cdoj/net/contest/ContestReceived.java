@@ -2,14 +2,15 @@ package cn.edu.uestc.acm.cdoj.net.contest;
 
 import java.util.List;
 
+import cn.edu.uestc.acm.cdoj.genaralData.ContentReceived;
+
 /**
  * Created by 14779 on 2017-7-24.
  */
 
-public class ContestReceived {
+public class ContestReceived extends ContentReceived{
     private Contest contest;
     private List<ContestProblem> problemList;
-    private String result;
 
     public Contest getContest() {
         return contest;
@@ -25,13 +26,5 @@ public class ContestReceived {
 
     public void setProblemList(List<ContestProblem> problemList) {
         this.problemList = problemList;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
     }
 }

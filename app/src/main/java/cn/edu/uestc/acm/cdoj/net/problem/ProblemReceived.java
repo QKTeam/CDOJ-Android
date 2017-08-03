@@ -6,7 +6,6 @@ package cn.edu.uestc.acm.cdoj.net.problem;
 
 public class ProblemReceived {
     private Problem problem;
-    private String result;
 
     public Problem getProblem() {
         return problem;
@@ -14,13 +13,5 @@ public class ProblemReceived {
 
     public void setProblem(Problem problem) {
         this.problem = problem;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
     }
 }
