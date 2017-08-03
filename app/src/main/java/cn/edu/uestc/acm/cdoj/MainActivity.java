@@ -2,6 +2,7 @@ package cn.edu.uestc.acm.cdoj;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -28,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.genaralData.GeneralFragment;
+import cn.edu.uestc.acm.cdoj.net.user.UserConnection;
+import cn.edu.uestc.acm.cdoj.net.user.UserInfo;
 import cn.edu.uestc.acm.cdoj.ui.ViewPagerAdapter;
 import cn.edu.uestc.acm.cdoj.ui.data.ArticleListData;
 import cn.edu.uestc.acm.cdoj.ui.data.ContestListData;
@@ -38,20 +41,22 @@ import cn.edu.uestc.acm.cdoj.ui.detailFragment.ProblemDetailFrg;
 import cn.edu.uestc.acm.cdoj.utils.DigestUtil;
 import cn.edu.uestc.acm.cdoj.utils.FileUtil;
 import cn.edu.uestc.acm.cdoj.utils.ImageUtil;
-
-import static cn.edu.uestc.acm.cdoj.net.user.UserInfoReceived.UserBean;
+import cn.edu.uestc.acm.cdoj.utils.JsonUtil;
+import cn.edu.uestc.acm.cdoj.utils.SharedPreferenceUtil;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         GeneralFragment.TransItemDataListener {
 
     private static final String TAG = "MainActivity";
     public static boolean isLogin = false;
+    public static String current_user;
 
     private String userName;
     private DrawerLayout drawer;
     private Toolbar toolbar;
 
     private List<String> tab_main_item = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +66,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
         initDrawer();
         initViewPager();
+        SharedPreferences sharedPreferences = getSharedPreferences(DigestUtil.md5("User"),MODE_PRIVATE);
+        current_user = sharedPreferences.getString("current_user","user");
+        if (new File(this.getFilesDir() + "/UserInfo/" + current_user).exists()) {
+            UserInfo userInfo = JSON.parseObject(
+                    FileUtil.readFile(this, "UserInfo", current_user),
+                    UserInfo.class);
+            initLoginStatus();
+            isLogin = true;
+            initUserInfo(userInfo);
+        }
     }
 
     @Override
@@ -74,20 +89,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onRestart() {
         super.onRestart();
         if (new File(this.getFilesDir() + "/UserInfo/" + userName).exists()) {
-            isLogin = true;
-            UserBean userBean = JSON.parseObject(
+            UserInfo userInfo = JSON.parseObject(
                     FileUtil.readFile(this, "UserInfo", userName),
-                    UserBean.class);
-            String url = String.format("http://cdn.v2ex.com/gravatar/%s.jpg?s=%d&&d=retro", DigestUtil.md5(userBean.getEmail()), 120);
-            String uri = this.getFilesDir() + "/Images/" + DigestUtil.md5(url) + ".jpg";
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_main);
-            View headerView = navigationView.getHeaderView(0);
-            TextView user_name = headerView.findViewById(R.id.user_name);
-            TextView user_motto = headerView.findViewById(R.id.user_motto);
-            ImageView avatar = headerView.findViewById(R.id.avatar);
-            user_name.setText(userBean.getName());
-            user_motto.setText(userBean.getMotto());
-            avatar.setImageBitmap(ImageUtil.readImage(uri));
+                    UserInfo.class);
+
+            current_user = userInfo.getUserName();
+            isLogin = true;
+            initUserInfo(userInfo);
+    }
+    }
+
+    private void initUserInfo(UserInfo userInfo) {
+        String url = String.format("http://cdn.v2ex.com/gravatar/%s.jpg?s=%d&&d=retro", DigestUtil.md5(userInfo.getEmail()), 120);
+        String uri = this.getFilesDir() + "/Images/" + DigestUtil.md5(url) + ".jpg";
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_main);
+        View headerView = navigationView.getHeaderView(0);
+        TextView user_name = headerView.findViewById(R.id.user_name);
+        TextView user_motto = headerView.findViewById(R.id.user_motto);
+        ImageView avatar = headerView.findViewById(R.id.avatar);
+        user_name.setText(userInfo.getName());
+        user_motto.setText(userInfo.getMotto());
+        avatar.setImageBitmap(ImageUtil.readImage(uri));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (current_user != null) {
+            SharedPreferenceUtil.save_single_sp(this, DigestUtil.md5("User"), "current_user", current_user);
         }
     }
 
@@ -161,6 +190,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+
+    private void initLoginStatus() {
+        SharedPreferences sharedPreferences = this.getSharedPreferences(DigestUtil.md5("User"), MODE_PRIVATE);
+        if (sharedPreferences.getAll() != null) {
+            current_user = sharedPreferences.getString("current_user", null);
+            String userName = sharedPreferences.getString(DigestUtil.md5(current_user), null);
+            String password = sharedPreferences.getString(DigestUtil.md5(current_user), null);
+            String[] key = new String[]{"userName", "password"};
+            Object[] value = new Object[]{userName, password};
+            UserConnection.getInstance().login_background(JsonUtil.getJsonString(key,value));
+        }
     }
 
     private GeneralFragment initArticleFragment(Context context) {

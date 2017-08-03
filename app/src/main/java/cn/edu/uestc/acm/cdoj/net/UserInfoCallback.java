@@ -2,6 +2,7 @@ package cn.edu.uestc.acm.cdoj.net;
 
 import android.os.Bundle;
 
+import cn.edu.uestc.acm.cdoj.net.user.UserInfo;
 import cn.edu.uestc.acm.cdoj.net.user.UserInfoReceived;
 
 /**
@@ -10,5 +11,5 @@ import cn.edu.uestc.acm.cdoj.net.user.UserInfoReceived;
 
 public interface UserInfoCallback {
     void loginStatus(Bundle bundle);
-    void getUserInfo(UserInfoReceived.UserBean userBean);
+    void getUserInfo(UserInfo userInfo);
 }
