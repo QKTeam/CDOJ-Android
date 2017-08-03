@@ -25,7 +25,7 @@ public abstract class AbsDataList<T> implements ReceivedCallback<ListReceived<T>
     protected RecyclerView.Adapter adapter;
     protected GeneralFragment.TransItemDataListener transItemDataListener;
     private boolean firstLoad = true;
-    protected boolean isfreshing = false;
+    protected boolean isRefreshing = false;
 
     public AbsDataList(Context context){
         this.context = context;
@@ -44,13 +44,14 @@ public abstract class AbsDataList<T> implements ReceivedCallback<ListReceived<T>
     @Override
     public void onDataReceived(ListReceived<T> tListReceived) {
         mPageInfo = tListReceived.getPageInfo();
+        if (isRefreshing) {
+            data.clear();
+            isRefreshing = false;
+        }
         data.addAll(tListReceived.getList());
         if (firstLoad) {
             list.setListAdapter(adapter);
             firstLoad = false;
-        }
-        if (isfreshing) {
-            data.clear();
         }
         adapter.notifyDataSetChanged();
     }

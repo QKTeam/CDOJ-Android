@@ -51,8 +51,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawer;
     private Toolbar toolbar;
 
-    private String[] tab_main_item = {"公告", "题目", "比赛"};
-
+    private List<String> tab_main_item = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,6 +148,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void initViewPager() {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout_main);
         ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager_main);
+        tab_main_item.add("公告");
+        tab_main_item.add("题目");
+        tab_main_item.add("比赛");
 
         List<Fragment> fragment_list = new ArrayList<>();
         fragment_list.add(initArticleFragment(MainActivity.this));

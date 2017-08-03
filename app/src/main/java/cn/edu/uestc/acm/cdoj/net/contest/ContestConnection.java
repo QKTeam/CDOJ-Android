@@ -20,6 +20,7 @@ public class ContestConnection {
     private String url = "http://acm.uestc.edu.cn";
     private String dataPath = "/contest/data/";
     private String searchPath = "/contest/search/";
+    private String loginPath = "/contest/loginContest/";
     private String[] key = {"currentPage", "orderFields", "orderAsc", "keyword", "starItd"};
 
     public static ContestConnection getInstance(){
@@ -62,7 +63,21 @@ public class ContestConnection {
         return handleContentJson(getContentJson(id)).getProblemList();
     }
 
+    public ContestReceived getContestReceived(int id){
+        return handleContentJson(getContentJson(id));
+    }
     public ListReceived<ContestListItem> getSearch(int currentPage, String orderFields, boolean orderAsc, String keyword, int startId){
         return handleSearchJson(getSearchJson(currentPage, orderFields, orderAsc, keyword, startId));
+    }
+
+    public String loginContest(int contestId, String password){
+        String[] key = {"contestId", "password"};
+        Object[] value = {contestId, password};
+        String request = JsonUtil.getJsonString(key, value);
+        byte[] result = Request.post(url, loginPath, request);
+        if (request != null){
+            return new String(result);
+        }
+        return "";
     }
 }

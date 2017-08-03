@@ -52,7 +52,7 @@ public class ArticleListData extends AbsDataList<ArticleListItem> {
     public void onLoadMore() {
         if (mPageInfo.currentPage < mPageInfo.getTotalPages()){
             Connection.instance.searchArticle(mPageInfo.currentPage+1, "time", this);
-            Toast.makeText(context, "刷新成功", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "加载成功", Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(context, "无更多内容", Toast.LENGTH_LONG).show();
         }
@@ -60,5 +60,7 @@ public class ArticleListData extends AbsDataList<ArticleListItem> {
 
     @Override
     public void onRefresh() {
+        Connection.instance.searchArticle(1, "time", this);
+        isRefreshing = true;
     }
 }

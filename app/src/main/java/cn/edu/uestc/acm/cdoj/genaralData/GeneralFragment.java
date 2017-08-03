@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
+import com.lcodecore.tkrefreshlayout.header.progresslayout.ProgressLayout;
 
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.ui.data.GeneralList;
@@ -47,6 +48,9 @@ public class GeneralFragment<T> extends Fragment implements GeneralList {
         mRecyclerView = view.findViewById(R.id.genaral_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         swipeRefreshLayout = view.findViewById(R.id.general_refresh_layout);
+
+        ProgressLayout headView = new ProgressLayout(context);
+        swipeRefreshLayout.setHeaderView(headView);
         swipeRefreshLayout.setOverScrollRefreshShow(false);
         swipeRefreshLayout.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
@@ -67,7 +71,7 @@ public class GeneralFragment<T> extends Fragment implements GeneralList {
                     @Override
                     public void run() {
                         refreshLoadListener.onLoadMore();
-                        refreshLayout.onFinishLoadMore();
+                        refreshLayout.finishLoadmore();
 
                     }
                 }, 1500);

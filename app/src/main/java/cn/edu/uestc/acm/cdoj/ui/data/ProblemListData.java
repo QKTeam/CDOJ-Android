@@ -1,11 +1,9 @@
 package cn.edu.uestc.acm.cdoj.ui.data;
 
-import android.content.Context;
+import  android.content.Context;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import cn.edu.uestc.acm.cdoj.genaralData.RecyclerViewItemClickListener;
 import cn.edu.uestc.acm.cdoj.net.Connection;
 import cn.edu.uestc.acm.cdoj.net.problem.ProblemListItem;
@@ -51,14 +49,15 @@ public class ProblemListData extends AbsDataList<ProblemListItem> {
     public void onLoadMore() {
         if (mPageInfo.currentPage < mPageInfo.getTotalPages()){
             Connection.instance.searchProblem(mPageInfo.currentPage+1, "id", this);
-            Toast.makeText(context, "刷新成功", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "加载成功", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(context, "已加载完", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "无更多内容", Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void onRefresh() {
         Connection.instance.searchProblem(1, "id", this);
+        isRefreshing = true;
     }
 }

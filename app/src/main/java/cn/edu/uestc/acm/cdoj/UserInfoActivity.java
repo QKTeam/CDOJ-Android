@@ -20,7 +20,6 @@ import cn.edu.uestc.acm.cdoj.utils.FileUtil;
 public class UserInfoActivity extends AppCompatActivity implements UserInfoCallback,View.OnClickListener{
 
     private static final String TAG = "LoginActivity";
-
     private final HandleUserData handleUserData = new HandleUserData(this);
 
     @Override
