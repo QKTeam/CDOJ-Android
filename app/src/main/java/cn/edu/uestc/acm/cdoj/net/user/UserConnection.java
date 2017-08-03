@@ -38,8 +38,8 @@ public class UserConnection {
                 case 0x01012017:
                     Object[] obj = (Object[]) msg.obj;
                     UserInfoCallback getUserInfo = (UserInfoCallback) obj[0];
-                    UserInfoReceived.UserBean userBean = (UserInfoReceived.UserBean) obj[1];
-                    getUserInfo.getUserInfo(userBean);
+                    UserInfo userInfo = (UserInfo) obj[1];
+                    getUserInfo.getUserInfo(userInfo);
                     break;
             }
         }
@@ -76,6 +76,15 @@ public class UserConnection {
         });
     }
 
+    public void login_background(final String request_json){
+        ThreadUtil.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+                Request.post(baseUrl,loginUrl,request_json);
+            }
+        });
+    }
+
     public void getUserInfo(final Context context, final String username, final UserInfoCallback userInfoCallback, final int size) {
         ThreadUtil.getInstance().execute(new Runnable() {
             @Override
@@ -83,8 +92,8 @@ public class UserConnection {
                 Bitmap bitmap;
                 byte[] receivedData = Request.get(baseUrl, userInfoUrl + username);
                 UserInfoReceived userInfoReceived = JSON.parseObject(new String(receivedData), UserInfoReceived.class);
-
-                String email = userInfoReceived.getUser().getEmail();
+                UserInfo userInfo = userInfoReceived.getUserInfo();
+                String email = userInfo.getEmail();
                 String url = String.format("http://cdn.v2ex.com/gravatar/%s.jpg?s=%d&&d=retro", DigestUtil.md5(email), size);
                 String uri = context.getFilesDir() + "/Images/" + DigestUtil.md5(url) + ".jpg";
                 if (!new File(uri).exists()) {
@@ -94,7 +103,7 @@ public class UserConnection {
                 Message message = Message.obtain();
                 Object[] obj = new Object[3];
                 obj[0] = userInfoCallback;
-                obj[1] = userInfoReceived.getUser();
+                obj[1] =userInfo;
                 message.obj = obj;
                 message.what = 0x01012017;
                 handler.sendMessage(message);

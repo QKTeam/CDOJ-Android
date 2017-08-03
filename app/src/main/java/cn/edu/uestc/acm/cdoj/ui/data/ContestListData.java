@@ -35,7 +35,6 @@ public class ContestListData extends AbsDataList<ContestListItem>{
         contestAdapter.setItemClickListener(new RecyclerViewItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                
             }
         });
         adapter = contestAdapter;

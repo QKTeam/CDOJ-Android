@@ -1,9 +1,11 @@
 package cn.edu.uestc.acm.cdoj.net.user;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.DebugUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +16,14 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 
+import java.util.Map;
+
 import cn.edu.uestc.acm.cdoj.MainActivity;
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.UserInfoCallback;
+import cn.edu.uestc.acm.cdoj.utils.DigestUtil;
 import cn.edu.uestc.acm.cdoj.utils.FileUtil;
+import cn.edu.uestc.acm.cdoj.utils.SharedPreferenceUtil;
 
 /**
  * Created by lagranmoon on 2017/8/3.
@@ -27,6 +33,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener,User
     private static final String TAG = "LoginFragment";
 
     private final HandleUserData handleUserData = new HandleUserData(this);
+    String login_request =handleUserData.handle_login_json();
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -47,7 +54,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener,User
 
                 break;
             case R.id.button_login:
-                String login_request = handleUserData.handle_login_json();
                 UserConnection.getInstance().login(login_request,LoginFragment.this);
                 break;
             case R.id.text_forgot_password:
@@ -66,14 +72,25 @@ public class LoginFragment extends Fragment implements View.OnClickListener,User
         }
     }
 
+
     @Override
-    public void getUserInfo(UserInfoReceived.UserBean userBean) {
-        String UserInfo = JSON.toJSONString(userBean);
-        FileUtil.saveUserInfo(getActivity(),UserInfo,userBean.getUserName());
+    public void getUserInfo(UserInfo userInfo) {
+        FileUtil.saveUserInfo(getActivity(),JSON.toJSONString(userInfo),userInfo.getUserName());
+        UserInfo user_password = JSON.parseObject(login_request,UserInfo.class);
+
+        save_user_password(user_password);
+
+        Log.d(TAG, "userName:"+userInfo.getUserName());
         Intent intent  = new Intent(getActivity(),MainActivity.class);
-        Log.d(TAG, "userName:"+userBean.getUserName());
-        intent.putExtra("userName",userBean.getUserName());
+        intent.putExtra("userName",userInfo.getUserName());
         startActivity(intent);
     }
+
+    private void save_user_password(UserInfo user_password) {
+        String[] key = {DigestUtil.md5(user_password.getUserName()),DigestUtil.md5(user_password.getPassword())};
+        String[] value = {user_password.getUserName(),DigestUtil.md5(user_password.getPassword())+"_password"};
+        SharedPreferenceUtil.saveSharedPreference(getActivity(),DigestUtil.md5("User"),key,value);
+    }
+
 
 }
