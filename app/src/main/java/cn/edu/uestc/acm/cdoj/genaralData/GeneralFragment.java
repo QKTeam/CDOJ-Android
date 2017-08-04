@@ -33,7 +33,6 @@ public class GeneralFragment<T> extends Fragment implements GeneralList {
     public GeneralFragment(Context context, String type) {
         this.context = context;
         this.type = type;
-
     }
 
     @Nullable
@@ -75,7 +74,6 @@ public class GeneralFragment<T> extends Fragment implements GeneralList {
 
                     }
                 }, 1500);
-
             }
         });
     }

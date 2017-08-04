@@ -1,9 +1,16 @@
 package cn.edu.uestc.acm.cdoj.ui.data;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import cn.edu.uestc.acm.cdoj.genaralData.ListReceived;
 import cn.edu.uestc.acm.cdoj.net.Connection;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestCommentListItem;
+import cn.edu.uestc.acm.cdoj.net.user.UserConnection;
 import cn.edu.uestc.acm.cdoj.ui.adapter.ContestCommentAdapter;
 
 /**
@@ -12,6 +19,7 @@ import cn.edu.uestc.acm.cdoj.ui.adapter.ContestCommentAdapter;
 
 public class ContestCommentListData extends AbsDataList<ContestCommentListItem> {
     private int id;
+    private List<Bitmap> listAvatar = new ArrayList<>();
 
     public ContestCommentListData(Context context, int id) {
         super(context);
@@ -21,7 +29,7 @@ public class ContestCommentListData extends AbsDataList<ContestCommentListItem> 
 
     @Override
     protected void createAdapter() {
-        super.adapter = new ContestCommentAdapter(context, super.data);
+        super.adapter = new ContestCommentAdapter(context, super.data, listAvatar);
     }
 
     @Override
@@ -38,5 +46,14 @@ public class ContestCommentListData extends AbsDataList<ContestCommentListItem> 
     public void onRefresh() {
         Connection.instance.getContestComment(1, id, this);
         isRefreshing = true;
+    }
+
+    @Override
+    public void onDataReceived(ListReceived<ContestCommentListItem> contestCommentListItemListReceived) {
+        super.onDataReceived(contestCommentListItemListReceived);
+        for (int i = 0; i<contestCommentListItemListReceived.getList().size(); i++) {
+            UserConnection.getInstance().saveAvatar(context, contestCommentListItemListReceived.getList().get(i).getOwnerEmail(),120);
+            listAvatar.add(UserConnection.getInstance().getAvatar(context, contestCommentListItemListReceived.getList().get(i).getOwnerEmail(),120));
+        }
     }
 }

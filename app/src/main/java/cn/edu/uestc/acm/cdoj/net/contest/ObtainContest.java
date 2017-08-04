@@ -29,4 +29,10 @@ public interface ObtainContest {
     void searchContest(int page, String orderFields, boolean orderAsc, String keyword, int startId, ReceivedCallback<ListReceived<ContestListItem>> callback);
 
     void getContestComment(int page, int ContestId, ReceivedCallback<ListReceived<ContestCommentListItem>> callback);
+
+    void getContestStatus(int page, int contestId, ReceivedCallback<ListReceived<ContestStatusListItem>> callback);
+
+    void getContestStatus(int page, int contestID, String orderFields, ReceivedCallback<ListReceived<ContestStatusListItem>> callback);
+
+    void getContestStatus(int page, int contestId, String orderFields, boolean orderAsc, ReceivedCallback<ListReceived<ContestStatusListItem>> callback);
 }

@@ -18,12 +18,16 @@ public class ContestConnection {
 
     private static final String TAG = "ContestConnection";
     private String url = "http://acm.uestc.edu.cn";
+
     private String dataPath = "/contest/data/";
     private String searchPath = "/contest/search/";
     private String loginPath = "/contest/loginContest/";
     private String commentPath = "/article/commentSearch/";
+    private String statusPath = "/status/search/";
+
     private String[] key = {"currentPage", "orderFields", "orderAsc", "keyword", "starItd"};
     private String[] commentKey = {"currentPage", "ContestId"};
+    private String[] statusKey = {"currentPage", "contestId", "orderFields", "orderAsc"};
 
     public static ContestConnection getInstance(){
         return instance;
@@ -57,6 +61,16 @@ public class ContestConnection {
         return "";
     }
 
+    private String getStatusJson(int currentPage, int contestId, String orderFields, boolean orderAsc){
+        Object[] value = {currentPage, contestId, orderFields, orderAsc};
+        String request = JsonUtil.getJsonString(statusKey, value);
+        byte[] dataReceived = Request.post(url, statusPath, request);
+        if (dataReceived != null){
+            return new String(dataReceived);
+        }
+        return "";
+    }
+
     private ContestReceived handleContentJson(String jsonString){
         ContestReceived contestReceived = JSON.parseObject(jsonString, new TypeReference<ContestReceived>(){});
         return contestReceived;
@@ -71,6 +85,10 @@ public class ContestConnection {
         return JSON.parseObject(jsonString, new TypeReference<ListReceived<ContestCommentListItem>>(){});
     }
 
+    private ListReceived<ContestStatusListItem> handleStatusJson(String jsonString){
+        return JSON.parseObject(jsonString, new TypeReference<ListReceived<ContestStatusListItem>>(){});
+    }
+
     public Contest getContent(int id){
         return handleContentJson(getContentJson(id)).getContest();
     }
@@ -82,6 +100,7 @@ public class ContestConnection {
     public ContestReceived getContestReceived(int id){
         return handleContentJson(getContentJson(id));
     }
+
     public ListReceived<ContestListItem> getSearch(int currentPage, String orderFields, boolean orderAsc, String keyword, int startId){
         return handleSearchJson(getSearchJson(currentPage, orderFields, orderAsc, keyword, startId));
     }
@@ -90,14 +109,7 @@ public class ContestConnection {
         return handleCommentJson(getCommentJson(page, ContestId));
     }
 
-    public String loginContest(int contestId, String password){
-        String[] key = {"contestId", "password"};
-        Object[] value = {contestId, password};
-        String request = JsonUtil.getJsonString(key, value);
-        byte[] result = Request.post(url, loginPath, request);
-        if (request != null){
-            return new String(result);
-        }
-        return "";
+    public ListReceived<ContestStatusListItem> getStatus(int page, int contestId, String orderFields, boolean orderAsc){
+        return handleStatusJson(getStatusJson(page, contestId, orderFields, orderAsc));
     }
 }

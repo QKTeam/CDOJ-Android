@@ -31,6 +31,7 @@ public class ContestProblemFrg extends Fragment {
         problemReceived = getArguments().getString("contest_problem_list_fragment");
         webView = view.findViewById(R.id.problem_detail_wedView);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setDomStorageEnabled(true);
 
         Resources resources = getContext().getResources();
         InputStream input;
