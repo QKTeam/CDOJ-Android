@@ -86,6 +86,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     FileUtil.readFile(this, "UserInfo", userName),
                     UserInfo.class);
             current_user = userInfo.getUserName();
+
+            Log.d(TAG, "current_user"+current_user);
+
             isLogin = true;
             initUserInfo(userInfo);
         }
@@ -100,6 +103,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextView user_motto = headerView.findViewById(R.id.user_motto);
         ImageView avatar = headerView.findViewById(R.id.avatar);
         user_name.setText(userInfo.getName());
+
+        Log.d(TAG, "initUserInfo: username"+user_name);
+
         user_motto.setText(userInfo.getMotto());
         avatar.setImageBitmap(ImageUtil.readImage(uri));
     }
@@ -188,17 +194,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SharedPreferences sharedPreferences = this.getSharedPreferences(DigestUtil.md5("User"), MODE_APPEND);
         if (sharedPreferences.contains("current_user")) {
             current_user = sharedPreferences.getString("current_user", null);
+
+            Log.d(TAG, "initLoginStatus: current_user"+current_user);
+
             String userName = sharedPreferences.getString(DigestUtil.md5(current_user), null);
             String password = sharedPreferences.getString(DigestUtil.md5(current_user), null);
             String[] key = new String[]{"userName", "password"};
             Object[] value = new Object[]{userName, password};
-
             UserConnection.getInstance().login_background(JsonUtil.getJsonString(key, value));
             if (new File(this.getFilesDir() + "/UserInfo/" + current_user).exists()) {
                 UserInfo userInfo = JSON.parseObject(
                         FileUtil.readFile(this, "UserInfo", current_user),
                         UserInfo.class);
-                initLoginStatus();
                 isLogin = true;
                 initUserInfo(userInfo);
 
