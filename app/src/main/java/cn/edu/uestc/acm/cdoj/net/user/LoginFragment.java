@@ -78,20 +78,16 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Use
     public void getUserInfo(UserInfo userInfo) {
         FileUtil.saveUserInfo(getActivity(), JSON.toJSONString(userInfo), userInfo.getUserName());
         UserInfo user_password = JSON.parseObject(login_request, UserInfo.class);
-
         save_user_password(user_password);
-
-        Log.d(TAG, "userName:" + userInfo.getUserName());
         Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.putExtra("userName", userInfo.getUserName());
         startActivity(intent);
     }
 
     private void save_user_password(UserInfo user_password) {
-        String[] key = {DigestUtil.md5(user_password.getUserName()), DigestUtil.md5(user_password.getPassword())};
-        String[] value = {user_password.getUserName(), DigestUtil.md5(user_password.getPassword()) + "_password"};
+        String[] key = {DigestUtil.md5(user_password.getUserName()),  DigestUtil.md5(user_password.getUserName()) + "_password"};
+        String[] value = {user_password.getUserName(),user_password.getPassword()};
         SharedPreferenceUtil.saveSharedPreference(getActivity(),"User", key, value);
     }
-
 
 }
