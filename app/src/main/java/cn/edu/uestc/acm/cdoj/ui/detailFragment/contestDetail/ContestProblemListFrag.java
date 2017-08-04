@@ -45,7 +45,7 @@ public class ContestProblemListFrag extends Fragment {
         for (int i = 0; i<problemList.size(); i++){
             tab_title.add(problemList.get(i).getOrderCharacter());
         }
-        init();
+        initData();
         viewPager = view.findViewById(R.id.view_pager_contest_problem_list);
         tabLayout = view.findViewById(R.id.tab_layout_contest_problem_list);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager(), fragmentList, tab_title);
@@ -54,7 +54,7 @@ public class ContestProblemListFrag extends Fragment {
         tabLayout.setupWithViewPager(viewPager);
     }
 
-    public void init(){
+    public void initData(){
         for (int i = 0; i<problemList.size(); i++){
             ContestProblemFrg fragment = new ContestProblemFrg();
             Bundle bundle = new Bundle();
