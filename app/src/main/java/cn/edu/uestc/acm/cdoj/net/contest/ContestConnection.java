@@ -6,6 +6,11 @@ import com.alibaba.fastjson.TypeReference;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.genaralData.ListReceived;
+import cn.edu.uestc.acm.cdoj.net.contest.comment.ContestCommentListItem;
+import cn.edu.uestc.acm.cdoj.net.contest.problem.ContestProblem;
+import cn.edu.uestc.acm.cdoj.net.contest.rank.RankListOverview;
+import cn.edu.uestc.acm.cdoj.net.contest.rank.RankListReceived;
+import cn.edu.uestc.acm.cdoj.net.contest.status.ContestStatusListItem;
 import cn.edu.uestc.acm.cdoj.utils.JsonUtil;
 import cn.edu.uestc.acm.cdoj.utils.Request;
 
@@ -24,6 +29,7 @@ public class ContestConnection {
     private String loginPath = "/contest/loginContest/";
     private String commentPath = "/article/commentSearch/";
     private String statusPath = "/status/search/";
+    private String rankPath = "/contest/rankList/";
 
     private String[] key = {"currentPage", "orderFields", "orderAsc", "keyword", "starItd"};
     private String[] commentKey = {"currentPage", "ContestId"};
@@ -71,6 +77,15 @@ public class ContestConnection {
         return "";
     }
 
+    private String getRankJson(int id){
+        byte[] dataReceived = Request.get(url, rankPath+id);
+        if (dataReceived != null){
+            return new String(dataReceived);
+        }
+        return "";
+    }
+
+
     private ContestReceived handleContentJson(String jsonString){
         ContestReceived contestReceived = JSON.parseObject(jsonString, new TypeReference<ContestReceived>(){});
         return contestReceived;
@@ -88,6 +103,11 @@ public class ContestConnection {
     private ListReceived<ContestStatusListItem> handleStatusJson(String jsonString){
         return JSON.parseObject(jsonString, new TypeReference<ListReceived<ContestStatusListItem>>(){});
     }
+
+    private RankListReceived handleRankJson(String jsonString){
+        return JSON.parseObject(jsonString, new TypeReference<RankListReceived>(){});
+    }
+
 
     public Contest getContent(int id){
         return handleContentJson(getContentJson(id)).getContest();
@@ -111,5 +131,14 @@ public class ContestConnection {
 
     public ListReceived<ContestStatusListItem> getStatus(int page, int contestId, String orderFields, boolean orderAsc){
         return handleStatusJson(getStatusJson(page, contestId, orderFields, orderAsc));
+    }
+
+    public RankListReceived getRankReceived(int id){
+        return handleRankJson(getRankJson(id));
+    }
+
+    //lastFetched,problemList,rankLIst
+    public RankListOverview getRank(int id){
+        return getRankReceived(id).getRankList();
     }
 }

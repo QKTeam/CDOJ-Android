@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.net.contest.ContestProblem;
+import cn.edu.uestc.acm.cdoj.net.contest.problem.ContestProblem;
 import cn.edu.uestc.acm.cdoj.ui.ViewPagerAdapter;
 
 /**

@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.net.contest.ContestStatusListItem;
+import cn.edu.uestc.acm.cdoj.net.contest.status.ContestStatusListItem;
 import cn.edu.uestc.acm.cdoj.utils.TimeFormat;
 
 /**

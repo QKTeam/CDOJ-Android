@@ -1,4 +1,4 @@
-package cn.edu.uestc.acm.cdoj.ui.data;
+package cn.edu.uestc.acm.cdoj.ui.data.contestData;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,9 +9,10 @@ import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.genaralData.ListReceived;
 import cn.edu.uestc.acm.cdoj.net.Connection;
-import cn.edu.uestc.acm.cdoj.net.contest.ContestCommentListItem;
+import cn.edu.uestc.acm.cdoj.net.contest.comment.ContestCommentListItem;
 import cn.edu.uestc.acm.cdoj.net.user.UserConnection;
 import cn.edu.uestc.acm.cdoj.ui.adapter.ContestCommentAdapter;
+import cn.edu.uestc.acm.cdoj.ui.data.AbsDataList;
 
 /**
  * Created by 14779 on 2017-8-3.

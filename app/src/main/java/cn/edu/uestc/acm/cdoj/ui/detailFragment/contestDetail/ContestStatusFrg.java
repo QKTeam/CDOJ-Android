@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import cn.edu.uestc.acm.cdoj.genaralData.GeneralFragment;
-import cn.edu.uestc.acm.cdoj.net.contest.ContestStatusListItem;
+import cn.edu.uestc.acm.cdoj.net.contest.status.ContestStatusListItem;
 
 /**
  * Created by 14779 on 2017-8-4.

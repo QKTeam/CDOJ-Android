@@ -27,7 +27,7 @@ public class GeneralFragment<T> extends Fragment implements GeneralList {
     private String type;
     private Context context;
     private RecyclerView mRecyclerView;
-    private TwinklingRefreshLayout swipeRefreshLayout;
+    protected TwinklingRefreshLayout swipeRefreshLayout;
     private RefreshLoadListener refreshLoadListener;
 
     public GeneralFragment(Context context, String type) {
