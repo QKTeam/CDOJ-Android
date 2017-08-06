@@ -97,19 +97,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void initUserInfo(UserInfo userInfo) {
-        String url = String.format("http://cdn.v2ex.com/gravatar/%s.jpg?s=%d&&d=retro", DigestUtil.md5(userInfo.getEmail()), 120);
-        String uri = this.getFilesDir() + "/Images/" + DigestUtil.md5(url) + ".jpg";
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_main);
-        View headerView = navigationView.getHeaderView(0);
-        TextView user_name = headerView.findViewById(R.id.user_name);
-        TextView user_motto = headerView.findViewById(R.id.user_motto);
-        ImageView avatar = headerView.findViewById(R.id.avatar);
-        user_name.setText(userInfo.getName());
-        user_motto.setText(userInfo.getMotto());
-        avatar.setImageBitmap(ImageUtil.readImage(uri));
-    }
-
     @Override
     protected void onDestroy() {
         if (current_user != null) {
@@ -165,8 +152,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, UserInfoActivity.class);
+                intent.putExtra("isLogin",isLogin);
                 startActivity(intent);
-//                startActivityForResult(intent,0);
             }
         });
 
@@ -211,6 +198,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         }
+    }
+
+    private void initUserInfo(UserInfo userInfo) {
+        String url = String.format("http://cdn.v2ex.com/gravatar/%s.jpg?s=%d&&d=retro", DigestUtil.md5(userInfo.getEmail()), 120);
+        String uri = this.getFilesDir() + "/Images/" + DigestUtil.md5(url) + ".jpg";
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_main);
+        View headerView = navigationView.getHeaderView(0);
+        TextView user_name = headerView.findViewById(R.id.user_name);
+        TextView user_motto = headerView.findViewById(R.id.user_motto);
+        ImageView avatar = headerView.findViewById(R.id.avatar);
+        user_name.setText(userInfo.getName());
+        user_motto.setText(userInfo.getMotto());
+        avatar.setImageBitmap(ImageUtil.readImage(uri));
     }
 
     private void setWindowStatus() {

@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.util.DebugUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +35,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Use
     private static final String TAG = "LoginFragment";
 
     private final HandleUserData handleUserData = new HandleUserData(this);
+    private FragmentManager fragmentManager;
     String login_request;
 
     @Nullable
@@ -52,12 +55,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Use
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.button_register:
+                fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.userinfo_container,new Register_Step1_Fragment());
+                fragmentTransaction.commit();
                 break;
             case R.id.button_login:
                 login_request = handleUserData.handle_login_json();
                 UserConnection.getInstance().login(login_request, LoginFragment.this);
-                break;
-            case R.id.text_forgot_password:
                 break;
         }
     }

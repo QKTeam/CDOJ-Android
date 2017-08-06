@@ -27,6 +27,8 @@ public class UserConnection {
     private String baseUrl = "http://acm.uestc.edu.cn";
     private String loginUrl = "/user/login";
     private String userInfoUrl = "/user/profile/";
+    private String registerUrl = "/user/register";
+
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -122,6 +124,7 @@ public class UserConnection {
             }
         });
     }
+
     public Bitmap getAvatar(Context context,String email,int size){
         String url = String.format("http://cdn.v2ex.com/gravatar/%s.jpg?s=%d&&d=retro", DigestUtil.md5(email), size);
         String uri = context.getFilesDir() + "/Images/" + DigestUtil.md5(url) + ".jpg";
@@ -131,4 +134,12 @@ public class UserConnection {
         return ImageUtil.readImage(uri);
     }
 
+    public void register(final String request_json, UserInfoCallback userInfoCallback){
+        ThreadUtil.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+//                Request.post(baseUrl,registerUrl,request_json);
+            }
+        });
+    }
 }

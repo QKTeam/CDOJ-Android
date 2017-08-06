@@ -3,8 +3,9 @@ package cn.edu.uestc.acm.cdoj.net.user;
 import android.support.v4.app.Fragment;
 
 /**
- * Created by lagranmoon on 2017/8/2.
+ * Created by lagranmoon on 2017/8/4.
  */
 
-public class RegisterFragment extends Fragment {
+public class UserInfoFragment extends Fragment {
+
 }
