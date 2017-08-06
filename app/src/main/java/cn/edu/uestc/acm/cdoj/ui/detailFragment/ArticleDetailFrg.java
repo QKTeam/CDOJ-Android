@@ -63,6 +63,7 @@ public class ArticleDetailFrg extends Fragment implements ReceivedCallback<Artic
 
         webView = view.findViewById(R.id.article_detail_webView);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setDomStorageEnabled(true);
     }
 
 

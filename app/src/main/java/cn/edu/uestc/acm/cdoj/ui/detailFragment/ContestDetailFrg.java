@@ -21,11 +21,15 @@ import cn.edu.uestc.acm.cdoj.net.Connection;
 import cn.edu.uestc.acm.cdoj.net.ReceivedCallback;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestReceived;
 import cn.edu.uestc.acm.cdoj.ui.ViewPagerAdapter;
-import cn.edu.uestc.acm.cdoj.ui.data.ContestCommentListData;
+import cn.edu.uestc.acm.cdoj.ui.data.contestData.ContestCommentListData;
 import cn.edu.uestc.acm.cdoj.ui.data.ContestListData;
+import cn.edu.uestc.acm.cdoj.ui.data.contestData.ContestRankListData;
+import cn.edu.uestc.acm.cdoj.ui.data.contestData.StatusListData;
 import cn.edu.uestc.acm.cdoj.ui.detailFragment.contestDetail.ContestCommentFrg;
 import cn.edu.uestc.acm.cdoj.ui.detailFragment.contestDetail.ContestOverViewFrg;
 import cn.edu.uestc.acm.cdoj.ui.detailFragment.contestDetail.ContestProblemListFrag;
+import cn.edu.uestc.acm.cdoj.ui.detailFragment.contestDetail.ContestRankListFrg;
+import cn.edu.uestc.acm.cdoj.ui.detailFragment.contestDetail.ContestStatusFrg;
 
 /**
  * Created by 14779 on 2017-7-24.
@@ -52,6 +56,9 @@ public class ContestDetailFrg extends Fragment implements ReceivedCallback<Conte
             fragmentList.add(initOverView());
             fragmentList.add(initProblemList());
             fragmentList.add(initContestComment());
+            fragmentList.add(initContestStatus());
+            fragmentList.add(initContestRank());
+
             tab_title.add("概览");
             tab_title.add("题目");
             tab_title.add("讨论");
@@ -73,7 +80,6 @@ public class ContestDetailFrg extends Fragment implements ReceivedCallback<Conte
         viewPager = view.findViewById(R.id.view_pager_contest_detail);
         tabLayout = view.findViewById(R.id.tab_layout_contest_detail);
         fragmentList = new ArrayList<>();
-
     }
 
     private Fragment initOverView() {
@@ -95,6 +101,18 @@ public class ContestDetailFrg extends Fragment implements ReceivedCallback<Conte
     private Fragment initContestComment(){
         ContestCommentFrg fragment = new ContestCommentFrg(getContext(), "contest_comment_fragment");
         new ContestCommentListData(getContext(), contestReceived.getContest().getContestId()).setUpList(fragment);
+        return fragment;
+    }
+
+    public Fragment initContestStatus(){
+        ContestStatusFrg fragment = new ContestStatusFrg(getContext(), "contest_status_fragment");
+        new StatusListData(getContext(), contestReceived.getContest().getContestId()).setUpList(fragment);
+        return fragment;
+    }
+
+    public Fragment initContestRank(){
+        ContestRankListFrg fragment = new ContestRankListFrg(getContext(), "contest_rank_fragment");
+        new ContestRankListData(getContext(), contestReceived.getContest().getContestId()).setUpList(fragment);
         return fragment;
     }
 

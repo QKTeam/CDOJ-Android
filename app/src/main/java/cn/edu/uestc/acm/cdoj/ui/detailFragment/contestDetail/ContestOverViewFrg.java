@@ -33,6 +33,7 @@ public class ContestOverViewFrg extends android.support.v4.app.Fragment {
 
         webView = view.findViewById(R.id.contest_detail_overview_web_view);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setDomStorageEnabled(true);
 
         Resources resources = getContext().getResources();
         InputStream input;

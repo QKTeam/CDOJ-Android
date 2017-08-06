@@ -3,6 +3,7 @@ package cn.edu.uestc.acm.cdoj.net.contest;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.genaralData.ContentReceived;
+import cn.edu.uestc.acm.cdoj.net.contest.problem.ContestProblem;
 
 /**
  * Created by 14779 on 2017-7-24.

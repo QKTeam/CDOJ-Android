@@ -11,12 +11,14 @@
             android:textStyle="bold"
             android:textSize="16dp"
             android:text="文章标题"
+            android:ellipsize="end"
             android:id="@+id/article_title"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:text="文章内容，文章内容，文章内容，文章内容"
+            android:ellipsize="end"
             android:id="@+id/article_content"/>
         <LinearLayout
             android:layout_width="match_parent"

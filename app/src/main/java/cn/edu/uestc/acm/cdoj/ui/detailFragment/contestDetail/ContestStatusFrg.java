@@ -8,14 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import cn.edu.uestc.acm.cdoj.genaralData.GeneralFragment;
+import cn.edu.uestc.acm.cdoj.net.contest.status.ContestStatusListItem;
 
 /**
- * Created by 14779 on 2017-8-3.
+ * Created by 14779 on 2017-8-4.
  */
 
-public class ContestCommentFrg extends GeneralFragment{
-
-    public ContestCommentFrg(Context context, String type) {
+public class ContestStatusFrg extends GeneralFragment<ContestStatusListItem> {
+    public ContestStatusFrg(Context context, String type) {
         super(context, type);
     }
 

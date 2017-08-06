@@ -1,4 +1,4 @@
-package cn.edu.uestc.acm.cdoj.net.contest;
+package cn.edu.uestc.acm.cdoj.net.contest.problem;
 
 /**
  * Created by 14779 on 2017-7-24.

@@ -1,6 +1,7 @@
 package cn.edu.uestc.acm.cdoj.net;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import java.util.List;
 
@@ -10,11 +11,14 @@ import cn.edu.uestc.acm.cdoj.net.article.ArticleConnection;
 import cn.edu.uestc.acm.cdoj.net.article.ArticleListItem;
 import cn.edu.uestc.acm.cdoj.net.article.ObtainArticle;
 import cn.edu.uestc.acm.cdoj.net.contest.Contest;
-import cn.edu.uestc.acm.cdoj.net.contest.ContestCommentListItem;
+import cn.edu.uestc.acm.cdoj.net.contest.comment.ContestCommentListItem;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestConnection;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestListItem;
-import cn.edu.uestc.acm.cdoj.net.contest.ContestProblem;
+import cn.edu.uestc.acm.cdoj.net.contest.problem.ContestProblem;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestReceived;
+import cn.edu.uestc.acm.cdoj.net.contest.rank.RankListOverview;
+import cn.edu.uestc.acm.cdoj.net.contest.rank.RankListReceived;
+import cn.edu.uestc.acm.cdoj.net.contest.status.ContestStatusListItem;
 import cn.edu.uestc.acm.cdoj.net.contest.ObtainContest;
 import cn.edu.uestc.acm.cdoj.net.problem.ObtainProblem;
 import cn.edu.uestc.acm.cdoj.net.problem.Problem;
@@ -250,11 +254,74 @@ public class Connection implements ObtainArticle, ObtainProblem, ObtainContest {
     }
 
     @Override
-    public void getContestComment(final int page, final int ContestId, final ReceivedCallback<ListReceived<ContestCommentListItem>> callback) {
+    public void getContestComment(final int page, final int contestId, final ReceivedCallback<ListReceived<ContestCommentListItem>> callback) {
         ThreadUtil.getInstance().execute(new Runnable() {
             @Override
             public void run() {
-                ListReceived<ContestCommentListItem> result = ContestConnection.getInstance().getComment(page, ContestId);
+                ListReceived<ContestCommentListItem> result = ContestConnection.getInstance().getComment(page, contestId);
+                Message msg = new Message();
+                Object[] obj = new Object[2];
+                obj[0] = callback;
+                obj[1] = result;
+                msg.obj = obj;
+                msg.what = 0x01012013;
+                handler.sendMessage(msg);
+            }
+        });
+    }
+
+
+    @Override
+    public void getContestStatus(int page, int contestId, ReceivedCallback<ListReceived<ContestStatusListItem>> callback) {
+        getContestStatus(page, contestId, "time", callback);
+    }
+
+    @Override
+    public void getContestStatus(int page, int contestID, String orderFields, ReceivedCallback<ListReceived<ContestStatusListItem>> callback) {
+        getContestStatus(page, contestID, orderFields, false, callback);
+    }
+
+    @Override
+    public void getContestStatus(final int page, final int contestId, final String orderFields, final boolean orderAsc, final ReceivedCallback<ListReceived<ContestStatusListItem>> callback) {
+        ThreadUtil.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+                ListReceived<ContestStatusListItem> result = ContestConnection.getInstance().getStatus(page, contestId, orderFields, orderAsc);
+                Message msg = new Message();
+                Object[] obj = new Object[2];
+                obj[0] = callback;
+                obj[1] = result;
+                msg.obj = obj;
+                msg.what = 0x01012013;
+                handler.sendMessage(msg);
+            }
+        });
+    }
+
+    @Override
+    public void getRankReceived(final int id, final ReceivedCallback<RankListReceived> callback) {
+        ThreadUtil.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+                RankListReceived result = ContestConnection.getInstance().getRankReceived(id);
+                Message msg = new Message();
+                Object[] obj = new Object[2];
+                obj[0] = callback;
+                obj[1] = result;
+                msg.obj = obj;
+                msg.what = 0x01012013;
+                handler.sendMessage(msg);
+            }
+        });
+    }
+
+    @Override
+    public void getRank(final int id, final ReceivedCallback<RankListOverview> callback) {
+        ThreadUtil.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+                RankListOverview result = ContestConnection.getInstance().getRank(id);
+                Log.i(TAG, "run: ******************************"+result.getRankList().size());
                 Message msg = new Message();
                 Object[] obj = new Object[2];
                 obj[0] = callback;

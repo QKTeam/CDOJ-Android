@@ -60,6 +60,7 @@ public class ProblemDetailFrg extends Fragment implements ReceivedCallback<Probl
 
         webView = view.findViewById(R.id.problem_detail_wedView);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setDomStorageEnabled(true);
     }
 
     @Override

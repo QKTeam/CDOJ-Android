@@ -36,12 +36,27 @@ public class ContestAdapter extends RecyclerView.Adapter<ContestAdapter.ContestV
     @Override
     public void onBindViewHolder(ContestViewHolder holder, int position) {
         ContestListItem positionItem = contestListItemList.get(position);
+        String contestType = null;
+        switch (positionItem.getType()){
+            case 0:
+                contestType = "Public";
+                break;
+            case 1:
+                contestType = "Private";
+                break;
+            case 3:
+                contestType = "Register";
+                break;
+            case 5:
+                contestType = "Onsite";
+                break;
+        }
         holder.title.setText(positionItem.getTitle());
         holder.time.setText(TimeFormat.changeDataFormat(positionItem.getTime(), "yyyy-MM-dd HH-mm-ss"));
         holder.rest_time.setText(TimeFormat.changeDataFormat(positionItem.getLength(),"HH:mm:ss") );
         holder.id.setText(String.valueOf(positionItem.getContestId()));
         holder.status.setText(positionItem.getStatus());
-        holder.type.setText(String.valueOf(positionItem.getType()));
+        holder.type.setText(contestType);
     }
 
     @Override
