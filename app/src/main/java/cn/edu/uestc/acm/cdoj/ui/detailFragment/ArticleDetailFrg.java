@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import cn.edu.uestc.acm.cdoj.R;
+import cn.edu.uestc.acm.cdoj.genaralData.ContentReceived;
 import cn.edu.uestc.acm.cdoj.net.Connection;
 import cn.edu.uestc.acm.cdoj.net.ReceivedCallback;
 import cn.edu.uestc.acm.cdoj.net.article.Article;
@@ -71,5 +72,10 @@ public class ArticleDetailFrg extends Fragment implements ReceivedCallback<Artic
     public void onDataReceived(Article article) {
         articleReceived = article;
         handler.obtainMessage(1, articleReceived).sendToTarget();
+    }
+
+    @Override
+    public void onLoginDataReceived(ContentReceived dataReceived) {
+
     }
 }

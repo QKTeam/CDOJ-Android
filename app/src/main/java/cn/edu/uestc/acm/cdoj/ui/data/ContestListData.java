@@ -9,19 +9,20 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.edu.uestc.acm.cdoj.MainActivity;
 import cn.edu.uestc.acm.cdoj.genaralData.RecyclerViewItemClickListener;
 import cn.edu.uestc.acm.cdoj.net.Connection;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestListItem;
 import cn.edu.uestc.acm.cdoj.ui.adapter.ContestAdapter;
+import cn.edu.uestc.acm.cdoj.utils.DigestUtil;
 
 /**
  * Created by 14779 on 2017-7-24.
  */
 
-public class ContestListData extends AbsDataList<ContestListItem>{
+public class ContestListData extends AbsDataList{
     private static final String TAG = "ContestListData";
     public static List<ContestListItem> data = new ArrayList<>();
-    public static boolean isPasswordTrue = false;
 
     public ContestListData(Context context){
         super(context);
@@ -35,17 +36,22 @@ public class ContestListData extends AbsDataList<ContestListItem>{
         contestAdapter.setItemClickListener(new RecyclerViewItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                if (data.get(position).getType() == 0) {
-                    transItemDataListener.onTranItemData(position, "contestFragment");
+                int type = data.get(position).getType();
+                if (!MainActivity.isLogin) {
+                    remindLogin(position);
                 } else {
-                    Toast.makeText(context, "进不去", Toast.LENGTH_SHORT).show();
+                    if (type == 0){
+                        transItemDataListener.onTranItemData(position, "contestFragment");
+                    } else if (type == 1){
+                        enterPassword(position);
+                    }
                 }
             }
         });
         adapter = contestAdapter;
     }
 
-    private void remindLogin() {
+    private void remindLogin(final int position) {
         new AlertDialog.Builder(context).setTitle("请先登录").setNegativeButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -60,7 +66,12 @@ public class ContestListData extends AbsDataList<ContestListItem>{
                 .setNegativeButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
+                        Connection.instance.getContestLogin(data.get(position).getContestId(), DigestUtil.sha1(passwordInput.toString().toString()), ContestListData.this);
+                        if (isPasswordTrue) {
+                            transItemDataListener.onTranItemData(position, "contestFragment");
+                        } else {
+                            Toast.makeText(context, "密码错误", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }).show();
   }

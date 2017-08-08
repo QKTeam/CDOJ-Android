@@ -14,6 +14,7 @@ import com.alibaba.fastjson.JSON;
 import java.io.IOException;
 import java.io.InputStream;
 import cn.edu.uestc.acm.cdoj.R;
+import cn.edu.uestc.acm.cdoj.genaralData.ContentReceived;
 import cn.edu.uestc.acm.cdoj.net.Connection;
 import cn.edu.uestc.acm.cdoj.net.ReceivedCallback;
 import cn.edu.uestc.acm.cdoj.net.problem.Problem;
@@ -67,5 +68,10 @@ public class ProblemDetailFrg extends Fragment implements ReceivedCallback<Probl
     public void onDataReceived(Problem problem) {
         problemReceived = problem;
         handler.obtainMessage(1, problemReceived).sendToTarget();
+    }
+
+    @Override
+    public void onLoginDataReceived(ContentReceived dataReceived) {
+
     }
 }

@@ -2,10 +2,10 @@ package cn.edu.uestc.acm.cdoj.ui.data;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.edu.uestc.acm.cdoj.genaralData.ContentReceived;
 import cn.edu.uestc.acm.cdoj.genaralData.GeneralFragment;
 import cn.edu.uestc.acm.cdoj.genaralData.ListReceived;
 import cn.edu.uestc.acm.cdoj.genaralData.PageInfo;
@@ -26,6 +26,7 @@ public abstract class AbsDataList<T> implements ReceivedCallback<ListReceived<T>
     protected GeneralFragment.TransItemDataListener transItemDataListener;
     private boolean firstLoad = true;
     protected boolean isRefreshing = false;
+    protected boolean isPasswordTrue = false;
 
     public AbsDataList(Context context){
         this.context = context;
@@ -44,16 +45,25 @@ public abstract class AbsDataList<T> implements ReceivedCallback<ListReceived<T>
     @Override
     public void onDataReceived(ListReceived<T> tListReceived) {
         mPageInfo = tListReceived.getPageInfo();
-        if (isRefreshing) {
-            data.clear();
-            isRefreshing = false;
+        if (tListReceived.getResult().equals("success")) {
+            if (isRefreshing) {
+                data.clear();
+                isRefreshing = false;
+            }
+            data.addAll(tListReceived.getList());
+            if (firstLoad) {
+                list.setListAdapter(adapter);
+                firstLoad = false;
+            }
+            adapter.notifyDataSetChanged();
         }
-        data.addAll(tListReceived.getList());
-        if (firstLoad) {
-            list.setListAdapter(adapter);
-            firstLoad = false;
+    }
+
+    @Override
+    public void onLoginDataReceived(ContentReceived dataReceived) {
+        if (dataReceived.getResult().equals("success")){
+            isPasswordTrue = true;
         }
-        adapter.notifyDataSetChanged();
     }
 
     protected abstract void createAdapter();

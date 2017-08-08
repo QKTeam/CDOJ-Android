@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.R;
+import cn.edu.uestc.acm.cdoj.genaralData.ContentReceived;
 import cn.edu.uestc.acm.cdoj.net.Connection;
 import cn.edu.uestc.acm.cdoj.net.ReceivedCallback;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestReceived;
@@ -120,5 +121,10 @@ public class ContestDetailFrg extends Fragment implements ReceivedCallback<Conte
     public void onDataReceived(ContestReceived contestReceived) {
         this.contestReceived = contestReceived;
         handler.obtainMessage(1, contestReceived).sendToTarget();
+    }
+
+    @Override
+    public void onLoginDataReceived(ContentReceived dataReceived) {
+        
     }
 }
