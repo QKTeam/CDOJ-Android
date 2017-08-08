@@ -10,6 +10,25 @@
     <string name="password">密码</string>
     <string name="username">用户名</string>
     <string name="department_id">department_id</string>
+    <string name="next_step">下一步</string>
+    <string name="UserInfo">个人信息</string>
+    <string name="name">姓名</string>
+    <string name="required">必填</string>
+    <string name="male">男</string>
+    <string name="female">女</string>
+    <string name="department">学院</string>
+    <string name="grade">年级</string>
+    <string name="t_shirt">T恤大小</string>
+    <string name="NickName">昵称</string>
+    <string name="Email">邮箱</string>
+    <string name="Motto">Motto</string>
+    <string name="school">学校</string>
+    <string name="StudentID">学号</string>
+    <string name="gender">性别</string>
+    <string name="phone">电话</string>
+    <string name="register_warning">您还有没有填写的项</string>
+    <string name="registerSuccess">注册成功</string>
+    <string name="registerError">用户名或邮箱已被使用</string>
 
 
 </resources>
