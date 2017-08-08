@@ -2,6 +2,7 @@ package cn.edu.uestc.acm.cdoj.net.contest;
 
 import java.util.List;
 
+import cn.edu.uestc.acm.cdoj.genaralData.ContentReceived;
 import cn.edu.uestc.acm.cdoj.genaralData.ListReceived;
 import cn.edu.uestc.acm.cdoj.net.ReceivedCallback;
 import cn.edu.uestc.acm.cdoj.net.contest.comment.ContestCommentListItem;
@@ -32,6 +33,8 @@ public interface ObtainContest {
     void searchContest(int page, String orderFields, boolean orderAsc, String keyword, ReceivedCallback<ListReceived<ContestListItem>> callback);
 
     void searchContest(int page, String orderFields, boolean orderAsc, String keyword, int startId, ReceivedCallback<ListReceived<ContestListItem>> callback);
+
+    void getContestLogin(int id, String password, ReceivedCallback<ContentReceived> callback);
 
     void getContestComment(int page, int ContestId, ReceivedCallback<ListReceived<ContestCommentListItem>> callback);
 

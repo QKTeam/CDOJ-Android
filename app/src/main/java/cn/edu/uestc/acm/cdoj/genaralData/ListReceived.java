@@ -6,7 +6,7 @@ import java.util.List;
  * Created by 14779 on 2017-7-18.
  */
 
-public class ListReceived<T> {
+public class ListReceived<T> extends ContentReceived {
     /**
      * list
      * pageInfo
@@ -14,7 +14,6 @@ public class ListReceived<T> {
      */
 
     private PageInfo pageInfo;
-    private String result;
     private List<T> list;
 
     public PageInfo getPageInfo() {
@@ -23,14 +22,6 @@ public class ListReceived<T> {
 
     public void setPageInfo(PageInfo pageInfo) {
         this.pageInfo = pageInfo;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
     }
 
     public List<T> getList() {

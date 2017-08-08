@@ -5,6 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 
 import java.util.List;
 
+import cn.edu.uestc.acm.cdoj.genaralData.ContentReceived;
 import cn.edu.uestc.acm.cdoj.genaralData.ListReceived;
 import cn.edu.uestc.acm.cdoj.net.contest.comment.ContestCommentListItem;
 import cn.edu.uestc.acm.cdoj.net.contest.problem.ContestProblem;
@@ -32,6 +33,7 @@ public class ContestConnection {
     private String rankPath = "/contest/rankList/";
 
     private String[] key = {"currentPage", "orderFields", "orderAsc", "keyword", "starItd"};
+    private String[] loginKey = {"contestId","password"};
     private String[] commentKey = {"currentPage", "ContestId"};
     private String[] statusKey = {"currentPage", "contestId", "orderFields", "orderAsc"};
 
@@ -51,6 +53,16 @@ public class ContestConnection {
         Object[] value = {currentPage, orderFields, orderAsc, keyword, startId};
         String request = JsonUtil.getJsonString(key, value);
         byte[] dataReceived = Request.post(url, searchPath, request);
+        if (dataReceived != null){
+            return new String(dataReceived);
+        }
+        return "";
+    }
+
+    private String getLoginJson(int contestId, String password){
+        Object[] value = {contestId, password};
+        String request = JsonUtil.getJsonString(loginKey, value);
+        byte[] dataReceived = Request.post(url, loginPath, request);
         if (dataReceived != null){
             return new String(dataReceived);
         }
@@ -96,6 +108,10 @@ public class ContestConnection {
         return itemListReceived;
     }
 
+    private ContentReceived handleLoginJson(String jsonString){
+        return JSON.parseObject(jsonString, new TypeReference<ContentReceived>(){});
+    }
+
     private ListReceived<ContestCommentListItem> handleCommentJson(String jsonString){
         return JSON.parseObject(jsonString, new TypeReference<ListReceived<ContestCommentListItem>>(){});
     }
@@ -123,6 +139,10 @@ public class ContestConnection {
 
     public ListReceived<ContestListItem> getSearch(int currentPage, String orderFields, boolean orderAsc, String keyword, int startId){
         return handleSearchJson(getSearchJson(currentPage, orderFields, orderAsc, keyword, startId));
+    }
+
+    public ContentReceived getLogin(int contestId, String password){
+        return handleLoginJson(getLoginJson(contestId, password));
     }
 
     public ListReceived<ContestCommentListItem> getComment(int page, int ContestId){

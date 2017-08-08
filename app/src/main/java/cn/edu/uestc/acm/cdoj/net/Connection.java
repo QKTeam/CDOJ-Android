@@ -1,25 +1,25 @@
 package cn.edu.uestc.acm.cdoj.net;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import java.util.List;
 
+import cn.edu.uestc.acm.cdoj.genaralData.ContentReceived;
 import cn.edu.uestc.acm.cdoj.genaralData.ListReceived;
 import cn.edu.uestc.acm.cdoj.net.article.Article;
 import cn.edu.uestc.acm.cdoj.net.article.ArticleConnection;
 import cn.edu.uestc.acm.cdoj.net.article.ArticleListItem;
 import cn.edu.uestc.acm.cdoj.net.article.ObtainArticle;
 import cn.edu.uestc.acm.cdoj.net.contest.Contest;
-import cn.edu.uestc.acm.cdoj.net.contest.comment.ContestCommentListItem;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestConnection;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestListItem;
-import cn.edu.uestc.acm.cdoj.net.contest.problem.ContestProblem;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestReceived;
+import cn.edu.uestc.acm.cdoj.net.contest.ObtainContest;
+import cn.edu.uestc.acm.cdoj.net.contest.comment.ContestCommentListItem;
+import cn.edu.uestc.acm.cdoj.net.contest.problem.ContestProblem;
 import cn.edu.uestc.acm.cdoj.net.contest.rank.RankListOverview;
 import cn.edu.uestc.acm.cdoj.net.contest.rank.RankListReceived;
 import cn.edu.uestc.acm.cdoj.net.contest.status.ContestStatusListItem;
-import cn.edu.uestc.acm.cdoj.net.contest.ObtainContest;
 import cn.edu.uestc.acm.cdoj.net.problem.ObtainProblem;
 import cn.edu.uestc.acm.cdoj.net.problem.Problem;
 import cn.edu.uestc.acm.cdoj.net.problem.ProblemConnection;
@@ -41,10 +41,16 @@ public class Connection implements ObtainArticle, ObtainProblem, ObtainContest {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 0x01012013:
-                    Object[] data = (Object[]) msg.obj;
-                    ReceivedCallback callback = (ReceivedCallback) data[0];
-                    Object result = data[1];
-                    callback.onDataReceived(result);
+                    Object[] data1 = (Object[]) msg.obj;
+                    ReceivedCallback callback1 = (ReceivedCallback) data1[0];
+                    Object result1 = data1[1];
+                    callback1.onDataReceived(result1);
+                    break;
+                case 0x01012014:
+                    Object[] data2 = (Object[]) msg.obj;
+                    ReceivedCallback callback2 = (ReceivedCallback) data2[0];
+                    Object result2 = data2[1];
+                    callback2.onLoginDataReceived((ContentReceived) result2);
                     break;
             }
         }
@@ -254,6 +260,23 @@ public class Connection implements ObtainArticle, ObtainProblem, ObtainContest {
     }
 
     @Override
+    public void getContestLogin(final int id, final String password, final ReceivedCallback<ContentReceived> callback) {
+        ThreadUtil.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+                ContentReceived result = ContestConnection.getInstance().getLogin(id, password);
+                Message msg = new Message();
+                Object[] obj = new Object[2];
+                obj[0] = callback;
+                obj[1] = result;
+                msg.obj = obj;
+                msg.what = 0x01012014;
+                handler.sendMessage(msg);
+            }
+        });
+    }
+
+    @Override
     public void getContestComment(final int page, final int contestId, final ReceivedCallback<ListReceived<ContestCommentListItem>> callback) {
         ThreadUtil.getInstance().execute(new Runnable() {
             @Override
@@ -321,7 +344,6 @@ public class Connection implements ObtainArticle, ObtainProblem, ObtainContest {
             @Override
             public void run() {
                 RankListOverview result = ContestConnection.getInstance().getRank(id);
-                Log.i(TAG, "run: ******************************"+result.getRankList().size());
                 Message msg = new Message();
                 Object[] obj = new Object[2];
                 obj[0] = callback;
