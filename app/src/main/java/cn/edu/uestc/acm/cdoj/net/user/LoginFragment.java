@@ -44,10 +44,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Use
         View view = inflater.inflate(R.layout.fragment_login, container, false);
         Button button_login = view.findViewById(R.id.button_login);
         Button button_register = view.findViewById(R.id.button_register);
-        TextView text_forgot_password = view.findViewById(R.id.text_forgot_password);
         button_login.setOnClickListener(this);
         button_register.setOnClickListener(this);
-        text_forgot_password.setOnClickListener(this);
         return view;
     }
 
@@ -57,6 +55,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Use
             case R.id.button_register:
                 fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.replace(R.id.userinfo_container,new Register_Step1_Fragment());
                 fragmentTransaction.commit();
                 break;

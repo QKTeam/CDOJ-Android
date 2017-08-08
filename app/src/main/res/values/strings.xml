@@ -29,6 +29,7 @@
     <string name="register_warning">您还有没有填写的项</string>
     <string name="registerSuccess">注册成功</string>
     <string name="registerError">用户名或邮箱已被使用</string>
+    <string name="copyright">Copyright © 晴空工作室 ACM创新中心</string>
 
 
 </resources>
