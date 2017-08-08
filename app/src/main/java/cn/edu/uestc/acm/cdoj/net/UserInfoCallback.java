@@ -11,6 +11,6 @@ import cn.edu.uestc.acm.cdoj.net.user.UserInfoReceived;
 
 public interface UserInfoCallback {
     void loginStatus(Bundle bundle);
-    void registerStatus(Bundle bundle);
+    void registerStatus(String s);
     void getUserInfo(UserInfo userInfo);
 }

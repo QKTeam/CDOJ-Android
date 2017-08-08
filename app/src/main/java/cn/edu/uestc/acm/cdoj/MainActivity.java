@@ -181,9 +181,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SharedPreferences sharedPreferences = this.getSharedPreferences(DigestUtil.md5("User"), MODE_APPEND);
         if (sharedPreferences.contains("current_user")) {
             current_user = sharedPreferences.getString("current_user", null);
-
-            Log.d(TAG, "initLoginStatus: current_user" + current_user);
-
             String userName = sharedPreferences.getString(DigestUtil.md5(current_user), null);
             String password = sharedPreferences.getString(DigestUtil.md5(current_user), null);
             String[] key = new String[]{"userName", "password"};

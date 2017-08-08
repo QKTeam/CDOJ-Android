@@ -44,6 +44,11 @@ public class UserConnection {
                     UserInfo userInfo = (UserInfo) obj[1];
                     getUserInfo.getUserInfo(userInfo);
                     break;
+                case 0x01010808:
+                    Object[] objects = (Object[]) msg.obj;
+                    UserInfoCallback register = (UserInfoCallback) objects[0];
+                    String registerStatus = (String) objects[1];
+                    register.registerStatus(registerStatus);
             }
         }
     };
@@ -134,11 +139,29 @@ public class UserConnection {
         return ImageUtil.readImage(uri);
     }
 
-    public void register(final String request_json, UserInfoCallback userInfoCallback){
+    public void register(final String request_json, final UserInfoCallback userInfoCallback){
         ThreadUtil.getInstance().execute(new Runnable() {
             @Override
             public void run() {
-//                Request.post(baseUrl,registerUrl,request_json);
+                byte[] receiveData =  Request.post(baseUrl,registerUrl,request_json);
+                String registerStatus = "";
+
+                Log.d(TAG, "receiveData"+new String (receiveData));
+
+                try {
+                    RegisterSuccess registerSuccess = JSON.parseObject(new String(receiveData),RegisterSuccess.class);
+                    registerStatus = registerSuccess.getResult();
+                }catch (Exception registerError){
+                    UserNameError userNameError = JSON.parseObject(new String(receiveData),UserNameError.class);
+                    registerStatus = userNameError.getResult();
+                }
+                Message message = Message.obtain();
+                Object[] obj = new Object[2];
+                obj[0] = userInfoCallback;
+                obj[1] = registerStatus;
+                message.obj = obj;
+                message.what = 0x01010808;
+                handler.sendMessage(message);
             }
         });
     }

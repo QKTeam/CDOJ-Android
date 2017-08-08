@@ -78,6 +78,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Use
         }
     }
 
+    @Override
+    public void registerStatus(String s) {
+
+    }
+
 
     @Override
     public void getUserInfo(UserInfo userInfo) {

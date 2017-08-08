@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ public class Register_Step1_Fragment extends Fragment {
     private Button button;
     private HandleUserData handleUserData = new HandleUserData(this);
     private SendDataCallback sendDataCallback;
+    private static final String TAG = "Register_Step1_Fragment";
 
     @Override
     public void onAttach(Context context) {
@@ -53,9 +55,6 @@ public class Register_Step1_Fragment extends Fragment {
             public void onClick(View view) {
                 String[] register_info_simple_info = handleUserData.get_register_simple_info();
                 sendDataCallback.onDataReceived(register_info_simple_info);
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
             }
         });
     }
