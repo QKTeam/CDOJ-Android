@@ -1,24 +1,18 @@
 package cn.edu.uestc.acm.cdoj.net.user;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.util.DebugUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
-
-import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.MainActivity;
 import cn.edu.uestc.acm.cdoj.R;
@@ -44,10 +38,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Use
         View view = inflater.inflate(R.layout.fragment_login, container, false);
         Button button_login = view.findViewById(R.id.button_login);
         Button button_register = view.findViewById(R.id.button_register);
-        TextView text_forgot_password = view.findViewById(R.id.text_forgot_password);
         button_login.setOnClickListener(this);
         button_register.setOnClickListener(this);
-        text_forgot_password.setOnClickListener(this);
         return view;
     }
 

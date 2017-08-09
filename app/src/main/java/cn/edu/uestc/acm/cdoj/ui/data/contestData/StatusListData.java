@@ -15,10 +15,9 @@ import cn.edu.uestc.acm.cdoj.ui.data.AbsDataList;
 public class StatusListData extends AbsDataList<ContestStatusListItem> {
     private static final String TAG = "StatusListData";
     private int id;
-
-    public StatusListData(Context context, int id) {
+    public StatusListData(Context context, int contestId) {
         super(context);
-        this.id = id;
+        this.id = contestId;
         Connection.instance.getContestStatus(1, id, this);
     }
 

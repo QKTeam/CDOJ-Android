@@ -92,5 +92,7 @@ public class RankListItem {
     public void setItemList(List<RankListDetailItem> itemList) {
         this.itemList = itemList;
     }
+
+
 }
 

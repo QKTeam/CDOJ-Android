@@ -24,6 +24,7 @@ import cn.edu.uestc.acm.cdoj.net.problem.ObtainProblem;
 import cn.edu.uestc.acm.cdoj.net.problem.Problem;
 import cn.edu.uestc.acm.cdoj.net.problem.ProblemConnection;
 import cn.edu.uestc.acm.cdoj.net.problem.ProblemListItem;
+import cn.edu.uestc.acm.cdoj.net.problem.ProblemStatusListItem;
 import cn.edu.uestc.acm.cdoj.utils.ThreadUtil;
 
 /**
@@ -159,6 +160,43 @@ public class Connection implements ObtainArticle, ObtainProblem, ObtainContest {
                 Object[] obj = new Object[2];
                 obj[0] = callback;
                 obj[1] = result;
+                msg.obj = obj;
+                msg.what = 0x01012013;
+                handler.sendMessage(msg);
+            }
+        });
+    }
+
+    @Override
+    public void getProblemStatus(int problemId, int currentPage, ReceivedCallback<ListReceived<ProblemStatusListItem>> callback) {
+        getProblemStatus(problemId, currentPage, "time", callback);
+    }
+
+    @Override
+    public void getProblemStatus(int problemId, int currentPage, String orderFields, ReceivedCallback<ListReceived<ProblemStatusListItem>> callback) {
+        getProblemStatus(problemId, currentPage, orderFields, false, callback);
+    }
+
+    @Override
+    public void getProblemStatus(int problemId, int currentPage, String orderFields, boolean orderAsc, ReceivedCallback<ListReceived<ProblemStatusListItem>> callback) {
+        getProblemStatus(problemId, currentPage, orderFields, orderAsc, -1, callback);
+    }
+
+    @Override
+    public void getProblemStatus(int problemId, int currentPage, String orderFields, boolean orderAsc, int contestId, ReceivedCallback<ListReceived<ProblemStatusListItem>> callback) {
+        getProblemStatus(problemId, currentPage, orderFields, orderAsc, contestId, 0, callback);
+    }
+
+    @Override
+    public void getProblemStatus(final int problemId, final int currentPage, final String orderFields, final boolean orderAsc, final int contestId, final int result, final ReceivedCallback<ListReceived<ProblemStatusListItem>> callback) {
+        ThreadUtil.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+                ListReceived<ProblemStatusListItem> received = ProblemConnection.getInstance().getStatus(problemId, currentPage, orderFields, orderAsc, contestId, result);
+                Message msg = new Message();
+                Object[] obj = new Object[2];
+                obj[0] = callback;
+                obj[1] = received;
                 msg.obj = obj;
                 msg.what = 0x01012013;
                 handler.sendMessage(msg);

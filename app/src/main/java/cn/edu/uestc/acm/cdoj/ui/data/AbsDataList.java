@@ -2,6 +2,8 @@ package cn.edu.uestc.acm.cdoj.ui.data;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 

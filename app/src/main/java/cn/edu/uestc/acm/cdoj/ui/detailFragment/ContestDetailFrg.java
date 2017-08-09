@@ -10,12 +10,9 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.alibaba.fastjson.JSON;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.genaralData.ContentReceived;
 import cn.edu.uestc.acm.cdoj.net.Connection;
@@ -125,6 +122,6 @@ public class ContestDetailFrg extends Fragment implements ReceivedCallback<Conte
 
     @Override
     public void onLoginDataReceived(ContentReceived dataReceived) {
-        
+
     }
 }

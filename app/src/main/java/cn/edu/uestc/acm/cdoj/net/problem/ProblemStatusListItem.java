@@ -1,14 +1,15 @@
-package cn.edu.uestc.acm.cdoj.net.contest.status;
+package cn.edu.uestc.acm.cdoj.net.problem;
 
+import cn.edu.uestc.acm.cdoj.genaralData.GeneralFragment;
 import cn.edu.uestc.acm.cdoj.genaralData.GeneralStatusListItem;
-import cn.edu.uestc.acm.cdoj.net.contest.rank.RankListItem;
 
 /**
- * Created by 14779 on 2017-8-4.
+ * Created by 14779 on 2017-8-9.
  */
 
-public class ContestStatusListItem extends GeneralStatusListItem {
-    private int contestId;private int caseNumber;
+public class ProblemStatusListItem extends GeneralStatusListItem {
+    private int problemId;
+    private int caseNumber;
     private String email;
     private String language;
     private int length;
@@ -125,13 +126,11 @@ public class ContestStatusListItem extends GeneralStatusListItem {
     public void setUserName(String userName) {
         this.userName = userName;
     }
-
-    public int getContestId() {
-        return contestId;
+    public int getProblemId() {
+        return problemId;
     }
 
-    public void setContestId(int contestId) {
-        this.contestId = contestId;
+    public void setProblemId(int problemId) {
+        this.problemId = problemId;
     }
-
 }

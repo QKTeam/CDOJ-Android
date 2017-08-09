@@ -22,4 +22,14 @@ public interface ObtainProblem {
 
     void searchProblem(int page, String orderFields, boolean orderAsc, String keyword, int startId, ReceivedCallback<ListReceived<ProblemListItem>> callback);
 
+    void getProblemStatus(int problemId, int currentPage, ReceivedCallback<ListReceived<ProblemStatusListItem>> callback);
+
+    void getProblemStatus(int problemId, int currentPage, String orderFields, ReceivedCallback<ListReceived<ProblemStatusListItem>> callback);
+
+    void getProblemStatus(int problemId, int currentPage, String orderFields, boolean orderAsc, ReceivedCallback<ListReceived<ProblemStatusListItem>> callback);
+
+    void getProblemStatus(int problemId, int currentPage, String orderFields, boolean orderAsc, int contestId, ReceivedCallback<ListReceived<ProblemStatusListItem>> callback);
+
+    void getProblemStatus(int problemId, int currentPage, String orderFields, boolean orderAsc, int contestId, int result, ReceivedCallback<ListReceived<ProblemStatusListItem>> callback);
+
 }

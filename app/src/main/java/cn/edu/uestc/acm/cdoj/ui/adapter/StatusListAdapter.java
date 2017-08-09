@@ -10,19 +10,25 @@ import android.widget.TextView;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.R;
+import cn.edu.uestc.acm.cdoj.genaralData.GeneralStatusListItem;
+import cn.edu.uestc.acm.cdoj.net.contest.Contest;
 import cn.edu.uestc.acm.cdoj.net.contest.status.ContestStatusListItem;
+import cn.edu.uestc.acm.cdoj.net.problem.ProblemStatusListItem;
+import cn.edu.uestc.acm.cdoj.ui.data.ProblemStatusListData;
+import cn.edu.uestc.acm.cdoj.ui.data.contestData.StatusListData;
 import cn.edu.uestc.acm.cdoj.utils.TimeFormat;
 
 /**
  * Created by 14779 on 2017-8-4.
  */
 
-public class StatusListAdapter extends RecyclerView.Adapter<StatusListAdapter.StatusListViewHolder>{
+public class StatusListAdapter<T> extends RecyclerView.Adapter<StatusListAdapter.StatusListViewHolder>{
     private static final String TAG = "StatusListAdapter";
     private Context context;
-    private List<ContestStatusListItem> statusListItems;
+    private List<T> statusListItems;
 
-    public StatusListAdapter(Context context, List<ContestStatusListItem> statusListItems){
+
+    public StatusListAdapter(Context context, List<T> statusListItems){
         this.context = context;
         this.statusListItems = statusListItems;
     }
@@ -34,14 +40,15 @@ public class StatusListAdapter extends RecyclerView.Adapter<StatusListAdapter.St
 
     @Override
     public void onBindViewHolder(StatusListViewHolder holder, int position) {
-        ContestStatusListItem positionItem = statusListItems.get(position);
+        GeneralStatusListItem positionItem = (GeneralStatusListItem) statusListItems.get(position);
         holder.returnType.setText(positionItem.getReturnType());
         holder.language_length.setText(positionItem.getLanguage()+"/"+positionItem.getLength());
         holder.userName.setText(positionItem.getUserName());
         if (positionItem.getReturnType().equals("Accepted")){
+            holder.returnType.setTextColor(R.color.green_primary);
             holder.memory_time_cost.setText(positionItem.getTimeCost()+"ms"+"/"+positionItem.getMemoryCost()+"KB");
         }
-        holder.problemName.setText("待解决");
+        holder.problemName.setText("");
         holder.submitTime.setText(TimeFormat.changeDataFormat(positionItem.getTime(), "yyyy-MM-dd HH:mm:ss"));
     }
 
