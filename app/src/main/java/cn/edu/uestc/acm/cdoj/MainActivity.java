@@ -3,6 +3,9 @@ package cn.edu.uestc.acm.cdoj;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -86,23 +89,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onRestart() {
         super.onRestart();
-        if (new File(this.getFilesDir() + "/UserInfo/" + userName).exists()) {
-            UserInfo userInfo = JSON.parseObject(
-                    FileUtil.readFile(this, "UserInfo", userName),
-                    UserInfo.class);
-            current_user = userInfo.getUserName();
-            isLogin = true;
-            initUserInfo(userInfo);
+        SharedPreferences sharedPreferences = this.getSharedPreferences(DigestUtil.md5("User"), MODE_APPEND);
+        if (!sharedPreferences.contains("current_user")) {
+            resetUserInfo();
+            isLogin = false;
+        }else{
+            if (new File(this.getFilesDir() + "/UserInfo/" + userName).exists()) {
+                UserInfo userInfo = JSON.parseObject(
+                        FileUtil.readFile(this, "UserInfo", userName),
+                        UserInfo.class);
+                current_user = userInfo.getUserName();
+                isLogin = true;
+                initUserInfo(userInfo);
+            }
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        if (current_user != null) {
-            SharedPreferenceUtil.save_single_sp(this, "User", "current_user", current_user);
-        }
-        super.onDestroy();
-    }
+//    @Override
+//    protected void onDestroy() {
+//        if (current_user != null) {
+//            SharedPreferenceUtil.save_single_sp(this, "User", "current_user", current_user);
+//        }
+//        super.onDestroy();
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -151,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, UserInfoActivity.class);
+                Log.d(TAG, "onClick: "+isLogin);
                 intent.putExtra("isLogin",isLogin);
                 startActivity(intent);
             }
@@ -191,7 +201,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         UserInfo.class);
                 isLogin = true;
                 initUserInfo(userInfo);
-
             }
         }
     }
@@ -207,6 +216,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         user_name.setText(userInfo.getName());
         user_motto.setText(userInfo.getMotto());
         avatar.setImageBitmap(ImageUtil.readImage(uri));
+    }
+
+    private void resetUserInfo(){
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_main);
+        View headerView = navigationView.getHeaderView(0);
+        TextView user_name = headerView.findViewById(R.id.user_name);
+        TextView user_motto = headerView.findViewById(R.id.user_motto);
+        ImageView avatar = headerView.findViewById(R.id.avatar);
+        user_motto.setText("");
+        user_name.setText("");
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.ic_default_avatar);
+        avatar.setImageBitmap(bitmap);
     }
 
     private void setWindowStatus() {

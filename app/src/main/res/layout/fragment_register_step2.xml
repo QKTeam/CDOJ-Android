@@ -132,7 +132,7 @@
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:gravity="center"
-            android:text="@string/t_shirt"
+            android:text="@string/size"
             android:textSize="14sp" />
 
         <Spinner

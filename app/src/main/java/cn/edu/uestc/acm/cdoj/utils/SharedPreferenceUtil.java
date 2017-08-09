@@ -22,4 +22,25 @@ public class SharedPreferenceUtil {
         String[] values = {value};
         saveSharedPreference(activity,name,keys,values);
     }
+
+    public static void deleteSharedPreference(Activity activity,String name,String [] keys){
+        SharedPreferences sharedPreferences = activity.getSharedPreferences(DigestUtil.md5(name), Context.MODE_APPEND);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        for (String key:keys){
+            editor.remove(key);
+        }
+        editor.apply();
+    }
+
+    public static void delete_single_sp(Activity activity,String name,String key){
+        String [] keys = {key};
+        deleteSharedPreference(activity,name,keys);
+    }
+
+    public static void clearSharedPreference(Activity activity,String name){
+        SharedPreferences sharedPreferences = activity.getSharedPreferences(DigestUtil.md5(name),Context.MODE_APPEND);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.commit();
+    }
 }

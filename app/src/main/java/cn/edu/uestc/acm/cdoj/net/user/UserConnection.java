@@ -28,6 +28,7 @@ public class UserConnection {
     private String loginUrl = "/user/login";
     private String userInfoUrl = "/user/profile/";
     private String registerUrl = "/user/register";
+    private String logoutUrl = "/user/logout";
 
     private Handler handler = new Handler() {
         @Override
@@ -59,7 +60,7 @@ public class UserConnection {
         return instance;
     }
 
-    public void login(final String request_json, final UserInfoCallback userInfoCallback) {
+    void login(final String request_json, final UserInfoCallback userInfoCallback) {
         ThreadUtil.getInstance().execute(new Runnable() {
             @Override
             public void run() {
@@ -93,7 +94,16 @@ public class UserConnection {
         });
     }
 
-    public void getUserInfo(final Context context, final String username, final UserInfoCallback userInfoCallback, final int size) {
+    public void logout(){
+        ThreadUtil.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+                Request.get(baseUrl,loginUrl);
+            }
+        });
+    }
+
+    void getUserInfo(final Context context, final String username, final UserInfoCallback userInfoCallback, final int size) {
         ThreadUtil.getInstance().execute(new Runnable() {
             @Override
             public void run() {
@@ -139,7 +149,7 @@ public class UserConnection {
         return ImageUtil.readImage(uri);
     }
 
-    public void register(final String request_json, final UserInfoCallback userInfoCallback){
+    void register(final String request_json, final UserInfoCallback userInfoCallback){
         ThreadUtil.getInstance().execute(new Runnable() {
             @Override
             public void run() {
@@ -165,4 +175,6 @@ public class UserConnection {
             }
         });
     }
+
+
 }

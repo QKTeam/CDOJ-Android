@@ -29,8 +29,8 @@ class HandleUserData {
         TextInputEditText input_username = fragment.getView().findViewById(R.id.input_username);
         TextInputEditText input_password = fragment.getView().findViewById(R.id.input_password);
         String username = input_username.getText().toString();
-//        String password_encrypted = DigestUtil.sha1(input_password.getText().toString());
-        String password_encrypted = "4afddabb3a1f7e8acde1eeec25ea06a77826f369";
+        String password_encrypted = DigestUtil.sha1(input_password.getText().toString());
+//        String password_encrypted = "4afddabb3a1f7e8acde1eeec25ea06a77826f369";
         String[] key = new String[]{"userName", "password"};
         Object[] value = new Object[]{username, password_encrypted};
         return JsonUtil.getJsonString(key, value);
