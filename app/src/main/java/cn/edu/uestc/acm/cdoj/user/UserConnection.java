@@ -1,4 +1,4 @@
-package cn.edu.uestc.acm.cdoj.net.user;
+package cn.edu.uestc.acm.cdoj.user;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -29,6 +29,7 @@ public class UserConnection {
     private String userInfoUrl = "/user/profile/";
     private String registerUrl = "/user/register";
     private String logoutUrl = "/user/logout";
+    private String editUrl = "/user/edit";
 
     private Handler handler = new Handler() {
         @Override
@@ -50,7 +51,13 @@ public class UserConnection {
                     UserInfoCallback register = (UserInfoCallback) objects[0];
                     String registerStatus = (String) objects[1];
                     register.registerStatus(registerStatus);
-            }
+                    break;
+                case 0x01010809:
+                    Object[] objs = (Object[]) msg.obj;
+                    UserInfoCallback edit = (UserInfoCallback) objs[0];
+                    String editStatus = (String) objs[1];
+                    edit.editStatus(editStatus);
+             }
         }
     };
     private UserConnection() {
@@ -98,7 +105,7 @@ public class UserConnection {
         ThreadUtil.getInstance().execute(new Runnable() {
             @Override
             public void run() {
-                Request.get(baseUrl,loginUrl);
+                Request.get(baseUrl,logoutUrl);
             }
         });
     }
@@ -176,5 +183,20 @@ public class UserConnection {
         });
     }
 
-
+    void edit(final String request_json, final UserInfoCallback userInfoCallback){
+        ThreadUtil.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+                byte[] receiveData = Request.post(baseUrl,editUrl,request_json);
+                EditResponse editResponse = JSON.parseObject(new String(receiveData),EditResponse.class);
+                Message message = Message.obtain();
+                Object[] obj = new Object[2];
+                obj[0] = userInfoCallback;
+                obj[1] = editResponse.getResult();
+                message.obj = obj;
+                message.what = 0x01010809;
+                handler.sendMessage(message);
+            }
+        });
+    }
 }

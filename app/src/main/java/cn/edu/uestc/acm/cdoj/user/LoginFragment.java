@@ -1,4 +1,4 @@
-package cn.edu.uestc.acm.cdoj.net.user;
+package cn.edu.uestc.acm.cdoj.user;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -85,6 +85,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Use
         Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.putExtra("userName", userInfo.getUserName());
         startActivity(intent);
+    }
+
+    @Override
+    public void editStatus(String s) {
+
     }
 
     private void save_user_password(UserInfo user_password) {

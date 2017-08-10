@@ -176,7 +176,7 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:padding="4dp"
-            android:id="@+id/student_id"/>
+            android:id="@+id/register_student_id"/>
     </TableRow>
 
     <TableRow>
@@ -189,7 +189,7 @@
             android:textSize="14sp" />
 
         <Spinner
-            android:id="@+id/spinner_department"
+            android:id="@+id/register_spinner_department"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:padding="4dp"
@@ -208,7 +208,7 @@
             android:textSize="14sp" />
 
         <Spinner
-            android:id="@+id/spinner_grade"
+            android:id="@+id/register_spinner_grade"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:padding="4dp"

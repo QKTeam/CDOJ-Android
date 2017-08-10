@@ -3,7 +3,6 @@ package cn.edu.uestc.acm.cdoj;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -35,8 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.genaralData.GeneralFragment;
-import cn.edu.uestc.acm.cdoj.net.user.UserConnection;
-import cn.edu.uestc.acm.cdoj.net.user.UserInfo;
+import cn.edu.uestc.acm.cdoj.user.UserConnection;
+import cn.edu.uestc.acm.cdoj.user.UserInfo;
 import cn.edu.uestc.acm.cdoj.ui.ViewPagerAdapter;
 import cn.edu.uestc.acm.cdoj.ui.data.ArticleListData;
 import cn.edu.uestc.acm.cdoj.ui.data.ContestListData;
@@ -48,7 +47,6 @@ import cn.edu.uestc.acm.cdoj.utils.DigestUtil;
 import cn.edu.uestc.acm.cdoj.utils.FileUtil;
 import cn.edu.uestc.acm.cdoj.utils.ImageUtil;
 import cn.edu.uestc.acm.cdoj.utils.JsonUtil;
-import cn.edu.uestc.acm.cdoj.utils.SharedPreferenceUtil;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         GeneralFragment.TransItemDataListener {
@@ -112,20 +110,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        super.onDestroy();
 //    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //绘制ToolBar上面的menu
-        getMenuInflater().inflate(R.menu.toolbar_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            //ToolBar工具栏点击事件
-        }
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        //绘制ToolBar上面的menu
+//        getMenuInflater().inflate(R.menu.toolbar_main, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            //ToolBar工具栏点击事件
+//        }
+//        return true;
+//    }
 
     @Override
     public void onBackPressed() {
@@ -139,7 +137,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.nav_rate:
+            case R.id.nav_recent_test:
+                break;
+            case R.id.nav_FAQ:
+                break;
+            case R.id.nav_Step_By_Step:
+                break;
+            case R.id.nav_about_us:
+                break;
 
         }
         return true;
