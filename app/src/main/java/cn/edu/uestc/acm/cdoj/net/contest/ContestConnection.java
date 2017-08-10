@@ -1,5 +1,7 @@
 package cn.edu.uestc.acm.cdoj.net.contest;
 
+import android.util.Log;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
@@ -99,7 +101,7 @@ public class ContestConnection {
         return "";
     }
 
-    private String getSubmitJosn(int contestId, String codeContent, int languageId){
+    private String getSubmitJson(int contestId, String codeContent, int languageId){
         Object[] value = {contestId, codeContent, languageId};
         String request = JsonUtil.getJsonString(submitKey, value);
         byte[] dataReceived = Request.post(url,submitPath, request);
@@ -135,7 +137,7 @@ public class ContestConnection {
         return JSON.parseObject(jsonString, new TypeReference<RankListReceived>(){});
     }
 
-    private ContentReceived handleSubmitJosn(String jsonString){
+    private ContentReceived handleSubmitJson(String jsonString){
         return JSON.parseObject(jsonString, new TypeReference<ContentReceived>(){});
     }
 
@@ -177,6 +179,6 @@ public class ContestConnection {
     }
 
     public ContentReceived submitContestCode(int contestId, String codeContent, int languageId){
-        return handleSubmitJosn(getSubmitJosn(contestId, codeContent, languageId));
+        return handleSubmitJson(getSubmitJson(contestId, codeContent, languageId));
     }
 }

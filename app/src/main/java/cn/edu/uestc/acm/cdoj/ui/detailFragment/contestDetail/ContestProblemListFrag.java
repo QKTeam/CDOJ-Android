@@ -90,7 +90,7 @@ public class ContestProblemListFrag extends Fragment {
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 ContestStatusFrg fragment = new ContestStatusFrg(getContext(), "problem_status_fragment");
                 new ProblemStatusListData(getContext(),problemList.get(positionItem).getProblemId()).setUpList(fragment);
-                transaction.replace(R.id.container, fragment);
+                transaction.replace(R.id.code_container, fragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
             }

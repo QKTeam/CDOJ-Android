@@ -18,7 +18,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -34,15 +33,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.genaralData.GeneralFragment;
-import cn.edu.uestc.acm.cdoj.user.UserConnection;
-import cn.edu.uestc.acm.cdoj.user.UserInfo;
 import cn.edu.uestc.acm.cdoj.ui.ViewPagerAdapter;
 import cn.edu.uestc.acm.cdoj.ui.data.ArticleListData;
 import cn.edu.uestc.acm.cdoj.ui.data.ContestListData;
 import cn.edu.uestc.acm.cdoj.ui.data.ProblemListData;
+import cn.edu.uestc.acm.cdoj.ui.data.RecentContestListData;
 import cn.edu.uestc.acm.cdoj.ui.detailFragment.ArticleDetailFrg;
 import cn.edu.uestc.acm.cdoj.ui.detailFragment.ContestDetailFrg;
 import cn.edu.uestc.acm.cdoj.ui.detailFragment.ProblemDetailFrg;
+import cn.edu.uestc.acm.cdoj.user.UserConnection;
+import cn.edu.uestc.acm.cdoj.user.UserInfo;
+import cn.edu.uestc.acm.cdoj.user.fragment_recent_contest;
 import cn.edu.uestc.acm.cdoj.utils.DigestUtil;
 import cn.edu.uestc.acm.cdoj.utils.FileUtil;
 import cn.edu.uestc.acm.cdoj.utils.ImageUtil;
@@ -138,6 +139,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_recent_test:
+                GeneralFragment fragment = new fragment_recent_contest(MainActivity.this, "recent_contest_fragment");
+                new RecentContestListData(MainActivity.this).setUpList(fragment);
+                getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).addToBackStack(null).commit();
+                drawer.closeDrawers();
                 break;
             case R.id.nav_FAQ:
                 break;
@@ -146,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_about_us:
                 break;
 
-        }
+         }
         return true;
     }
 

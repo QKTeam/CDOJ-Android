@@ -20,6 +20,8 @@ import cn.edu.uestc.acm.cdoj.net.contest.problem.ContestProblem;
 import cn.edu.uestc.acm.cdoj.net.contest.rank.RankListOverview;
 import cn.edu.uestc.acm.cdoj.net.contest.rank.RankListReceived;
 import cn.edu.uestc.acm.cdoj.net.contest.status.ContestStatusListItem;
+import cn.edu.uestc.acm.cdoj.net.homePage.HomePageConnection;
+import cn.edu.uestc.acm.cdoj.net.homePage.RecentContestListItem;
 import cn.edu.uestc.acm.cdoj.net.problem.ObtainProblem;
 import cn.edu.uestc.acm.cdoj.net.problem.Problem;
 import cn.edu.uestc.acm.cdoj.net.problem.ProblemConnection;
@@ -416,6 +418,22 @@ public class Connection implements ObtainArticle, ObtainProblem, ObtainContest {
             @Override
             public void run() {
                 ContentReceived result = ContestConnection.getInstance().submitContestCode(contestId, codeContent, languageId);
+                Message msg = new Message();
+                Object[] obj = new Object[2];
+                obj[0] = callback;
+                obj[1] = result;
+                msg.obj = obj;
+                msg.what = 0x01012013;
+                handler.sendMessage(msg);
+            }
+        });
+    }
+
+    public void getRecentContest(final ReceivedCallback<List<RecentContestListItem>> callback){
+        ThreadUtil.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+                List<RecentContestListItem> result = HomePageConnection.getInstance().getRecentContest();
                 Message msg = new Message();
                 Object[] obj = new Object[2];
                 obj[0] = callback;

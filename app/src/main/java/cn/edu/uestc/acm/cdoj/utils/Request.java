@@ -1,5 +1,6 @@
 package cn.edu.uestc.acm.cdoj.utils;
 
+import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 
@@ -59,6 +60,7 @@ public class Request {
             bos.flush();
             byte[] response = bos.toByteArray();
             bos.close();
+            Log.i("***************", "post: ******************"+response);
             return response;
         } catch (IOException e) {
             e.printStackTrace();

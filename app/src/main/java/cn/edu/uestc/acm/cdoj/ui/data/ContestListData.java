@@ -3,6 +3,7 @@ package cn.edu.uestc.acm.cdoj.ui.data;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -66,9 +67,10 @@ public class ContestListData extends AbsDataList{
                 .setNegativeButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Connection.instance.getContestLogin(data.get(position).getContestId(), DigestUtil.sha1(passwordInput.toString().toString()), ContestListData.this);
+                        Connection.instance.getContestLogin(data.get(position).getContestId(), DigestUtil.sha1(passwordInput.getText().toString()), ContestListData.this);
                         if (isPasswordTrue) {
                             transItemDataListener.onTranItemData(position, "contestFragment");
+                            isPasswordTrue = false;
                         } else {
                             Toast.makeText(context, "密码错误", Toast.LENGTH_SHORT).show();
                         }
