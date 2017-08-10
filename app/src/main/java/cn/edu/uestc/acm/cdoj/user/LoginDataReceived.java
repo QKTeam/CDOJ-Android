@@ -1,16 +1,16 @@
-package cn.edu.uestc.acm.cdoj.net.user;
+package cn.edu.uestc.acm.cdoj.user;
 
 /**
- * Created by lagranmoon on 2017/8/8.
+ * Created by lagranmoon on 2017/7/23.
  */
 
-public class RegisterSuccess {
+public class LoginDataReceived {
 
     /**
-     * email : test@test.com
+     * email : tanliqun1999@outlook.com
      * result : success
      * type : 0
-     * userName : test12
+     * userName : 2016100104001
      */
 
     private String email;

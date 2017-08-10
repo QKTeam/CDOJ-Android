@@ -1,33 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:title="ACM">
+    <item android:title="@string/acm">
         <menu>
             <item
-                android:title="最近比赛"
-                android:id="@+id/nav_recent_test"/>
+                android:id="@+id/nav_recent_test"
+                android:title="@string/recent_contest" />
             <item
-                android:title="FAQ"
-                android:id="@+id/nav_FAQ"/>
+                android:id="@+id/nav_FAQ"
+                android:title="@string/faq" />
             <item
-                android:title="Step By Step"
-                android:id="@+id/nav_Step_By_Step"/>
+                android:id="@+id/nav_Step_By_Step"
+                android:title="@string/step_by_step" />
         </menu>
     </item>
-    <item android:title="集训队">
-        <menu>
-            <item
-                android:title="队内荣誉"
-                android:id="@+id/nav_honor">
-            </item>
-            <item
-                android:title="训练rating"
-                android:id="@+id/nav_rate"/>
-        </menu>
-    </item>
-    <item android:title="关于">
-        <menu>
-            <item android:title="关于我们"
-                android:id="@+id/nav_about_us"/>
-        </menu>
-    </item>
+
+    <item
+        android:id="@+id/nav_about_us"
+        android:title="@string/aoubt_us" />
 </menu>

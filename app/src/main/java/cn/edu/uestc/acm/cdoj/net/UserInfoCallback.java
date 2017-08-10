@@ -2,8 +2,7 @@ package cn.edu.uestc.acm.cdoj.net;
 
 import android.os.Bundle;
 
-import cn.edu.uestc.acm.cdoj.net.user.UserInfo;
-import cn.edu.uestc.acm.cdoj.net.user.UserInfoReceived;
+import cn.edu.uestc.acm.cdoj.user.UserInfo;
 
 /**
  * Created by lagranmoon on 2017/7/25.

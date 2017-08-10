@@ -1,4 +1,4 @@
-package cn.edu.uestc.acm.cdoj.net.user;
+package cn.edu.uestc.acm.cdoj.user;
 
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -96,9 +96,6 @@ public class UserEditFragment extends Fragment implements UserInfoCallback {
             public void onClick(View view) {
                 try {
                     request_json = handleUserData.get_edit_json(edit_simple_info);
-
-                    Log.d(TAG, "onClick: "+request_json);
-
                     UserConnection.getInstance().edit(request_json,UserEditFragment.this);
                 } catch (Exception e) {
                     Toast.makeText(getActivity(), R.string.register_warning, Toast.LENGTH_SHORT).show();

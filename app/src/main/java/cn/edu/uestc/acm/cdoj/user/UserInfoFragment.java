@@ -1,4 +1,4 @@
-package cn.edu.uestc.acm.cdoj.net.user;
+package cn.edu.uestc.acm.cdoj.user;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import com.alibaba.fastjson.JSON;
 import java.io.File;
 
 import cn.edu.uestc.acm.cdoj.R;
-import cn.edu.uestc.acm.cdoj.net.UserInfoCallback;
 import cn.edu.uestc.acm.cdoj.utils.DigestUtil;
 import cn.edu.uestc.acm.cdoj.utils.FileUtil;
 import cn.edu.uestc.acm.cdoj.utils.SharedPreferenceUtil;

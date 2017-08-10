@@ -18,7 +18,7 @@ import cn.edu.uestc.acm.cdoj.net.Connection;
 import cn.edu.uestc.acm.cdoj.net.ReceivedCallback;
 import cn.edu.uestc.acm.cdoj.net.contest.rank.RankListItem;
 import cn.edu.uestc.acm.cdoj.net.contest.rank.RankListOverview;
-import cn.edu.uestc.acm.cdoj.net.user.UserConnection;
+import cn.edu.uestc.acm.cdoj.user.UserConnection;
 import cn.edu.uestc.acm.cdoj.ui.adapter.RankListAdapter;
 import cn.edu.uestc.acm.cdoj.ui.adapter.RankListDetailAdapter;
 import cn.edu.uestc.acm.cdoj.ui.data.GeneralList;

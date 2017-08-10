@@ -10,7 +10,7 @@ import java.util.List;
 import cn.edu.uestc.acm.cdoj.genaralData.ListReceived;
 import cn.edu.uestc.acm.cdoj.net.Connection;
 import cn.edu.uestc.acm.cdoj.net.contest.comment.ContestCommentListItem;
-import cn.edu.uestc.acm.cdoj.net.user.UserConnection;
+import cn.edu.uestc.acm.cdoj.user.UserConnection;
 import cn.edu.uestc.acm.cdoj.ui.adapter.ContestCommentAdapter;
 import cn.edu.uestc.acm.cdoj.ui.data.AbsDataList;
 

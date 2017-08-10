@@ -1,24 +1,18 @@
-package cn.edu.uestc.acm.cdoj.net.user;
+package cn.edu.uestc.acm.cdoj.user;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.util.DebugUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
-
-import java.util.Map;
 
 import cn.edu.uestc.acm.cdoj.MainActivity;
 import cn.edu.uestc.acm.cdoj.R;

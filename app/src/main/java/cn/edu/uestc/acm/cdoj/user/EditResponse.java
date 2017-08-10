@@ -1,4 +1,4 @@
-package cn.edu.uestc.acm.cdoj.net.user;
+package cn.edu.uestc.acm.cdoj.user;
 
 import java.util.List;
 

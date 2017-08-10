@@ -1,4 +1,4 @@
-package cn.edu.uestc.acm.cdoj.net.user;
+package cn.edu.uestc.acm.cdoj.user;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,7 +8,6 @@ import android.os.Message;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.asm.ByteVector;
 
 import java.io.File;
 
@@ -189,10 +188,6 @@ public class UserConnection {
             @Override
             public void run() {
                 byte[] receiveData = Request.post(baseUrl,editUrl,request_json);
-
-                Log.d(TAG, "run: "+new String (receiveData));
-
-
                 EditResponse editResponse = JSON.parseObject(new String(receiveData),EditResponse.class);
                 Message message = Message.obtain();
                 Object[] obj = new Object[2];

@@ -8,10 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
-import cn.edu.uestc.acm.cdoj.net.user.LoginFragment;
-import cn.edu.uestc.acm.cdoj.net.user.Register_Step1_Fragment;
-import cn.edu.uestc.acm.cdoj.net.user.Register_Step2_Fragment;
-import cn.edu.uestc.acm.cdoj.net.user.UserInfoFragment;
+import cn.edu.uestc.acm.cdoj.user.LoginFragment;
+import cn.edu.uestc.acm.cdoj.user.Register_Step1_Fragment;
+import cn.edu.uestc.acm.cdoj.user.Register_Step2_Fragment;
+import cn.edu.uestc.acm.cdoj.user.UserInfoFragment;
 
 public class UserInfoActivity extends AppCompatActivity implements Register_Step1_Fragment.SendDataCallback {
 
