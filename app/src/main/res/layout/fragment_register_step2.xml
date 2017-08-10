@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+  >
+<TableLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
     <TableRow>
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="44dp"
+            android:layout_height="48dp"
             android:gravity="center"
             android:text="@string/name"
             android:textSize="14sp" />
 
         <EditText
             android:layout_width="0dp"
-            android:layout_height="44dp"
+            android:layout_height="48dp"
             android:layout_weight="1"
             android:id="@+id/register_name"
             android:padding="4dp" />
@@ -25,14 +28,14 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="44dp"
+            android:layout_height="48dp"
             android:gravity="center"
             android:text="@string/NickName"
             android:textSize="14sp" />
 
         <EditText
             android:layout_width="0dp"
-            android:layout_height="44dp"
+            android:layout_height="48dp"
             android:layout_weight="1"
             android:id="@+id/register_nick_name"
             android:padding="4dp" />
@@ -42,14 +45,14 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="44dp"
+            android:layout_height="48dp"
             android:gravity="center"
             android:text="@string/gender"
             android:textSize="14sp" />
 
         <RadioGroup
             android:layout_width="match_parent"
-            android:layout_height="44dp"
+            android:layout_height="48dp"
             android:gravity="center"
             android:orientation="horizontal"
             android:id="@+id/register_gender">
@@ -77,14 +80,14 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="44dp"
+            android:layout_height="48dp"
             android:gravity="center"
             android:text="@string/Email"
             android:textSize="14sp" />
 
         <EditText
             android:layout_width="0dp"
-            android:layout_height="44dp"
+            android:layout_height="48dp"
             android:layout_weight="1"
             android:padding="4dp"
             android:id="@+id/register_email"/>
@@ -93,14 +96,14 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="44dp"
+            android:layout_height="48dp"
             android:gravity="center"
             android:text="@string/phone"
             android:textSize="14sp" />
 
         <EditText
             android:layout_width="0dp"
-            android:layout_height="44dp"
+            android:layout_height="48dp"
             android:layout_weight="1"
             android:padding="4dp"
             android:id="@+id/register_phone"/>
@@ -110,14 +113,14 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="44dp"
+            android:layout_height="48dp"
             android:gravity="center"
             android:text="@string/Motto"
             android:textSize="14sp" />
 
         <EditText
             android:layout_width="0dp"
-            android:layout_height="44dp"
+            android:layout_height="48dp"
             android:layout_weight="1"
             android:padding="4dp"
             android:id="@+id/register_motto"/>
@@ -129,7 +132,7 @@
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:gravity="center"
-            android:text="@string/t_shirt"
+            android:text="@string/size"
             android:textSize="14sp" />
 
         <Spinner
@@ -219,5 +222,5 @@
         android:text="@string/register"
         android:id="@+id/button_register_step2"/>
 
-
 </TableLayout>
+</ScrollView>

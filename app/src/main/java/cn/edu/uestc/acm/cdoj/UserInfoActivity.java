@@ -15,7 +15,7 @@ import cn.edu.uestc.acm.cdoj.net.user.UserInfoFragment;
 
 public class UserInfoActivity extends AppCompatActivity implements Register_Step1_Fragment.SendDataCallback {
 
-    private static final String TAG = "LoginActivity";
+    private static final String TAG = "UserInfoActivity";
     public static boolean isLogin = false;
 
 
@@ -29,18 +29,22 @@ public class UserInfoActivity extends AppCompatActivity implements Register_Step
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.userinfo_container, new LoginFragment());
-//        if (isLogin){
-//            transaction.add(R.id.userinfo_container,new UserInfoFragment());
-//        }else {
-//            transaction.add(R.id.userinfo_container,new LoginFragment());
-//        }
+//        transaction.add(R.id.userinfo_container, new LoginFragment());
+        Intent intent = getIntent();
+        isLogin = intent.getBooleanExtra("isLogin", false);
+
+        if (isLogin){
+            transaction.add(R.id.userinfo_container,new UserInfoFragment());
+        }else {
+            transaction.add(R.id.userinfo_container,new LoginFragment());
+        }
         transaction.commit();
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        Log.d(TAG, "onNewIntent: "+isLogin);
         isLogin = intent.getBooleanExtra("isLogin", false);
     }
 

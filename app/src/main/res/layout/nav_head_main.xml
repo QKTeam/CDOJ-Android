@@ -13,7 +13,7 @@
     <ImageView
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:src="@drawable/ic_home_tab_user_selected"
+        android:src="@drawable/ic_default_avatar"
         android:id="@+id/avatar"
         android:paddingTop="16dp"/>
     <TextView

@@ -49,6 +49,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Use
             case R.id.button_register:
                 fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.replace(R.id.userinfo_container,new Register_Step1_Fragment());
                 fragmentTransaction.commit();
                 break;
@@ -87,8 +88,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Use
     }
 
     private void save_user_password(UserInfo user_password) {
-        String[] key = {DigestUtil.md5(user_password.getUserName()),  DigestUtil.md5(user_password.getUserName()) + "_password"};
-        String[] value = {user_password.getUserName(),user_password.getPassword()};
+        String[] key = {DigestUtil.md5(user_password.getUserName()),  DigestUtil.md5(user_password.getUserName()) + "_password" ,"current_user"};
+        String[] value = {user_password.getUserName(),user_password.getPassword(),user_password.getUserName()};
+
         SharedPreferenceUtil.saveSharedPreference(getActivity(),"User", key, value);
     }
 
