@@ -31,11 +31,13 @@ public class ContestConnection {
     private String commentPath = "/article/commentSearch/";
     private String statusPath = "/status/search/";
     private String rankPath = "/contest/rankList/";
+    private String submitPath = "/status/submit/";
 
     private String[] key = {"currentPage", "orderFields", "orderAsc", "keyword", "starItd"};
     private String[] loginKey = {"contestId","password"};
     private String[] commentKey = {"currentPage", "ContestId"};
     private String[] statusKey = {"currentPage", "contestId", "orderFields", "orderAsc"};
+    private String[] submitKey = {"contestId", "codeContent", "languageId"};
 
     public static ContestConnection getInstance(){
         return instance;
@@ -97,6 +99,15 @@ public class ContestConnection {
         return "";
     }
 
+    private String getSubmitJosn(int contestId, String codeContent, int languageId){
+        Object[] value = {contestId, codeContent, languageId};
+        String request = JsonUtil.getJsonString(submitKey, value);
+        byte[] dataReceived = Request.post(url,submitPath, request);
+        if (dataReceived != null){
+            return new String(dataReceived);
+        }
+        return "";
+    }
 
     private ContestReceived handleContentJson(String jsonString){
         ContestReceived contestReceived = JSON.parseObject(jsonString, new TypeReference<ContestReceived>(){});
@@ -124,6 +135,9 @@ public class ContestConnection {
         return JSON.parseObject(jsonString, new TypeReference<RankListReceived>(){});
     }
 
+    private ContentReceived handleSubmitJosn(String jsonString){
+        return JSON.parseObject(jsonString, new TypeReference<ContentReceived>(){});
+    }
 
     public Contest getContent(int id){
         return handleContentJson(getContentJson(id)).getContest();
@@ -160,5 +174,9 @@ public class ContestConnection {
     //lastFetched,problemList,rankLIst
     public RankListOverview getRank(int id){
         return getRankReceived(id).getRankList();
+    }
+
+    public ContentReceived submitContestCode(int contestId, String codeContent, int languageId){
+        return handleSubmitJosn(getSubmitJosn(contestId, codeContent, languageId));
     }
 }

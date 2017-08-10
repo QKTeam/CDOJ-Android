@@ -392,4 +392,38 @@ public class Connection implements ObtainArticle, ObtainProblem, ObtainContest {
             }
         });
     }
+
+    @Override
+    public void submitProblemCode(final int problemId, final String codeContent, final int languageId, final ReceivedCallback<ContentReceived> callback) {
+        ThreadUtil.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+                ContentReceived result = ProblemConnection.getInstance().submitProblemCode(problemId, codeContent, languageId);
+                Message msg = new Message();
+                Object[] obj = new Object[2];
+                obj[0] = callback;
+                obj[1] = result;
+                msg.obj = obj;
+                msg.what = 0x01012013;
+                handler.sendMessage(msg);
+            }
+        });
+    }
+
+    @Override
+    public void submitContestCode(final int contestId, final String codeContent, final int languageId, final ReceivedCallback<ContentReceived> callback) {
+        ThreadUtil.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+                ContentReceived result = ContestConnection.getInstance().submitContestCode(contestId, codeContent, languageId);
+                Message msg = new Message();
+                Object[] obj = new Object[2];
+                obj[0] = callback;
+                obj[1] = result;
+                msg.obj = obj;
+                msg.what = 0x01012013;
+                handler.sendMessage(msg);
+            }
+        });
+    }
 }

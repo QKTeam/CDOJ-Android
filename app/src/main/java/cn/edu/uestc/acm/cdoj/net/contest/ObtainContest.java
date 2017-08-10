@@ -47,4 +47,6 @@ public interface ObtainContest {
     void getRankReceived(int id, ReceivedCallback<RankListReceived> callback);
 
     void getRank(int id, ReceivedCallback<RankListOverview> callback);
+
+    void submitContestCode(int contestId, String codeContent, int languageId, ReceivedCallback<ContentReceived> callback);
 }

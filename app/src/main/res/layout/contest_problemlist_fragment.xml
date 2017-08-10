@@ -3,30 +3,47 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <android.support.design.widget.TabLayout
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tab_layout_contest_problem_list"
-            app:tabIndicatorColor="@color/colorAccent"
-            app:tabMode="scrollable"/>
-    </android.support.design.widget.AppBarLayout>
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <android.support.v4.view.ViewPager
+            android:layout_height="wrap_content">
+            <android.support.design.widget.TabLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tab_layout_contest_problem_list"
+                app:tabIndicatorColor="@color/colorAccent"
+                app:tabMode="scrollable"/>
+        </android.support.design.widget.AppBarLayout>
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/view_pager_contest_problem_list" />
-        <android.support.design.widget.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:layout_gravity="bottom|end"
-            android:src="@drawable/ic_add_white_24dp"/>
-    </FrameLayout>
-
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            <android.support.v4.view.ViewPager
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/view_pager_contest_problem_list" />
+            <com.github.clans.fab.FloatingActionMenu
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="20dp"
+                android:src="@drawable/ic_add_white_24dp"
+                app:menu_colorNormal="@color/Yellow"
+                app:menu_colorPressed="@color/Yellow"
+                android:id="@+id/contest_problem_detail_fragment_floating_button_menu">
+                <com.github.clans.fab.FloatingActionButton
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/pen"
+                    app:fab_colorNormal="@color/Yellow"
+                    app:fab_label="提交代码"
+                    android:id="@+id/contest_problem_submit_button"/>
+                <com.github.clans.fab.FloatingActionButton
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/pen"
+                    app:fab_colorNormal="@color/Yellow"
+                    app:fab_label="查看提交记录"
+                    android:id="@+id/contest_problem_submit_history_button"/>
+            </com.github.clans.fab.FloatingActionMenu>
+        </FrameLayout>
 </LinearLayout>

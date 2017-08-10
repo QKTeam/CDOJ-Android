@@ -39,6 +39,7 @@ public class ProblemDetailFrg extends Fragment implements ReceivedCallback<Probl
     private FloatingActionButton submitBt;
     private FloatingActionButton historyBt;
     private boolean isFbVisible;
+    private String type = "problem";
 
     Handler handler = new Handler(){
         @Override
@@ -95,7 +96,7 @@ public class ProblemDetailFrg extends Fragment implements ReceivedCallback<Probl
             @Override
             public void onClick(View view) {
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                CodeFragment fragment = new CodeFragment(problemReceived.getProblemId());
+                CodeFragment fragment = new CodeFragment(problemReceived.getProblemId(),type);
                 transaction.add(R.id.container, fragment);
                 transaction.addToBackStack(null);
                 transaction.commit();

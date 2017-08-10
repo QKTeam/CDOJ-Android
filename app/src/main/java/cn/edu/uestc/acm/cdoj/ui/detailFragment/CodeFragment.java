@@ -11,7 +11,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import cn.edu.uestc.acm.cdoj.R;
+import cn.edu.uestc.acm.cdoj.genaralData.ContentReceived;
 import cn.edu.uestc.acm.cdoj.net.Connection;
+import cn.edu.uestc.acm.cdoj.net.ReceivedCallback;
 import cn.edu.uestc.acm.cdoj.utils.JsonUtil;
 import cn.edu.uestc.acm.cdoj.utils.Request;
 import cn.edu.uestc.acm.cdoj.utils.ThreadUtil;
@@ -20,14 +22,18 @@ import cn.edu.uestc.acm.cdoj.utils.ThreadUtil;
  * Created by 14779 on 2017-8-9.
  */
 
-public class CodeFragment extends Fragment implements View.OnClickListener {
+public class CodeFragment extends Fragment implements View.OnClickListener, ReceivedCallback<ContentReceived> {
     private EditText codeEdit;
     private Button submitButton;
     private Button jumpButton;
     private int id;
+    /**
+     * 用于判断是比赛提交还是问题提交*/
+    private String type;
 
-    public CodeFragment(int id){
+    public CodeFragment(int id, String type){
         this.id = id;
+        this.type = type;
     }
     @Nullable
     @Override
@@ -50,19 +56,25 @@ public class CodeFragment extends Fragment implements View.OnClickListener {
         switch (view.getId()){
             case R.id.submit_code_button:
                 String codeContent = codeEdit.getText().toString();
-                String[] key = {"problemId","codeContent","languageId"};
-                Object[] value = {id, codeContent, 1};
-                final String request = JsonUtil.getJsonString(key, value);
-                ThreadUtil.getInstance().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        Request.post("http://acm.uestc.edu.cn","/status/submit/",request);
-                    }
-                });
+                if (type.equals("contestProblem")){
+                    Connection.instance.submitContestCode(id, codeContent, 1, this);
+                } else {
+                    Connection.instance.submitProblemCode(id, codeContent, 1, this);
+                }
                 getFragmentManager().beginTransaction().remove(this).commit();
                 break;
             case R.id.jump_to_codeEditor:
                 break;
         }
+    }
+
+    @Override
+    public void onDataReceived(ContentReceived contentReceived) {
+
+    }
+
+    @Override
+    public void onLoginDataReceived(ContentReceived dataReceived) {
+
     }
 }

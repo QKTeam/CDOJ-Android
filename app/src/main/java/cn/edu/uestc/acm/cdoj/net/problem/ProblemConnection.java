@@ -1,10 +1,9 @@
 package cn.edu.uestc.acm.cdoj.net.problem;
 
-import android.util.Log;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
+import cn.edu.uestc.acm.cdoj.genaralData.ContentReceived;
 import cn.edu.uestc.acm.cdoj.genaralData.ListReceived;
 import cn.edu.uestc.acm.cdoj.utils.JsonUtil;
 import cn.edu.uestc.acm.cdoj.utils.Request;
@@ -21,8 +20,10 @@ public class ProblemConnection {
     private String dataPath = "/problem/data/";
     private String searchPath = "/problem/search/";
     private String statusPath = "/status/search/";
+    private String submitPath = "/status/submit/";
     private String[] key = {"currentPage", "orderFields", "orderAsc", "keyword", "startId"};
-    private String[] statusKey = {"currentPage","currentPage","orderFields","orderAsc","contestId","result"};
+    private String[] statusKey = {"problemId","currentPage","orderFields","orderAsc","contestId","result"};
+    private String[] submitKey = {"problemId","codeContent","languageId"};
 
     public static ProblemConnection getInstance(){
         return instance;
@@ -57,6 +58,16 @@ public class ProblemConnection {
         return "";
     }
 
+    private String getSubmitJson(int problemId, String codeContent, int languageId){
+        Object[] value = {problemId, codeContent, languageId};
+        String request = JsonUtil.getJsonString(submitKey, value);
+        byte[] dataReceived = Request.post(url,submitPath, request);
+        if (dataReceived != null){
+            return new String(dataReceived);
+        }
+        return "";
+    }
+
     private Problem handleContentJson(String jsonString){
         ProblemReceived received = JSON.parseObject(jsonString, new TypeReference<ProblemReceived>(){});
         return received.getProblem();
@@ -71,6 +82,10 @@ public class ProblemConnection {
         return JSON.parseObject(jsonString, new TypeReference<ListReceived<ProblemStatusListItem>>(){});
     }
 
+    private ContentReceived handleSubmitJson(String jsonString){
+        return JSON.parseObject(jsonString, new TypeReference<ContentReceived>(){});
+    }
+
     public Problem getContent(int id){
         return handleContentJson(getContentJson(id));
     }
@@ -81,5 +96,10 @@ public class ProblemConnection {
 
     public ListReceived<ProblemStatusListItem> getStatus(int problemId, int currentPage, String orderFields, boolean orderAsc, int contestId, int result){
         return handleStatusJson(getStatusJson(problemId, currentPage, orderFields, orderAsc, contestId, result));
+    }
+
+
+    public ContentReceived submitProblemCode(int problemId, String codeContent, int languageId){
+        return handleSubmitJson(getSubmitJson(problemId,codeContent, languageId));
     }
 }

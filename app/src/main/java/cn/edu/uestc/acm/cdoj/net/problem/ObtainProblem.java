@@ -1,5 +1,6 @@
 package cn.edu.uestc.acm.cdoj.net.problem;
 
+import cn.edu.uestc.acm.cdoj.genaralData.ContentReceived;
 import cn.edu.uestc.acm.cdoj.genaralData.ListReceived;
 import cn.edu.uestc.acm.cdoj.net.ReceivedCallback;
 
@@ -32,4 +33,5 @@ public interface ObtainProblem {
 
     void getProblemStatus(int problemId, int currentPage, String orderFields, boolean orderAsc, int contestId, int result, ReceivedCallback<ListReceived<ProblemStatusListItem>> callback);
 
+    void submitProblemCode(int problemId, String codeContent, int languageId, ReceivedCallback<ContentReceived> callback);
 }

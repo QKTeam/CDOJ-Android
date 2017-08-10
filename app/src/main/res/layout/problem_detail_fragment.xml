@@ -17,6 +17,7 @@
         android:src="@drawable/ic_add_white_24dp"
         app:menu_colorNormal="@color/Yellow"
         app:menu_colorPressed="@color/Yellow"
+        android:visibility="gone"
         android:id="@+id/problem_detail_fragment_floating_button_menu">
         <com.github.clans.fab.FloatingActionButton
             android:layout_width="match_parent"
