@@ -44,8 +44,8 @@ public class Register_Step2_Fragment extends Fragment implements UserInfoCallbac
         View view = inflater.inflate(R.layout.fragment_register_step2, container, false);
         button = view.findViewById(R.id.button_register_step2);
         register_gender = view.findViewById(R.id.register_gender);
-        register_department = view.findViewById(R.id.spinner_department);
-        register_grade = view.findViewById(R.id.spinner_grade);
+        register_department = view.findViewById(R.id.register_spinner_department);
+        register_grade = view.findViewById(R.id.register_spinner_grade);
         register_size = view.findViewById(R.id.register_size);
         return view;
     }
@@ -100,18 +100,11 @@ public class Register_Step2_Fragment extends Fragment implements UserInfoCallbac
             @Override
             public void onClick(View view) {
                 try {
-
-                    Log.d(TAG, "onClick: "+register_info_simple_info);
-
                     request_json = handleUserData.get_register_json(register_info_simple_info);
                     UserConnection.getInstance().register(request_json, Register_Step2_Fragment.this);
                 } catch (Exception e) {
                     Toast.makeText(getActivity(), R.string.register_warning, Toast.LENGTH_SHORT).show();
                 }
-
-                Log.d(TAG, "request_json: " + request_json);
-
-
             }
         });
     }
@@ -144,6 +137,11 @@ public class Register_Step2_Fragment extends Fragment implements UserInfoCallbac
 
     @Override
     public void getUserInfo(UserInfo userInfo) {
+
+    }
+
+    @Override
+    public void editStatus(String s) {
 
     }
 

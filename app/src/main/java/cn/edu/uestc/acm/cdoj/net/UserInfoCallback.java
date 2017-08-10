@@ -13,4 +13,5 @@ public interface UserInfoCallback {
     void loginStatus(Bundle bundle);
     void registerStatus(String s);
     void getUserInfo(UserInfo userInfo);
+    void editStatus(String s);
 }

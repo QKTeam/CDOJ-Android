@@ -56,7 +56,7 @@ class HandleUserData {
         EditText register_email = view.findViewById(R.id.register_email);
         EditText register_motto = view.findViewById(R.id.register_motto);
         EditText register_school = view.findViewById(R.id.register_school);
-        EditText register_student_id = view.findViewById(R.id.student_id);
+        EditText register_student_id = view.findViewById(R.id.register_student_id);
         EditText register_phone = view.findViewById(R.id.register_phone);
 
         if (register_simple_info[2]==null){
@@ -84,10 +84,6 @@ class HandleUserData {
         register_info[12] = register_name.getText().toString();
         register_info[13] = register_email.getText().toString();
 
-        for (String s:register_info){
-            Log.d(TAG, "get_register_json: "+s);
-        }
-
         for (int i = 0; i < register_info.length; i++) {
             if (TextUtils.isEmpty(register_info[i].trim())) {
                 throw new Exception("null info");
@@ -96,7 +92,57 @@ class HandleUserData {
             }
         }
 
+        return JsonUtil.getJsonString(key, value);
+    }
 
+    String get_edit_json(String[] edit_simple_info)throws Exception{
+        String[] edit_info = new String[14];
+        String[] key = {"motto","nickName","departmentId", "grade" ,"size", "sex", "oldPassword", "type",  "phone", "school",  "studentId", "userName", "name", "email"};
+        Object[] value = new Object[14];
+
+        View view = fragment.getView();
+        EditText edit_username = view.findViewById(R.id.edit_username);
+        EditText edit_old_password = view.findViewById(R.id.edit_password);
+        EditText edit_name = view.findViewById(R.id.edit_name);
+        EditText edit_nick_name = view.findViewById(R.id.edit_nick_name);
+        EditText edit_email = view.findViewById(R.id.edit_email);
+        EditText edit_motto = view.findViewById(R.id.edit_motto);
+        EditText edit_school = view.findViewById(R.id.edit_school);
+        EditText edit_student_id = view.findViewById(R.id.edit_student_id);
+        EditText edit_phone = view.findViewById(R.id.edit_phone);
+
+        if (edit_simple_info[2]==null){
+            edit_info[2] = "1";
+        }else {
+            edit_info[2] = edit_simple_info[2];
+        }
+
+        for (int i =3;i<6;i++){
+            if (edit_simple_info[i]==null){
+                edit_info[i] = "0";
+            }else {
+                edit_info[i] = edit_simple_info[i];
+            }
+        }
+
+        edit_info[0] = edit_motto.getText().toString();
+        edit_info[1] = edit_nick_name.getText().toString();
+        edit_info[6] = DigestUtil.sha1(edit_old_password.getText().toString());
+        edit_info[7] = String .valueOf(0);
+        edit_info[8] = edit_phone.getText().toString();
+        edit_info[9] = edit_school.getText().toString();
+        edit_info[10] = edit_student_id.getText().toString();
+        edit_info[11] = edit_username.getText().toString();
+        edit_info[12] = edit_name.getText().toString();
+        edit_info[13] = edit_email.getText().toString();
+
+        for (int i = 0; i < edit_info.length; i++) {
+            if (TextUtils.isEmpty(edit_info[i].trim())) {
+                throw new Exception("null info");
+            } else {
+                value[i] = edit_info[i];
+            }
+        }
 
         return JsonUtil.getJsonString(key, value);
     }

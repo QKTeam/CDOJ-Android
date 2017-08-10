@@ -93,6 +93,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Use
         startActivity(intent);
     }
 
+    @Override
+    public void editStatus(String s) {
+
+    }
+
     private void save_user_password(UserInfo user_password) {
         String[] key = {DigestUtil.md5(user_password.getUserName()),  DigestUtil.md5(user_password.getUserName()) + "_password" ,"current_user"};
         String[] value = {user_password.getUserName(),user_password.getPassword(),user_password.getUserName()};
