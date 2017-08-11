@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -41,9 +42,11 @@ import cn.edu.uestc.acm.cdoj.ui.data.RecentContestListData;
 import cn.edu.uestc.acm.cdoj.ui.detailFragment.ArticleDetailFrg;
 import cn.edu.uestc.acm.cdoj.ui.detailFragment.ContestDetailFrg;
 import cn.edu.uestc.acm.cdoj.ui.detailFragment.ProblemDetailFrg;
+import cn.edu.uestc.acm.cdoj.user.FragmentStep;
 import cn.edu.uestc.acm.cdoj.user.UserConnection;
 import cn.edu.uestc.acm.cdoj.user.UserInfo;
-import cn.edu.uestc.acm.cdoj.user.fragment_recent_contest;
+import cn.edu.uestc.acm.cdoj.user.FragmentFAQ;
+import cn.edu.uestc.acm.cdoj.user.FragmentRecentContest;
 import cn.edu.uestc.acm.cdoj.utils.DigestUtil;
 import cn.edu.uestc.acm.cdoj.utils.FileUtil;
 import cn.edu.uestc.acm.cdoj.utils.ImageUtil;
@@ -137,16 +140,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
         switch (item.getItemId()) {
             case R.id.nav_recent_test:
-                GeneralFragment fragment = new fragment_recent_contest(MainActivity.this, "recent_contest_fragment");
-                new RecentContestListData(MainActivity.this).setUpList(fragment);
-                getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).addToBackStack(null).commit();
+                GeneralFragment fragment_recent_contest = new FragmentRecentContest(MainActivity.this, "recent_contest_fragment");
+                new RecentContestListData(MainActivity.this).setUpList(fragment_recent_contest);
+                transaction.replace(R.id.container, fragment_recent_contest).addToBackStack(null).commit();
                 drawer.closeDrawers();
                 break;
             case R.id.nav_FAQ:
+                Fragment fragment_faq = new FragmentFAQ();
+                transaction.replace(R.id.container, fragment_faq).addToBackStack(null).commit();
+                drawer.closeDrawers();
                 break;
             case R.id.nav_Step_By_Step:
+                Fragment fragment_step = new FragmentStep();
+                transaction.replace(R.id.container, fragment_step).addToBackStack(null).commit();
+                drawer.closeDrawers();
                 break;
             case R.id.nav_about_us:
                 break;

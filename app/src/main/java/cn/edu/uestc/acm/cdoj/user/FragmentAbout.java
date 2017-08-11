@@ -7,6 +7,6 @@ package cn.edu.uestc.acm.cdoj.user;
  * feedback——提供反馈bug的方式
  */
 
-public class fragment_about {
+public class FragmentAbout {
 
 }

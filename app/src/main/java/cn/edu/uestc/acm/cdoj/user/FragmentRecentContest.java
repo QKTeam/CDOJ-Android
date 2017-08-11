@@ -22,9 +22,9 @@ import cn.edu.uestc.acm.cdoj.net.homePage.RecentContestListItem;
  * url: http://acm.uestc.edu.cn/recentContest
  */
 
-public class fragment_recent_contest extends GeneralFragment implements ReceivedCallback<List<RecentContestListItem>>{
+public class FragmentRecentContest extends GeneralFragment implements ReceivedCallback<List<RecentContestListItem>>{
 
-    public fragment_recent_contest(Context context, String type) {
+    public FragmentRecentContest(Context context, String type) {
         super(context, type);
     }
 
