@@ -40,14 +40,14 @@
             android:layout_weight="3"
             android:text="ID:123"
             android:id="@+id/contest_id"/>
-        <TextView
+        <cn.edu.uestc.acm.cdoj.ui.DIYView.ContestStatusTextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Ended"
             android:gravity="center"
             android:id="@+id/contest_status"/>
-        <TextView
+        <cn.edu.uestc.acm.cdoj.ui.DIYView.ContestTypeTextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

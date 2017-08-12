@@ -13,6 +13,8 @@ import java.util.List;
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.genaralData.RecyclerViewItemClickListener;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestListItem;
+import cn.edu.uestc.acm.cdoj.ui.DIYView.ContestStatusTextView;
+import cn.edu.uestc.acm.cdoj.ui.DIYView.ContestTypeTextView;
 import cn.edu.uestc.acm.cdoj.utils.TimeFormat;
 
 /**
@@ -74,8 +76,8 @@ public class ContestAdapter extends RecyclerView.Adapter<ContestAdapter.ContestV
         private TextView time;
         private TextView rest_time;
         private TextView id;
-        private TextView status;
-        private TextView type;
+        private ContestStatusTextView status;
+        private ContestTypeTextView type;
         private View view;
         private RecyclerViewItemClickListener itemClickListener;
 

@@ -19,6 +19,7 @@ import cn.edu.uestc.acm.cdoj.R;
 public class ContestProblemFrg extends Fragment {
     private WebView webView;
     private String problemReceived;
+    private String baseUrl = "http://acm.uestc.edu.cn";
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -41,7 +42,7 @@ public class ContestProblemFrg extends Fragment {
             input.read(in);
             String html = new String(in);
             html = html.replace("{{{replace_data_here}}}", problemReceived);
-            webView.loadDataWithBaseURL(null,html , "text/html", "UTF-8", null);
+            webView.loadDataWithBaseURL(baseUrl,html , "text/html", "UTF-8", null);
         } catch (IOException e) {
             e.printStackTrace();
         }

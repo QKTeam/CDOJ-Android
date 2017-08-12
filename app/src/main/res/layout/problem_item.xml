@@ -23,7 +23,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
+            android:layout_weight="4"
             android:text="ID:1"
             android:textSize="10dp"
             android:id="@+id/problem_id"/>
@@ -34,7 +34,7 @@
             android:text="Solved:999"
             android:textSize="10dp"
             android:textColor="@color/green_primary"
-            android:gravity="right"
+            android:gravity="left"
             android:id="@+id/problem_solved"/>
         <TextView
             android:layout_width="0dp"

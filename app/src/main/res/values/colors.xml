@@ -45,4 +45,16 @@
     <color name="grey_primary_dark">#616161</color>
     <color name="blue_grey_primary">#607D8B</color>
     <color name="blue_grey_primary_dark">#455A64</color>
+
+    <color name="contestPermission_Invited">#FFE000</color>
+    <color name="contestPermission_Diy">#FF9403</color>
+    <color name="contestPermission_Onsite">#00A9FF</color>
+    <color name="contestPermission_Private">#FF0000</color>
+    <color name="contestPermission_Public">#00FF00</color>
+
+    <color name="contestStatus_Ended">#FF0000</color>
+    <color name="contestStatus_Running">#00FF00</color>
+
+    <color name="red">#FF0000</color>
+    <color name="green">#00FF00</color>
 </resources>

@@ -19,6 +19,7 @@ import cn.edu.uestc.acm.cdoj.R;
 
 public class ContestOverViewFrg extends android.support.v4.app.Fragment {
     private WebView webView;
+    private String baseUrl = "http://acm.uestc.edu.cn";
 
     @Nullable
     @Override
@@ -43,7 +44,7 @@ public class ContestOverViewFrg extends android.support.v4.app.Fragment {
             input.read(in);
             String html = new String(in);
             html = html.replace("{{{replace_data_here}}}", contestReceived);
-            webView.loadDataWithBaseURL(null,html , "text/html", "UTF-8", null);
+            webView.loadDataWithBaseURL(baseUrl,html , "text/html", "UTF-8", null);
         } catch (IOException e) {
             e.printStackTrace();
         }
