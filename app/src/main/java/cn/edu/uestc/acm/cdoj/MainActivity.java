@@ -42,6 +42,7 @@ import cn.edu.uestc.acm.cdoj.ui.data.RecentContestListData;
 import cn.edu.uestc.acm.cdoj.ui.detailFragment.ArticleDetailFrg;
 import cn.edu.uestc.acm.cdoj.ui.detailFragment.ContestDetailFrg;
 import cn.edu.uestc.acm.cdoj.ui.detailFragment.ProblemDetailFrg;
+import cn.edu.uestc.acm.cdoj.user.FragmentAbout;
 import cn.edu.uestc.acm.cdoj.user.FragmentStep;
 import cn.edu.uestc.acm.cdoj.user.UserConnection;
 import cn.edu.uestc.acm.cdoj.user.UserInfo;
@@ -159,9 +160,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 transaction.replace(R.id.container, fragment_step).addToBackStack(null).commit();
                 drawer.closeDrawers();
                 break;
-            case R.id.nav_about_us:
+            case R.id.nav_about:
+                transaction.replace(R.id.container, new FragmentAbout());
+                transaction.addToBackStack(null);
+                drawer.closeDrawers();
+                transaction.commit();
                 break;
-
          }
         return true;
     }
