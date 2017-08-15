@@ -1,9 +1,9 @@
 package cn.edu.uestc.acm.cdoj.ui.detailFragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +14,6 @@ import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.genaralData.ContentReceived;
 import cn.edu.uestc.acm.cdoj.net.Connection;
 import cn.edu.uestc.acm.cdoj.net.ReceivedCallback;
-import cn.edu.uestc.acm.cdoj.utils.JsonUtil;
-import cn.edu.uestc.acm.cdoj.utils.Request;
-import cn.edu.uestc.acm.cdoj.utils.ThreadUtil;
 
 /**
  * Created by 14779 on 2017-8-9.
@@ -31,14 +28,19 @@ public class CodeFragment extends Fragment implements View.OnClickListener, Rece
      * 用于判断是比赛提交还是问题提交*/
     private String type;
 
+    @SuppressLint("ValidFragment")
     public CodeFragment(int id, String type){
+        super();
         this.id = id;
         this.type = type;
+    }
+    public CodeFragment(){
+        super();
     }
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.code_frament, container, false);
+        return inflater.inflate(R.layout.frament_code, container, false);
     }
 
     @Override

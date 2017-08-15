@@ -1,5 +1,6 @@
 package cn.edu.uestc.acm.cdoj.ui.detailFragment.contestDetail;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,8 +16,12 @@ import cn.edu.uestc.acm.cdoj.net.contest.status.ContestStatusListItem;
  */
 
 public class ContestStatusFrg extends GeneralFragment<ContestStatusListItem> {
+    @SuppressLint("ValidFragment")
     public ContestStatusFrg(Context context, String type) {
         super(context, type);
+    }
+
+    public ContestStatusFrg() {
     }
 
     @Nullable
