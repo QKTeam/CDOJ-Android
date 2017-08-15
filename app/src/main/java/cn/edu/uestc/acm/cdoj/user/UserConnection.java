@@ -119,12 +119,12 @@ public class UserConnection {
                 UserInfoReceived userInfoReceived = JSON.parseObject(new String(receivedData), UserInfoReceived.class);
                 UserInfo userInfo =  userInfoReceived.getUser();
                 String email = userInfo.getEmail();
-                String url = String.format("http://cdn.v2ex.com/gravatar/%s.jpg?s=%d&&d=retro", DigestUtil.md5(email), size);
-                String uri = context.getFilesDir() + "/Images/" + DigestUtil.md5(url) + ".jpg";
-                if (!new File(uri).exists()) {
-                    bitmap = ImageUtil.downloadImage(url);
-                    ImageUtil.saveImage(context, bitmap, url);
-                }
+//                String url = String.format("http://cdn.v2ex.com/gravatar/%s.jpg?s=%d&&d=retro", DigestUtil.md5(email), size);
+//                String uri = context.getFilesDir() + "/Images/" + DigestUtil.md5(url) + ".jpg";
+//                if (!new File(uri).exists()) {
+//                    bitmap = ImageUtil.downloadImage(url);
+//                    ImageUtil.saveImage(context, bitmap, url);
+//                }
                 Message message = Message.obtain();
                 Object[] obj = new Object[3];
                 obj[0] = userInfoCallback;

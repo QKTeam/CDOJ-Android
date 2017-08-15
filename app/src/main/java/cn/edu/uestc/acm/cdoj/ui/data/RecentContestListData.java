@@ -37,6 +37,7 @@ public class RecentContestListData implements ReceivedCallback<List<RecentContes
 
     protected void createAdapter() {
         adapter = new RecentContestAdapter(context, data);
+        list.setRefreshLoadListener(this);
     }
 
 
