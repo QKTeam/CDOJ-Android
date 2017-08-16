@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.edu.uestc.acm.cdoj.genaralData.ContentReceived;
+import cn.edu.uestc.acm.cdoj.genaralData.RefreshLoadListener;
 import cn.edu.uestc.acm.cdoj.net.Connection;
 import cn.edu.uestc.acm.cdoj.net.ReceivedCallback;
 import cn.edu.uestc.acm.cdoj.net.homePage.RecentContestListItem;
@@ -17,7 +18,7 @@ import cn.edu.uestc.acm.cdoj.ui.adapter.RecentContestAdapter;
  * Created by 14779 on 2017-8-10.
  */
 
-public class RecentContestListData implements ReceivedCallback<List<RecentContestListItem>>{
+public class RecentContestListData implements ReceivedCallback<List<RecentContestListItem>>, RefreshLoadListener{
     private static final String TAG = "RecentContestListData";
     private Context context;
     private GeneralList list;
@@ -36,6 +37,7 @@ public class RecentContestListData implements ReceivedCallback<List<RecentContes
 
     protected void createAdapter() {
         adapter = new RecentContestAdapter(context, data);
+        list.setRefreshLoadListener(this);
     }
 
 
@@ -49,6 +51,16 @@ public class RecentContestListData implements ReceivedCallback<List<RecentContes
 
     @Override
     public void onLoginDataReceived(ContentReceived dataReceived) {
+
+    }
+
+    @Override
+    public void onLoadMore() {
+
+    }
+
+    @Override
+    public void onRefresh() {
 
     }
 }

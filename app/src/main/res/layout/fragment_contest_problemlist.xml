@@ -10,7 +10,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/tab_layout_contest_problem_list"
-                app:tabIndicatorColor="@color/colorAccent"
+                style="@style/Tab_Style"
                 app:tabMode="scrollable"/>
         </android.support.design.widget.AppBarLayout>
         <FrameLayout
@@ -26,21 +26,21 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_margin="20dp"
-                android:src="@drawable/ic_add_white_24dp"
+                android:src="@drawable/ic_add"
                 app:menu_colorNormal="@color/Yellow"
                 app:menu_colorPressed="@color/Yellow"
                 android:id="@+id/contest_problem_detail_fragment_floating_button_menu">
                 <com.github.clans.fab.FloatingActionButton
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/pen"
+                    android:src="@drawable/ic_submit"
                     app:fab_colorNormal="@color/Yellow"
                     app:fab_label="提交代码"
                     android:id="@+id/contest_problem_submit_button"/>
                 <com.github.clans.fab.FloatingActionButton
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@drawable/pen"
+                    android:src="@drawable/ic_submit_record"
                     app:fab_colorNormal="@color/Yellow"
                     app:fab_label="查看提交记录"
                     android:id="@+id/contest_problem_submit_history_button"/>

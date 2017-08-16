@@ -1,5 +1,6 @@
 package cn.edu.uestc.acm.cdoj.genaralData;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,15 +31,20 @@ public class GeneralFragment<T> extends Fragment implements GeneralList {
     protected TwinklingRefreshLayout swipeRefreshLayout;
     private RefreshLoadListener refreshLoadListener;
 
+    @SuppressLint("ValidFragment")
     public GeneralFragment(Context context, String type) {
+        super();
         this.context = context;
         this.type = type;
+    }
+    public GeneralFragment(){
+        super();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.genaral_fragment, container, false);
+        return inflater.inflate(R.layout.fragment_genaral, container, false);
     }
 
     @Override

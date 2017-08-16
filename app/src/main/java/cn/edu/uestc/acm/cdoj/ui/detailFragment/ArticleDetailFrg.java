@@ -55,7 +55,7 @@ public class ArticleDetailFrg extends Fragment implements ReceivedCallback<Artic
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.article_detail_fragmnet, container, false);
+        return inflater.inflate(R.layout.fragment_article_detail, container, false);
     }
 
     @Override

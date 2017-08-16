@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
+import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ import cn.edu.uestc.acm.cdoj.utils.DigestUtil;
 import cn.edu.uestc.acm.cdoj.utils.FileUtil;
 import cn.edu.uestc.acm.cdoj.utils.ImageUtil;
 import cn.edu.uestc.acm.cdoj.utils.JsonUtil;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         GeneralFragment.TransItemDataListener {
@@ -95,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (!sharedPreferences.contains("current_user")) {
             resetUserInfo();
             isLogin = false;
-        }else{
+        } else {
             if (new File(this.getFilesDir() + "/UserInfo/" + userName).exists()) {
                 UserInfo userInfo = JSON.parseObject(
                         FileUtil.readFile(this, "UserInfo", userName),
@@ -166,13 +168,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 drawer.closeDrawers();
                 transaction.commit();
                 break;
-         }
+        }
         return true;
     }
 
     private void initDrawer() {
         drawer = (DrawerLayout) findViewById(R.id.drawer_main);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -184,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, UserInfoActivity.class);
-                intent.putExtra("isLogin",isLogin);
+                intent.putExtra("isLogin", isLogin);
                 startActivity(intent);
             }
         });
@@ -230,26 +233,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void initUserInfo(UserInfo userInfo) {
         String url = String.format("http://cdn.v2ex.com/gravatar/%s.jpg?s=%d&&d=retro", DigestUtil.md5(userInfo.getEmail()), 120);
-        String uri = this.getFilesDir() + "/Images/" + DigestUtil.md5(url) + ".jpg";
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_main);
         View headerView = navigationView.getHeaderView(0);
-        TextView user_name = headerView.findViewById(R.id.user_name);
-        TextView user_motto = headerView.findViewById(R.id.user_motto);
-        ImageView avatar = headerView.findViewById(R.id.avatar);
-        user_name.setText(userInfo.getName());
-        user_motto.setText(userInfo.getMotto());
-        avatar.setImageBitmap(ImageUtil.readImage(uri));
+        CircleImageView avatar = headerView.findViewById(R.id.avatar);
+        Glide.with(this).load(url).into(avatar);
+//        String uri = this.getFilesDir() + "/Images/" + DigestUtil.md5(url) + ".jpg";
+//        TextView user_name = headerView.findViewById(R.id.user_name);
+//        TextView user_motto = headerView.findViewById(R.id.user_motto);
+//        user_name.setText(userInfo.getName());
+//        user_motto.setText(userInfo.getMotto());
+//        avatar.setImageBitmap(ImageUtil.readImage(uri));
     }
 
-    private void resetUserInfo(){
+    private void resetUserInfo() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_main);
         View headerView = navigationView.getHeaderView(0);
-        TextView user_name = headerView.findViewById(R.id.user_name);
-        TextView user_motto = headerView.findViewById(R.id.user_motto);
         ImageView avatar = headerView.findViewById(R.id.avatar);
-        user_motto.setText("");
-        user_name.setText("");
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.ic_default_avatar);
+//        TextView user_name = headerView.findViewById(R.id.user_name);
+//        TextView user_motto = headerView.findViewById(R.id.user_motto);
+//        user_motto.setText("");
+//        user_name.setText("");
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_default_avatar);
         avatar.setImageBitmap(bitmap);
     }
 

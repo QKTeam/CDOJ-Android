@@ -37,7 +37,6 @@ public class ContestCommentListData extends AbsDataList<ContestCommentListItem> 
     public void onLoadMore() {
         if (mPageInfo.currentPage < mPageInfo.getTotalPages()) {
             Connection.instance.getContestComment(mPageInfo.getCurrentPage() + 1, id, this);
-            Toast.makeText(context, "加载成功", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(context, "无更多内容", Toast.LENGTH_SHORT).show();
         }

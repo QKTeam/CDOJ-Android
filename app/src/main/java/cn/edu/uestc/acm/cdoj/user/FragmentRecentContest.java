@@ -1,5 +1,6 @@
 package cn.edu.uestc.acm.cdoj.user;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -24,8 +25,12 @@ import cn.edu.uestc.acm.cdoj.net.homePage.RecentContestListItem;
 
 public class FragmentRecentContest extends GeneralFragment implements ReceivedCallback<List<RecentContestListItem>>{
 
+    @SuppressLint("ValidFragment")
     public FragmentRecentContest(Context context, String type) {
         super(context, type);
+    }
+
+    public FragmentRecentContest() {
     }
 
     @Override

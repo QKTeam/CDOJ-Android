@@ -13,8 +13,8 @@ import java.util.List;
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.genaralData.RecyclerViewItemClickListener;
 import cn.edu.uestc.acm.cdoj.net.contest.ContestListItem;
-import cn.edu.uestc.acm.cdoj.ui.DIYView.ContestStatusTextView;
-import cn.edu.uestc.acm.cdoj.ui.DIYView.ContestTypeTextView;
+import cn.edu.uestc.acm.cdoj.ui.custom_view.ContestStatusTextView;
+import cn.edu.uestc.acm.cdoj.ui.custom_view.ContestTypeTextView;
 import cn.edu.uestc.acm.cdoj.utils.TimeFormat;
 
 /**

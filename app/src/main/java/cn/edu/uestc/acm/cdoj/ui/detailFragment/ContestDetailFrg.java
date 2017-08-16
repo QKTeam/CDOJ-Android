@@ -44,7 +44,7 @@ public class ContestDetailFrg extends Fragment implements ReceivedCallback<Conte
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.contest_detail_fragment, container, false);
+        return inflater.inflate(R.layout.fragment_contest_detail, container, false);
     }
 
     Handler handler = new Handler(){

@@ -37,11 +37,12 @@
     <string name="edit_success">修改成功</string>
     <string name="password_error">原密码错误</string>
     <string name="about">关于</string>
-    <string name="aoubt_us">关于我们</string>
     <string name="recent_contest">最近比赛</string>
-    <string name="faq">FAQ</string>
-    <string name="step_by_step">step_by_step</string>
+    <string name="faq">常见问题</string>
+    <string name="step_by_step">开始入门</string>
     <string name="acm">ACM</string>
+    <string name="settings">设置</string>
+    <string name="feedback">反馈</string>
 
 
 </resources>

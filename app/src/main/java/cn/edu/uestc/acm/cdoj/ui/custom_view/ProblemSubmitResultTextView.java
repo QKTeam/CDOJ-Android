@@ -1,4 +1,4 @@
-package cn.edu.uestc.acm.cdoj.ui.DIYView;
+package cn.edu.uestc.acm.cdoj.ui.custom_view;
 
 import android.content.Context;
 import android.support.annotation.Nullable;

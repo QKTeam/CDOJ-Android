@@ -14,7 +14,7 @@ import cn.edu.uestc.acm.cdoj.genaralData.GeneralStatusListItem;
 import cn.edu.uestc.acm.cdoj.net.contest.Contest;
 import cn.edu.uestc.acm.cdoj.net.contest.status.ContestStatusListItem;
 import cn.edu.uestc.acm.cdoj.net.problem.ProblemStatusListItem;
-import cn.edu.uestc.acm.cdoj.ui.DIYView.ProblemSubmitResultTextView;
+import cn.edu.uestc.acm.cdoj.ui.custom_view.ProblemSubmitResultTextView;
 import cn.edu.uestc.acm.cdoj.ui.data.ProblemStatusListData;
 import cn.edu.uestc.acm.cdoj.ui.data.contestData.StatusListData;
 import cn.edu.uestc.acm.cdoj.utils.TimeFormat;

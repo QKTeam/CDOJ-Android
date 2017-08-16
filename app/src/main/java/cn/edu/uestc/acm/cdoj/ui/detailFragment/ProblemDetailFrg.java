@@ -1,5 +1,6 @@
 package cn.edu.uestc.acm.cdoj.ui.detailFragment;
 
+import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
@@ -60,13 +61,17 @@ public class ProblemDetailFrg extends Fragment implements ReceivedCallback<Probl
             }
         }
     };
-
+    @SuppressLint("ValidFragment")
     public ProblemDetailFrg(boolean isFBVisible){
         this.isFbVisible = isFBVisible;
     }
+
+    public ProblemDetailFrg(){
+
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.problem_detail_fragment, container, false);
+        return inflater.inflate(R.layout.fragment_problem_detail, container, false);
     }
 
     @Override
