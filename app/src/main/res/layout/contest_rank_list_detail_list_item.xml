@@ -7,20 +7,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:layout_margin="10dp"
         android:id="@+id/contest_rank_list_detail_list_item_container">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="123123132131"
             android:id="@+id/contest_rank_list_detail_list_item_"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="12313213213131551"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="12313213213131551"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

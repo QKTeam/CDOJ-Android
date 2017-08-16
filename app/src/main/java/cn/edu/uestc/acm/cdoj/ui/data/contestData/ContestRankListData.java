@@ -8,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +24,7 @@ import cn.edu.uestc.acm.cdoj.user.UserConnection;
 import cn.edu.uestc.acm.cdoj.ui.adapter.RankListAdapter;
 import cn.edu.uestc.acm.cdoj.ui.adapter.RankListDetailAdapter;
 import cn.edu.uestc.acm.cdoj.ui.data.GeneralList;
+import cn.edu.uestc.acm.cdoj.utils.DigestUtil;
 
 /**
  * Created by 14779 on 2017-8-5.

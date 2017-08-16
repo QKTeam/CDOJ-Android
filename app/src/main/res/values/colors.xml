@@ -53,11 +53,10 @@
 
     <color name="contestStatus_Ended">#FF0000</color>
     <color name="contestStatus_Running">#00FF00</color>
+
     <color name="contestPermission_Invited">#FFE000</color>
     <color name="contestPermission_Diy">#FF9403</color>
     <color name="contestPermission_Onsite">#00A9FF</color>
     <color name="contestPermission_Private">#FF0000</color>
     <color name="contestPermission_Public">#00FF00</color>
-
-
 </resources>

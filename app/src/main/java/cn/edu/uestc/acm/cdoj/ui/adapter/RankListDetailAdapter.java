@@ -45,8 +45,7 @@ public class RankListDetailAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.contest_rank_list_detail_list_item, viewGroup, false);
         }
         LinearLayout container = convertView.findViewById(R.id.contest_rank_list_detail_list_item_container);
-
-        container.setBackgroundColor(R.color.pink_primary_dark);
+        
         return convertView;
     }
 }

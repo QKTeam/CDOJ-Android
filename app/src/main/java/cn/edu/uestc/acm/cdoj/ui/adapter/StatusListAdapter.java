@@ -14,6 +14,7 @@ import cn.edu.uestc.acm.cdoj.genaralData.GeneralStatusListItem;
 import cn.edu.uestc.acm.cdoj.net.contest.Contest;
 import cn.edu.uestc.acm.cdoj.net.contest.status.ContestStatusListItem;
 import cn.edu.uestc.acm.cdoj.net.problem.ProblemStatusListItem;
+import cn.edu.uestc.acm.cdoj.ui.custom_view.ProblemSubmitResultTextView;
 import cn.edu.uestc.acm.cdoj.ui.data.ProblemStatusListData;
 import cn.edu.uestc.acm.cdoj.ui.data.contestData.StatusListData;
 import cn.edu.uestc.acm.cdoj.utils.TimeFormat;
@@ -45,7 +46,6 @@ public class StatusListAdapter<T> extends RecyclerView.Adapter<StatusListAdapter
         holder.language_length.setText(positionItem.getLanguage()+"/"+positionItem.getLength());
         holder.userName.setText(positionItem.getUserName());
         if (positionItem.getReturnType().equals("Accepted")){
-            holder.returnType.setTextColor(R.color.green_primary);
             holder.memory_time_cost.setText(positionItem.getTimeCost()+"ms"+"/"+positionItem.getMemoryCost()+"KB");
         }
         holder.problemName.setText("");
@@ -58,7 +58,7 @@ public class StatusListAdapter<T> extends RecyclerView.Adapter<StatusListAdapter
     }
 
     public static class StatusListViewHolder extends RecyclerView.ViewHolder {
-        private TextView returnType;
+        private ProblemSubmitResultTextView returnType;
         private TextView language_length;
         private TextView userName;
         private TextView memory_time_cost;

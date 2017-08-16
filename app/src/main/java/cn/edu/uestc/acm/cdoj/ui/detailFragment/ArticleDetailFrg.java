@@ -8,6 +8,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import com.alibaba.fastjson.JSON;
@@ -30,6 +32,7 @@ public class ArticleDetailFrg extends Fragment implements ReceivedCallback<Artic
     private static final String TAG = "ArticleDetailFrg";
     private Article articleReceived = new Article();
     private WebView webView;
+    private String baseUrl = "http://acm.uestc.edu.cn";
 
     android.os.Handler handler = new android.os.Handler(){
         @Override
@@ -43,7 +46,7 @@ public class ArticleDetailFrg extends Fragment implements ReceivedCallback<Artic
                 input.read(in);
                 String html = new String(in);
                 html = html.replace("{{{replace_data_here}}}", JSON.toJSONString(articleReceived));
-                webView.loadDataWithBaseURL(null,html , "text/html", "UTF-8", null);
+                webView.loadDataWithBaseURL(baseUrl,html , "text/html", "UTF-8", null);
             } catch (IOException e) {
                 e.printStackTrace();
             }

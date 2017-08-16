@@ -236,8 +236,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_main);
         View headerView = navigationView.getHeaderView(0);
         CircleImageView avatar = headerView.findViewById(R.id.avatar);
-        String uri = this.getFilesDir() + "/Images/" + DigestUtil.md5(url) + ".jpg";
         Glide.with(this).load(url).into(avatar);
+//        String uri = this.getFilesDir() + "/Images/" + DigestUtil.md5(url) + ".jpg";
 //        TextView user_name = headerView.findViewById(R.id.user_name);
 //        TextView user_motto = headerView.findViewById(R.id.user_motto);
 //        user_name.setText(userInfo.getName());

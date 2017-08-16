@@ -1,42 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="6dp">
+    style="@style/CardView_Item">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="6dp"
-        android:id="@+id/contest_comment_user_avatar"
-        android:background="@drawable/ic_arrow"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/contest_comment_user_avatar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@drawable/ic_arrow" />
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="2016100104012"
-                android:id="@+id/contest_comment_user_name"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="2017-8-3 15:50:23"
-                android:id="@+id/contest_comment_user_time"/>
-        </LinearLayout>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="\@adm 红红火火恍恍惚惚"
-            android:id="@+id/contest_comment_user_comment"/>
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-</LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/contest_comment_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    style="@style/TextTitle"
+                    android:text="2016100104012" />
+
+                <TextView
+                    android:id="@+id/contest_comment_user_time"
+                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    style="@style/TextTitle"
+                    android:text="2017-8-3 15:50:23" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/contest_comment_user_comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/TextContent"
+                android:text="\@adm 红红火火恍恍惚惚" />
+        </LinearLayout>
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>

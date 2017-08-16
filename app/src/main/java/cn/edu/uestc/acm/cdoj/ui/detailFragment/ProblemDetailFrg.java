@@ -41,6 +41,7 @@ public class ProblemDetailFrg extends Fragment implements ReceivedCallback<Probl
     private FloatingActionButton historyBt;
     private boolean isFbVisible;
     private String type = "problem";
+    private String baseUrl = "http://acm.uestc.edu.cn";
 
     Handler handler = new Handler(){
         @Override
@@ -54,7 +55,7 @@ public class ProblemDetailFrg extends Fragment implements ReceivedCallback<Probl
                 input.read(in);
                 String html = new String(in);
                 html = html.replace("{{{replace_data_here}}}", JSON.toJSONString(problemReceived));
-                webView.loadDataWithBaseURL(null,html , "text/html", "UTF-8", null);
+                webView.loadDataWithBaseURL(baseUrl,html , "text/html", "UTF-8", null);
             } catch (IOException e) {
                 e.printStackTrace();
             }

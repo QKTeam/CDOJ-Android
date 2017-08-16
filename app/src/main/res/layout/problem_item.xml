@@ -32,9 +32,8 @@
             <TextView
                 android:id="@+id/problem_id"
                 style="@style/TextFoot"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/problem_solved"
@@ -50,5 +49,6 @@
                 android:layout_height="wrap_content"
                 android:gravity="center" />
         </LinearLayout>
+
     </LinearLayout>
 </android.support.v7.widget.CardView>
