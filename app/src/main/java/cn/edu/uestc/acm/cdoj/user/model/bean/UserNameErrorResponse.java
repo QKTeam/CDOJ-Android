@@ -1,4 +1,4 @@
-package cn.edu.uestc.acm.cdoj.user;
+package cn.edu.uestc.acm.cdoj.user.model.bean;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import java.util.List;
  * Created by lagranmoon on 2017/8/8.
  */
 
-public class UserNameError {
+public class UserNameErrorResponse {
 
     /**
      * field : [{"bindingFailure":false,"defaultMessage":"User name has been used!","field":"userName","objectName":"userName"}]

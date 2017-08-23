@@ -2,9 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cn.edu.uestc.acm.cdoj"
     android:versionCode="2"
-    android:versionName="V2.0.0测试版">
+    android:versionName="V2.0.1测试版">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:allowBackup="true"

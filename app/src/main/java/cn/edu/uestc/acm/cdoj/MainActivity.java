@@ -25,7 +25,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.CookieSyncManager;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
@@ -46,12 +45,11 @@ import cn.edu.uestc.acm.cdoj.ui.detailFragment.ProblemDetailFrg;
 import cn.edu.uestc.acm.cdoj.user.FragmentAbout;
 import cn.edu.uestc.acm.cdoj.user.FragmentStep;
 import cn.edu.uestc.acm.cdoj.user.UserConnection;
-import cn.edu.uestc.acm.cdoj.user.UserInfo;
+import cn.edu.uestc.acm.cdoj.user.model.bean.UserInfo;
 import cn.edu.uestc.acm.cdoj.user.FragmentFAQ;
 import cn.edu.uestc.acm.cdoj.user.FragmentRecentContest;
 import cn.edu.uestc.acm.cdoj.utils.DigestUtil;
 import cn.edu.uestc.acm.cdoj.utils.FileUtil;
-import cn.edu.uestc.acm.cdoj.utils.ImageUtil;
 import cn.edu.uestc.acm.cdoj.utils.JsonUtil;
 import de.hdodenhof.circleimageview.CircleImageView;
 
