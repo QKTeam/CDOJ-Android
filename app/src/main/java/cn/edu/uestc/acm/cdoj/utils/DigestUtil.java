@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by lagranmoon on 2017/7/23.
+ * 用于处理信息加密的工具类
  */
 
 public class DigestUtil {

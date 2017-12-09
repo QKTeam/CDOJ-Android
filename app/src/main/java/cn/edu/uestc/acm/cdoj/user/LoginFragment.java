@@ -17,7 +17,7 @@ import com.alibaba.fastjson.JSON;
 import cn.edu.uestc.acm.cdoj.MainActivity;
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.UserInfoCallback;
-import cn.edu.uestc.acm.cdoj.user.model.bean.UserInfo;
+import cn.edu.uestc.acm.cdoj.user.model.reserved.UserInfo;
 import cn.edu.uestc.acm.cdoj.utils.DigestUtil;
 import cn.edu.uestc.acm.cdoj.utils.FileUtil;
 import cn.edu.uestc.acm.cdoj.utils.SharedPreferenceUtil;

@@ -1,4 +1,4 @@
-package cn.edu.uestc.acm.cdoj;
+package cn.edu.uestc.acm.cdoj.base;
 
 import android.view.View;
 

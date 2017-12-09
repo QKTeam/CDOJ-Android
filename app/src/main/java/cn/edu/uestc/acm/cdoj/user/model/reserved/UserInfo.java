@@ -1,4 +1,4 @@
-package cn.edu.uestc.acm.cdoj.user.model.bean;
+package cn.edu.uestc.acm.cdoj.user.model.reserved;
 
 /**
  * Created by lagranmoon on 2017/8/3.

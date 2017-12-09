@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.UserInfoCallback;
-import cn.edu.uestc.acm.cdoj.user.model.bean.UserInfo;
+import cn.edu.uestc.acm.cdoj.user.model.reserved.UserInfo;
 
 /**
  * Created by lagranmoon on 2017/8/9.

@@ -1,9 +1,7 @@
 package cn.edu.uestc.acm.cdoj.user.login;
 
-import android.view.View;
-
-import cn.edu.uestc.acm.cdoj.BasePresenter;
-import cn.edu.uestc.acm.cdoj.BaseView;
+import cn.edu.uestc.acm.cdoj.base.BasePresenter;
+import cn.edu.uestc.acm.cdoj.base.BaseView;
 
 /**
  * Created by lagranmoon on 2017/8/21.

@@ -1,14 +1,15 @@
-package cn.edu.uestc.acm.cdoj.user.model.bean;
+package cn.edu.uestc.acm.cdoj.user.model.reserved;
 
 import java.util.List;
 
 /**
- * Created by lagranmoon on 2017/8/9.
+ * Created by lagranmoon on 2017/8/8.
  */
 
-public class EditResponse {
+public class UserNameErrorResponse {
+
     /**
-     * field : [{"bindingFailure":false,"defaultMessage":"Your password is wrong, please try again.","field":"oldPassword","objectName":"oldPassword"}]
+     * field : [{"bindingFailure":false,"defaultMessage":"User name has been used!","field":"userName","objectName":"userName"}]
      * result : field_error
      */
 
@@ -34,9 +35,9 @@ public class EditResponse {
     public static class FieldBean {
         /**
          * bindingFailure : false
-         * defaultMessage : Your password is wrong, please try again.
-         * field : oldPassword
-         * objectName : oldPassword
+         * defaultMessage : User name has been used!
+         * field : userName
+         * objectName : userName
          */
 
         private boolean bindingFailure;

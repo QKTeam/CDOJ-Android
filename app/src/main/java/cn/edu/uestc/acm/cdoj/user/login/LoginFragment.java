@@ -21,7 +21,7 @@ import cn.edu.uestc.acm.cdoj.utils.JsonUtil;
 
 /**
  * Created by lagranmoon on 2017/8/21.
- * Main UI for Login screen.
+ * 用户登录的View层
  */
 
 public class LoginFragment extends Fragment implements LoginContract.View,View.OnClickListener {

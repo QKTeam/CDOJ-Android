@@ -12,12 +12,12 @@ import com.alibaba.fastjson.JSON;
 import java.io.File;
 
 import cn.edu.uestc.acm.cdoj.net.UserInfoCallback;
-import cn.edu.uestc.acm.cdoj.user.model.bean.EditResponse;
+import cn.edu.uestc.acm.cdoj.user.model.reserved.EditResponse;
 import cn.edu.uestc.acm.cdoj.user.model.bean.LoginResponse;
-import cn.edu.uestc.acm.cdoj.user.model.bean.RegisterSuccessResponse;
-import cn.edu.uestc.acm.cdoj.user.model.bean.UserInfo;
-import cn.edu.uestc.acm.cdoj.user.model.bean.UserResponse;
-import cn.edu.uestc.acm.cdoj.user.model.bean.UserNameErrorResponse;
+import cn.edu.uestc.acm.cdoj.user.model.reserved.RegisterSuccessResponse;
+import cn.edu.uestc.acm.cdoj.user.model.reserved.UserInfo;
+import cn.edu.uestc.acm.cdoj.user.model.reserved.UserResponse;
+import cn.edu.uestc.acm.cdoj.user.model.reserved.UserNameErrorResponse;
 import cn.edu.uestc.acm.cdoj.utils.DigestUtil;
 import cn.edu.uestc.acm.cdoj.utils.ImageUtil;
 import cn.edu.uestc.acm.cdoj.utils.Request;
