@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import cn.edu.uestc.acm.cdoj.R;
 import cn.edu.uestc.acm.cdoj.net.UserInfoCallback;
+import cn.edu.uestc.acm.cdoj.user.model.reserved.UserInfo;
 
 /**
  * Created by lagranmoon on 2017/8/4.
@@ -111,7 +112,7 @@ public class Register_Step2_Fragment extends Fragment implements UserInfoCallbac
     @Override
     public void registerStatus(String s) {
         if (TextUtils.equals(s, "success")) {
-            Toast.makeText(getActivity(), R.string.registerSuccess, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.registerSuccessResponse, Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getActivity(), R.string.registerError, Toast.LENGTH_SHORT).show();
         }

@@ -19,13 +19,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.CookieSyncManager;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
@@ -46,13 +46,13 @@ import cn.edu.uestc.acm.cdoj.ui.detailFragment.ProblemDetailFrg;
 import cn.edu.uestc.acm.cdoj.user.FragmentAbout;
 import cn.edu.uestc.acm.cdoj.user.FragmentStep;
 import cn.edu.uestc.acm.cdoj.user.UserConnection;
-import cn.edu.uestc.acm.cdoj.user.UserInfo;
+import cn.edu.uestc.acm.cdoj.user.model.reserved.UserInfo;
 import cn.edu.uestc.acm.cdoj.user.FragmentFAQ;
 import cn.edu.uestc.acm.cdoj.user.FragmentRecentContest;
 import cn.edu.uestc.acm.cdoj.utils.DigestUtil;
 import cn.edu.uestc.acm.cdoj.utils.FileUtil;
-import cn.edu.uestc.acm.cdoj.utils.ImageUtil;
 import cn.edu.uestc.acm.cdoj.utils.JsonUtil;
+import cn.edu.uestc.acm.cdoj.utils.SharedPreferenceUtil;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
@@ -74,8 +74,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         CookieSyncManager.createInstance(this);
-        toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        toolbar =  findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
+
         setWindowStatus();
         initDrawer();
         initViewPager();
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onRestart() {
         super.onRestart();
-        SharedPreferences sharedPreferences = this.getSharedPreferences(DigestUtil.md5("User"), MODE_APPEND);
+        SharedPreferences sharedPreferences = this.getSharedPreferences(DigestUtil.md5("User"), MODE_PRIVATE);
         if (!sharedPreferences.contains("current_user")) {
             resetUserInfo();
             isLogin = false;
@@ -109,13 +110,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-//    @Override
-//    protected void onDestroy() {
-//        if (current_user != null) {
-//            SharedPreferenceUtil.save_single_sp(this, "User", "current_user", current_user);
-//        }
-//        super.onDestroy();
-//    }
+    @Override
+    protected void onDestroy() {
+        if (current_user != null) {
+            SharedPreferenceUtil.save_single_sp(this, "User", "current_user", current_user);
+        }
+        super.onDestroy();
+    }
 
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        getMenuInflater().inflate(R.menu.toolbar_main, menu);
 //        return true;
 //    }
-//
+
 //    @Override
 //    public boolean onOptionsItemSelected(MenuItem item) {
 //        switch (item.getItemId()) {
@@ -173,13 +174,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void initDrawer() {
-        drawer = (DrawerLayout) findViewById(R.id.drawer_main);
+        drawer =findViewById(R.id.drawer_main);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-
+        toggle.setHomeAsUpIndicator(R.drawable.ic_menu);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_main);
+        NavigationView navigationView = findViewById(R.id.nav_main);
         navigationView.setNavigationItemSelectedListener(this);
 
         ImageView avatar = navigationView.getHeaderView(0).findViewById(R.id.avatar);
@@ -213,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void initLoginStatus() {
-        SharedPreferences sharedPreferences = this.getSharedPreferences(DigestUtil.md5("User"), MODE_APPEND);
+        SharedPreferences sharedPreferences = this.getSharedPreferences(DigestUtil.md5("User"), MODE_PRIVATE);
         if (sharedPreferences.contains("current_user")) {
             current_user = sharedPreferences.getString("current_user", null);
             String userName = sharedPreferences.getString(DigestUtil.md5(current_user), null);

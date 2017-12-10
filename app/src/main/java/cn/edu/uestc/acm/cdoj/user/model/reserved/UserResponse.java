@@ -1,10 +1,10 @@
-package cn.edu.uestc.acm.cdoj.user;
+package cn.edu.uestc.acm.cdoj.user.model.reserved;
 
 /**
  * Created by lagranmoon on 2017/7/25.
  */
 
-public class UserInfoReceived {
+public class UserResponse {
 
 
     /**
@@ -30,6 +30,6 @@ public class UserInfoReceived {
     public void setUser(UserBean user) {
         this.user = user;
     }
-    public static class UserBean extends UserInfo{
+    public static class UserBean extends UserInfo {
     }
 }

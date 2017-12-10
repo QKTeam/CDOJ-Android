@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.0"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.1"
     defaultConfig {
         applicationId "cn.edu.uestc.acm.cdoj"
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 27
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -22,15 +22,22 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:26.0.0-alpha1'
+    compile 'com.android.support:appcompat-v7:27.0.2'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:design:26.0.0-alpha1'
-    compile 'com.android.support:cardview-v7:26.0.0-alpha1'
+    compile 'com.android.support:design:27.0.2'
+    compile 'com.android.support:cardview-v7:27.0.2'
     compile 'com.alibaba:fastjson:1.2.35'
     compile 'com.lcodecorex:tkrefreshlayout:1.0.7'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.github.clans:fab:1.6.4'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'de.hdodenhof:circleimageview:2.1.0'
+    compile 'com.android.volley:volley:1.0.0'
     testCompile 'junit:junit:4.12'
+
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.3.0'
+
+    implementation "io.reactivex.rxjava2:rxjava:2.1.7"
 }

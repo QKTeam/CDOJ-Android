@@ -12,6 +12,12 @@ import com.alibaba.fastjson.JSON;
 import java.io.File;
 
 import cn.edu.uestc.acm.cdoj.net.UserInfoCallback;
+import cn.edu.uestc.acm.cdoj.user.model.reserved.EditResponse;
+import cn.edu.uestc.acm.cdoj.user.model.bean.LoginResponse;
+import cn.edu.uestc.acm.cdoj.user.model.reserved.RegisterSuccessResponse;
+import cn.edu.uestc.acm.cdoj.user.model.reserved.UserInfo;
+import cn.edu.uestc.acm.cdoj.user.model.reserved.UserResponse;
+import cn.edu.uestc.acm.cdoj.user.model.reserved.UserNameErrorResponse;
 import cn.edu.uestc.acm.cdoj.utils.DigestUtil;
 import cn.edu.uestc.acm.cdoj.utils.ImageUtil;
 import cn.edu.uestc.acm.cdoj.utils.Request;
@@ -72,12 +78,12 @@ public class UserConnection {
             @Override
             public void run() {
                 byte[] receiveData = Request.post(baseUrl, loginUrl, request_json);
-                LoginDataReceived loginDataReceived;
+                LoginResponse loginResponse;
                 String[] data = new String[2];
                 try {
-                    loginDataReceived = JSON.parseObject(new String(receiveData), LoginDataReceived.class);
-                    data[0] = loginDataReceived.getResult();
-                    data[1] = loginDataReceived.getUserName();
+                    loginResponse = JSON.parseObject(new String(receiveData), LoginResponse.class);
+                    data[0] = loginResponse.getResult();
+                    data[1] = loginResponse.getUserName();
                 } catch (Exception e) {
                     data[0] = "error";
                 }
@@ -116,8 +122,8 @@ public class UserConnection {
             public void run() {
                 Bitmap bitmap;
                 byte[] receivedData = Request.get(baseUrl, userInfoUrl + username);
-                UserInfoReceived userInfoReceived = JSON.parseObject(new String(receivedData), UserInfoReceived.class);
-                UserInfo userInfo =  userInfoReceived.getUser();
+                UserResponse userResponse = JSON.parseObject(new String(receivedData), UserResponse.class);
+                UserInfo userInfo =  userResponse.getUser();
                 String email = userInfo.getEmail();
 //                String url = String.format("http://cdn.v2ex.com/gravatar/%s.jpg?s=%d&&d=retro", DigestUtil.md5(email), size);
 //                String uri = context.getFilesDir() + "/Images/" + DigestUtil.md5(url) + ".jpg";
@@ -166,11 +172,11 @@ public class UserConnection {
                 Log.d(TAG, "receiveData"+new String (receiveData));
 
                 try {
-                    RegisterSuccess registerSuccess = JSON.parseObject(new String(receiveData),RegisterSuccess.class);
-                    registerStatus = registerSuccess.getResult();
+                    RegisterSuccessResponse registerSuccessResponse = JSON.parseObject(new String(receiveData),RegisterSuccessResponse.class);
+                    registerStatus = registerSuccessResponse.getResult();
                 }catch (Exception registerError){
-                    UserNameError userNameError = JSON.parseObject(new String(receiveData),UserNameError.class);
-                    registerStatus = userNameError.getResult();
+                    UserNameErrorResponse userNameErrorResponse = JSON.parseObject(new String(receiveData),UserNameErrorResponse.class);
+                    registerStatus = userNameErrorResponse.getResult();
                 }
                 Message message = Message.obtain();
                 Object[] obj = new Object[2];

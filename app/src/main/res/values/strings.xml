@@ -3,7 +3,11 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="username_null_error">用户名不能为空</string>
+    <string name="password_null_error">密码不能为空</string>
     <string name="login_error">用户名或密码错误</string>
+
     <string name="forgot_password">忘记密码</string>
     <string name="register">注册</string>
     <string name="login">登陆</string>
@@ -28,7 +32,7 @@
     <string name="gender">性别</string>
     <string name="phone">电话</string>
     <string name="register_warning">您还有没有填写的项</string>
-    <string name="registerSuccess">注册成功</string>
+    <string name="registerSuccessResponse">注册成功</string>
     <string name="registerError">用户名或邮箱已被使用</string>
     <string name="copyright">Copyright © 晴空工作室 ACM创新中心</string>
     <string name="logout">退出登陆</string>
