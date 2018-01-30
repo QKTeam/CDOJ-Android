@@ -12,11 +12,12 @@ import android.support.v4.app.FragmentTransaction;
 
 public class ActivityUtil {
 
-        /**
-         * The {@code fragment} is added to the container view with id {@code containerId}. The operation is
-         * performed by the {@code fragmentManager}.
-         */
-
+    /**
+     * 添加Fragment到布局容器中
+     * @param fragmentManager 传入的FragmentManager
+     * @param fragment 要添加的Fragment
+     * @param containerId 要添加到的布局容器ID
+     */
     public static void addFragment(@NonNull FragmentManager fragmentManager,
                                    @NonNull Fragment fragment, int containerId) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -24,10 +25,12 @@ public class ActivityUtil {
         transaction.commit();
     }
 
-        /**
-         * The {@code fragment} will replace the fragment in the container  with id {@code containerId} .
-         * The operation is performed by the {@code fragmentManager}.
-         */
+    /**
+     * 替换布局容器里的Fragment
+     * @param fragmentManager 传入的FragmentManager
+     * @param fragment 要替换成的Fragment
+     * @param containerId 被替换的布局容器
+     */
 
     public static void replaceFragment(@NonNull FragmentManager fragmentManager,
                                        @NonNull Fragment fragment, int containerId) {
