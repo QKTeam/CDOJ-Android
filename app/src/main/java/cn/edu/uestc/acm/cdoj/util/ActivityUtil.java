@@ -1,4 +1,4 @@
-package cn.edu.uestc.acm.cdoj.utils;
+package cn.edu.uestc.acm.cdoj.util;
 
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 
 /**
      * Created by lagranmoon on 2017/8/21.
-     * This provides methods to help Activities load their UI.
+     * Activity 的一些工具类
  * */
 
 public class ActivityUtil {

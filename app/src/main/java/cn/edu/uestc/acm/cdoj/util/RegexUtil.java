@@ -1,4 +1,4 @@
-package cn.edu.uestc.acm.cdoj.utils;
+package cn.edu.uestc.acm.cdoj.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
