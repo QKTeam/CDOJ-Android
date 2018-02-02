@@ -28,7 +28,7 @@
     <string name="Email">邮箱</string>
     <string name="Motto">Motto</string>
     <string name="school">学校</string>
-    <string name="StudentID">学号</string>
+    <string name="student_id">学号</string>
     <string name="gender">性别</string>
     <string name="phone">电话</string>
     <string name="register_warning">您还有没有填写的项</string>
