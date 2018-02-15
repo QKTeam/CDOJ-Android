@@ -1,18 +1,25 @@
-package cn.edu.uestc.acm.cdoj;
+package cn.edu.uestc.acm.cdoj.ui.activity;
 
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+
+import cn.edu.uestc.acm.cdoj.R;
+import cn.edu.uestc.acm.cdoj.util.NetworkUtil;
 
 public class SplashActivity extends AppCompatActivity {
 
     private static final String TAG = "SplashActivity";
+
+    public static boolean networkStatus;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        networkStatus = NetworkUtil.isConnect(this);
+
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
